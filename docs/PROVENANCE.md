@@ -88,6 +88,7 @@ Two runs on the same raw file produce byte-identical JSON. Verified by
 - **No MIC-to-LEI mapping.** Out of scope (D11). The `lei` field on
   each entry is present but unused by any current consumer.
 - **No MIC-to-BIC mapping.** Out of scope (D11).
+- **Exchange Calendar gap.** Three MICs referenced by the Exchange Calendar registry are not present in the 2026-09-23 ISO 10383 file: `XBEK` (Beirut), `XNBO` (Nairobi), `XQSE` (Qatar). Either they were removed from the source, or Exchange Calendar should drop them. CI reports this as a warning (D6: advisory in v1.0.0, blocking in v1.0.1).
 - **No trading currency per MIC.** Derived from `country_code` →
   ISO 4217, not stored.
 
