@@ -1,0 +1,263 @@
+{
+  "$id": "https://github.com/slimissa/iso10383/schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "additionalProperties": false,
+      "properties": {
+        "broken_chains": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "chain": {
+                "items": {
+                  "pattern": "^[A-Z0-9]{4}$",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "mic": {
+                "pattern": "^[A-Z0-9]{4}$",
+                "type": "string"
+              },
+              "operating_mic": {
+                "pattern": "^[A-Z0-9]{4}$",
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "mic",
+              "operating_mic",
+              "reason",
+              "chain"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "active": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "expired": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "operating": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "segment": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "total": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "updated": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "operating",
+            "segment",
+            "active",
+            "updated",
+            "expired",
+            "total"
+          ],
+          "type": "object"
+        },
+        "source_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_snapshot": {
+          "format": "date",
+          "type": "string"
+        },
+        "source_url": {
+          "format": "uri",
+          "type": "string"
+        },
+        "updated": {
+          "format": "date",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "updated",
+        "source_snapshot",
+        "source_url",
+        "source_hash",
+        "counts",
+        "broken_chains"
+      ],
+      "type": "object"
+    },
+    "mics": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "acronym": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "city": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "country_code": {
+            "pattern": "^[A-Z]{2}$",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "creation_date": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expiration_date": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_update_date": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_validation_date": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "legal_entity_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lei": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "market_category": {
+            "enum": [
+              "ATSS",
+              "APPA",
+              "ARMS",
+              "CTPS",
+              "CASP",
+              "DCMS",
+              "IDQS",
+              "MLTF",
+              "NSPD",
+              "OTFS",
+              "OTHR",
+              "RMOS",
+              "RMKT",
+              "SEFS",
+              "SINT",
+              "TRFS",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "market_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mic": {
+            "pattern": "^[A-Z0-9]{4}$",
+            "type": "string"
+          },
+          "mic_type": {
+            "enum": [
+              "OPERATING",
+              "SEGMENT"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "operating_mic": {
+            "pattern": "^[A-Z0-9]{4}$",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "UPDATED",
+              "EXPIRED"
+            ]
+          },
+          "website": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "mic",
+          "mic_type",
+          "status",
+          "operating_mic",
+          "market_name",
+          "country_code",
+          "creation_date",
+          "last_update_date",
+          "last_validation_date",
+          "expiration_date"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "meta",
+    "mics"
+  ],
+  "title": "ISO 10383 MIC Registry",
+  "type": "object"
+}
