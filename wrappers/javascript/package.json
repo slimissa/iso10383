@@ -1,0 +1,29 @@
+{
+  "name": "iso10383-registry",
+  "version": "0.1.0",
+  "description": "ISO 10383 Market Identifier Codes - canonical, versioned, machine-readable registry",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "files": [
+    "src/"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Le P'tit <slimissabara@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slimissa/iso10383.git"
+  },
+  "keywords": [
+    "iso10383",
+    "mic",
+    "market-identifier",
+    "exchange",
+    "finance"
+  ]
+}
