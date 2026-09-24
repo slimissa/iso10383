@@ -19,7 +19,7 @@ ask for, not planned in advance (D14)._
 
 ---
 
-## [0.2.0] - 2026-09-24
+## [1.0.0] - 2026-09-24
 
 Four language wrappers, identical behavior, one shared contract.
 
@@ -69,6 +69,13 @@ Four language wrappers, identical behavior, one shared contract.
   the CHANGELOG notes both in one release.
 
 ---
+
+### Stability
+
+- The JSON contract, JSON Schema, nine distribution artifacts,
+  CLI, and four wrappers are now stable under Semantic Versioning.
+- Documentation: README, PROVENANCE, LAYERS, action_types, four
+  ADRs, and CONTRIBUTING.
 
 ## [0.1.0] - 2026-09-23
 
@@ -232,6 +239,6 @@ Phases 0 through 4: foundation, fetcher, schema, validator, exports.
 
 ## References
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v0.2.0...HEAD
-[0.2.0]:      https://github.com/slimissa/iso10383/compare/v0.1.0...v0.2.0
-[0.1.0]:      https://github.com/slimissa/iso10383/releases/tag/v0.1.0
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/slimissa/iso10383/releases/tag/v1.0.0
+[0.1.0]: https://github.com/slimissa/iso10383/releases/tag/v0.1.0
