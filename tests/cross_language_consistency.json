@@ -1,0 +1,150 @@
+{
+  "cases": [
+    {
+      "args": [
+        "XNYS"
+      ],
+      "expect": {
+        "country_code": "US",
+        "mic": "XNYS",
+        "mic_type": "OPERATING",
+        "operating_mic": "XNYS"
+      },
+      "id": "lookup_xnys",
+      "op": "by_mic"
+    },
+    {
+      "args": [
+        "XTKS"
+      ],
+      "expect": {
+        "country_code": "JP",
+        "mic": "XTKS",
+        "mic_type": "SEGMENT",
+        "operating_mic": "XJPX"
+      },
+      "id": "lookup_xtks",
+      "op": "by_mic"
+    },
+    {
+      "args": [
+        "ZZZZ"
+      ],
+      "expect": null,
+      "id": "lookup_missing",
+      "op": "by_mic"
+    },
+    {
+      "args": [
+        "XJPX"
+      ],
+      "expect_contains": {
+        "mic": "XTKS"
+      },
+      "id": "segments_xjpx_contains_xtks",
+      "op": "segments"
+    },
+    {
+      "args": [
+        "XNYS"
+      ],
+      "expect_count_max": 0,
+      "id": "segments_xjpx_empty_when_no_children",
+      "op": "segments"
+    },
+    {
+      "args": [
+        "XTKS"
+      ],
+      "expect": "XJPX",
+      "id": "parent_xtks",
+      "op": "operating_mic"
+    },
+    {
+      "args": [
+        "XNYS"
+      ],
+      "expect": "XNYS",
+      "id": "parent_of_operating_is_self",
+      "op": "operating_mic"
+    },
+    {
+      "args": [
+        "2024-01-01"
+      ],
+      "expect_all_expiration_ge": "2024-01-01",
+      "expect_all_status": "EXPIRED",
+      "expect_count_min": 1,
+      "id": "expired_since_2024",
+      "op": "expired"
+    },
+    {
+      "args": [
+        "nasdaq"
+      ],
+      "expect_count_min": 5,
+      "id": "search_nasdaq_count",
+      "op": "search"
+    },
+    {
+      "args": [
+        "US"
+      ],
+      "expect_all_field": {
+        "country_code": "US"
+      },
+      "expect_count_min": 50,
+      "id": "list_by_country_us",
+      "op": "by_country"
+    },
+    {
+      "args": [
+        "ACTIVE"
+      ],
+      "expect_all_field": {
+        "status": "ACTIVE"
+      },
+      "expect_count_min": 2000,
+      "id": "list_by_status_active",
+      "op": "by_status"
+    },
+    {
+      "args": [
+        "SEGMENT"
+      ],
+      "expect_all_field": {
+        "mic_type": "SEGMENT"
+      },
+      "expect_count_min": 1000,
+      "id": "list_by_mic_type_segment",
+      "op": "by_mic_type"
+    },
+    {
+      "args": [
+        [
+          "XNYS",
+          "ZZZZ"
+        ]
+      ],
+      "expect_missing": [
+        "ZZZZ"
+      ],
+      "expect_ok": false,
+      "id": "validate_missing_returns_false",
+      "op": "validate"
+    },
+    {
+      "args": [
+        [
+          "XNYS",
+          "XLON",
+          "XTKS"
+        ]
+      ],
+      "expect_ok": true,
+      "id": "validate_all_present",
+      "op": "validate"
+    }
+  ],
+  "description": "Shared test vectors for all ISO 10383 wrappers. Every wrapper must produce byte-identical output for every case."
+}
