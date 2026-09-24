@@ -1,3 +1,7 @@
+[![Validate](https://github.com/slimissa/iso10383/actions/workflows/validate.yml/badge.svg)](https://github.com/slimissa/iso10383/actions/workflows/validate.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Registry](https://img.shields.io/badge/registry-0.1.0-orange.svg)](./CHANGELOG.md)
+
 # ISO 10383 MIC Registry
 
 **A canonical, versioned, machine-readable registry of ISO 10383 Market Identifier Codes.**

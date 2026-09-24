@@ -86,7 +86,11 @@ def chain_terminates(mic: str, by_mic: dict[str, dict[str, Any]],
 
 
 def load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        print(f"[schema] {path}: {e}", file=sys.stderr)
+        sys.exit(3)
 
 
 def load_optional(path: Path) -> Any | None:

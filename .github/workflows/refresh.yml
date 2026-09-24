@@ -1,0 +1,71 @@
+name: refresh
+
+on:
+  schedule:
+    - cron: "0 0 15 * *"     # 00:00 UTC on the 15th of every month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install jsonschema pyarrow pytest
+
+      - name: Download current SWIFT file
+        run: python3 -c "from tools.fetch_swift_mic import download; download(force=True, target=__import__('pathlib').Path('raw/MIC_new.csv'))"
+
+      - name: Snapshot the old registry
+        run: cp iso10383.json /tmp/iso10383.old.json
+
+      - name: Regenerate
+        run: |
+          python3 tools/fetch_swift_mic.py \
+            --raw raw/MIC_new.csv \
+            --snapshot-date "$(date -u +%Y-%m-%d)"
+
+      - name: Diff
+        id: diff
+        run: |
+          set +e
+          python3 tools/refresh_diff.py /tmp/iso10383.old.json iso10383.json | tee /tmp/diff.txt
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Regenerate artifacts
+        run: |
+          python3 tools/export_csv.py
+          python3 tools/export_sql.py
+          python3 tools/export_parquet.py
+          python3 tools/sync_wrappers.py
+
+      - name: Validate
+        run: |
+          python3 tools/validate.py
+          python3 -m pytest tests/ -q
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: refresh/$(date -u +%Y-%m)
+          title: "Refresh: ISO 10383 snapshot $(date -u +%Y-%m-%d)"
+          body: |
+            Automated monthly refresh.
+            ${{ steps.diff.outputs.code }}
+            See /tmp/diff.txt content in the workflow log.
+
+            **Before merging:**
+            - Review the diff summary above.
+            - If `REMOVED > 0`, confirm the removal is intentional.
+            - Add a `CHANGELOG.md` entry.
+            commit-message: "Refresh: ISO 10383 snapshot"
+            delete-branch: true
