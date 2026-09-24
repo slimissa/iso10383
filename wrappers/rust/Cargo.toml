@@ -1,0 +1,21 @@
+[package]
+name = "iso10383-registry"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "ISO 10383 Market Identifier Codes - canonical, versioned, machine-readable registry"
+repository = "https://github.com/slimissa/iso10383"
+authors = ["Le P'tit <slimissabara@gmail.com>"]
+keywords = ["iso10383", "mic", "market-identifier", "exchange", "finance"]
+categories = ["finance"]
+readme = "README.md"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+
+[[example]]
+name = "smoke"
+path = "examples/smoke.rs"
