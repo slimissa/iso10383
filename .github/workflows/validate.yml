@@ -55,7 +55,7 @@ jobs:
       matrix:
         include:
           - lang: python
-            setup: pip install -e wrappers/python
+            setup: pip install -e wrappers/python pytest
             test: python3 -m pytest wrappers/python/tests -q
           - lang: javascript
             setup: "true"
