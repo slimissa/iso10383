@@ -1,6 +1,7 @@
 "use strict";
 
 const test = require("node:test");
+const fs = require("node:fs");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 
@@ -9,9 +10,15 @@ const { CASES } = require("./fixture");
 
 // --- Sanity assertions on the bundled snapshot ---
 
+const VERSION = fs.readFileSync(
+  path.resolve(__dirname, "..", "..", "..", "VERSION"),
+  "utf8"
+).trim();
+
 const REG = new MICRegistry();
 assert.ok(REG.size > 0, "bundled registry is empty");
-assert.equal(REG.version, "0.1.0", `unexpected version: ${REG.version}`);
+assert.equal(REG.version, VERSION,
+  `version ${REG.version} != VERSION ${VERSION}`);
 assert.deepEqual(REG.brokenChains, [], "bundled snapshot has broken chains");
 
 // --- Shape of the bundled snapshot ---

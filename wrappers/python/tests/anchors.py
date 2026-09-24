@@ -14,6 +14,7 @@ from iso10383 import MICRegistry
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _FIXTURE = _REPO_ROOT / "tests" / "cross_language_consistency.json"
+_VERSION = (_REPO_ROOT / "VERSION").read_text(encoding="utf-8").strip()
 
 assert _FIXTURE.is_file(), (
     f"missing shared fixture: {_FIXTURE}. "
@@ -29,7 +30,7 @@ CASES = {c["id"]: c for c in CONTRACT["cases"]}
 
 REG = MICRegistry()
 assert len(REG) > 0, "bundled registry is empty"
-assert REG.version == "0.1.0", f"unexpected version: {REG.version}"
+assert REG.version == _VERSION, f"version {REG.version} != VERSION {_VERSION}"
 assert REG.broken_chains == [], "bundled snapshot has broken chains"
 
 XNYS = REG.by_mic("XNYS")

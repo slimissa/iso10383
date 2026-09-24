@@ -43,7 +43,10 @@ fn args_list(c: &Value) -> Vec<String> {
 fn load_bundled() {
     let r = Registry::load().expect("bundled snapshot loads");
     assert!(!r.is_empty());
-    assert_eq!(r.meta().version, "0.1.0");
+    let version = std::fs::read_to_string(concat!(
+        env!("CARGO_MANIFEST_DIR"), "/../../VERSION"
+    )).expect("VERSION file").trim().to_string();
+    assert_eq!(r.meta().version, version);
     assert!(r.meta().source_hash.starts_with("sha256:"));
     assert_eq!(r.meta().broken_chains.len(), 0);
 }

@@ -60,8 +60,15 @@ func TestLoadBundled(t *testing.T) {
 	if r.Len() == 0 {
 		t.Fatal("bundled registry is empty")
 	}
-	if r.Meta().Version != "0.1.0" {
-		t.Fatalf("version: %s", r.Meta().Version)
+	_, thisFile, _, _ := runtime.Caller(0)
+	versionBytes, err := os.ReadFile(filepath.Join(
+		filepath.Dir(thisFile), "..", "..", "VERSION"))
+	if err != nil {
+		t.Fatalf("read VERSION: %v", err)
+	}
+	wantVersion := strings.TrimSpace(string(versionBytes))
+	if r.Meta().Version != wantVersion {
+		t.Fatalf("version: %s != %s", r.Meta().Version, wantVersion)
 	}
 	if !strings.HasPrefix(r.Meta().SourceHash, "sha256:") {
 		t.Fatalf("source_hash: %s", r.Meta().SourceHash)
