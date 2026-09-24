@@ -19,6 +19,9 @@ jobs:
       - run: python3 tools/validate.py
       - run: python3 tools/check_version_consistency.py
       - run: python3 tools/check_snapshot_freshness.py
+      - run: python3 tools/check_iso3166_current.py
+      - run: python3 tools/check_exchange_calendar_current.py
+      - run: python3 tools/check_iso4217_current.py
       - run: python3 -m pytest tests/ -q
 
   check-exports:
