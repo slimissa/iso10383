@@ -102,6 +102,12 @@ p = Path("wrappers/rust/Cargo.toml")
 p.write_text(re.sub(r'^version\\s*=\\s*"[^"]+"',
                     f'version = "{v}"',
                     p.read_text(), count=1, flags=re.M))
+
+# README.md badge
+p = Path("README.md")
+p.write_text(re.sub(r'badge/registry-[0-9]+\\.[0-9]+\\.[0-9]+-',
+                    f'badge/registry-{v}-',
+                    p.read_text()))
 PY
 fi
 
