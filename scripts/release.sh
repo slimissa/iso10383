@@ -7,12 +7,14 @@
 #
 # Refuses on:
 #   dirty tree / wrong branch / CHANGELOG section missing
-#   version sites not in agreement
+#   version sites not in agreement AFTER regeneration
 #   failing test gate
 #   red CI on the pushed commit
 #   an already-existing tag
 #
-# This script is the only supported way to tag a release.
+# Order of operations is deliberate. The version-consistency check
+# runs AFTER regeneration, because regeneration is what updates the
+# Parquet footer. The check before regeneration would always fail.
 
 set -euo pipefail
 
@@ -65,7 +67,7 @@ grep -q "## \[$VERSION\]" CHANGELOG.md \
     || { echo "FAIL: CHANGELOG.md has no [${VERSION}] section" >&2; exit 1; }
 echo "  CHANGELOG.md has [$VERSION]"
 
-# --- Version sites --------------------------------------------------------
+# --- Version sites ---------------------------------------------------------
 
 step "Version sites"
 
@@ -81,37 +83,39 @@ import json, re
 from pathlib import Path
 v = "$VERSION"
 
-# meta.version
-p = Path("iso10383.json"); d = json.loads(p.read_text())
+# iso10383.json -> meta.version
+p = Path("iso10383.json")
+d = json.loads(p.read_text(encoding="utf-8"))
 d["meta"]["version"] = v
-p.write_text(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False) + "\\n")
+p.write_text(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False) + "\\n",
+             encoding="utf-8")
 
-# pyproject.toml
+# wrappers/python/pyproject.toml
 p = Path("wrappers/python/pyproject.toml")
-p.write_text(re.sub(r'^version\\s*=\\s*"[^"]+"',
-                    f'version = "{v}"',
-                    p.read_text(), count=1, flags=re.M))
+p.write_text(re.sub(r'^version\s*=\s*"[^"]+"', f'version = "{v}"',
+                    p.read_text(encoding="utf-8"), count=1, flags=re.M),
+             encoding="utf-8")
 
-# package.json
-p = Path("wrappers/javascript/package.json"); d = json.loads(p.read_text())
+# wrappers/javascript/package.json
+p = Path("wrappers/javascript/package.json")
+d = json.loads(p.read_text(encoding="utf-8"))
 d["version"] = v
-p.write_text(json.dumps(d, indent=2) + "\\n")
+p.write_text(json.dumps(d, indent=2) + "\\n", encoding="utf-8")
 
-# Cargo.toml
+# wrappers/rust/Cargo.toml
 p = Path("wrappers/rust/Cargo.toml")
-p.write_text(re.sub(r'^version\\s*=\\s*"[^"]+"',
-                    f'version = "{v}"',
-                    p.read_text(), count=1, flags=re.M))
+p.write_text(re.sub(r'^version\s*=\s*"[^"]+"', f'version = "{v}"',
+                    p.read_text(encoding="utf-8"), count=1, flags=re.M),
+             encoding="utf-8")
 
-# README.md badge
+# README.md -> registry badge
 p = Path("README.md")
-p.write_text(re.sub(r'badge/registry-[0-9]+\\.[0-9]+\\.[0-9]+-',
+p.write_text(re.sub(r'badge/registry-[0-9]+\.[0-9]+\.[0-9]+-',
                     f'badge/registry-{v}-',
-                    p.read_text()))
+                    p.read_text(encoding="utf-8")),
+             encoding="utf-8")
 PY
 fi
-
-run python3 tools/check_version_consistency.py
 
 # --- Regenerate -----------------------------------------------------------
 
@@ -123,6 +127,9 @@ run python3 tools/sync_wrappers.py
 
 # --- Gate -----------------------------------------------------------------
 
+step "Version consistency (after regeneration)"
+run python3 tools/check_version_consistency.py
+
 step "Validation gate"
 run python3 tools/validate.py
 run python3 tools/check_snapshot_freshness.py
@@ -133,7 +140,7 @@ run python3 tools/sync_wrappers.py --check
 run python3 -m pytest tests/ -q
 run bash tools/check_cross_language.sh
 
-# --- Commit, push, tag ----------------------------------------------------
+# --- Commit, push ---------------------------------------------------------
 
 step "Commit and push"
 run git add -A
@@ -141,7 +148,6 @@ run git commit -m "Release v$VERSION"
 run git push origin main
 
 # --- Poll CI --------------------------------------------------------------
-# Skipped in --dry-run. Requires gh CLI.
 
 if [[ "$DRY_RUN" != "--dry-run" ]] && command -v gh >/dev/null 2>&1; then
     step "Waiting for CI"
@@ -164,8 +170,8 @@ fi
 step "Tag v$VERSION"
 TAG_MSG="$(python3 - <<PY
 import re
-text = open("CHANGELOG.md").read()
-m = re.search(r"## \\[$VERSION\\][^\\n]*\\n(.*?)(?=\\n## |\\Z)", text, re.S)
+text = open("CHANGELOG.md", encoding="utf-8").read()
+m = re.search(r"## \[$VERSION\][^\n]*\n(.*?)(?=\n## |\Z)", text, re.S)
 print((m.group(1).strip() if m else "")[:4000])
 PY
 )"
@@ -185,8 +191,17 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
         echo "Released: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
         echo "Commit:   $(git rev-parse HEAD)"
         echo
-        echo "All gates passed: validate, freshness, export --check (x3),"
-        echo "sync_wrappers, root tests, cross-language."
+        echo "## Gates"
+        echo
+        echo "- \`tools/validate.py\` — pass"
+        echo "- \`tools/check_version_consistency.py\` — pass"
+        echo "- \`tools/check_snapshot_freshness.py\` — pass"
+        echo "- \`tools/export_csv.py --check\` — pass"
+        echo "- \`tools/export_sql.py --check\` — pass"
+        echo "- \`tools/export_parquet.py --check\` — pass"
+        echo "- \`tools/sync_wrappers.py --check\` — pass"
+        echo "- \`pytest tests/\` — pass"
+        echo "- \`tools/check_cross_language.sh\` — pass"
     } > "$DOC"
     git add "$DOC"
     git commit -m "docs: v$VERSION verification"
