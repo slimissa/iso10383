@@ -33,3 +33,22 @@ json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
 ```
 
 LF line endings. Trailing newline. Two runs on the same input produce byte-identical output.
+## Export drift checks
+
+Every exporter has a `--check` mode. Run before pushing:
+
+    python3 tools/export_csv.py --check
+    python3 tools/export_sql.py --check
+    python3 tools/export_parquet.py --check
+    python3 tools/sync_wrappers.py --check
+
+If any reports `stale:`, regenerate the artifact:
+
+    python3 tools/export_csv.py
+    python3 tools/export_sql.py
+    python3 tools/export_parquet.py
+    python3 tools/sync_wrappers.py
+
+The nine committed files at repo root are the contract with downstream
+consumers. They are always derived from `iso10383.json`; never edit them
+by hand.
