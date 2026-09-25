@@ -154,7 +154,7 @@ if [[ "$DRY_RUN" != "--dry-run" ]] && command -v gh >/dev/null 2>&1; then
     SHA="$(git rev-parse HEAD)"
     for i in $(seq 1 60); do
         STATUS="$(gh run list --commit "$SHA" --json status,conclusion \
-            --jq '.[0] | "\\(.status) \\(.conclusion)"' 2>/dev/null || echo "unknown")"
+            --jq '.[0] | "\(.status) \(.conclusion)"' 2>/dev/null || echo "unknown")"
         echo "  [$i] $STATUS"
         case "$STATUS" in
             "completed success") break ;;
@@ -189,7 +189,8 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
         echo "# v$VERSION verification"
         echo
         echo "Released: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-        echo "Commit:   $(git rev-parse HEAD)"
+        echo "Commit:     $(git rev-parse "v$VERSION^{commit}")"
+        echo "Tag object: $(git rev-parse "v$VERSION")"
         echo
         echo "## Gates"
         echo
