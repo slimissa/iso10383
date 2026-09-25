@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "iso10383-registry"
-version = "1.0.0"
+version = "1.0.1"
 description = "ISO 10383 Market Identifier Codes - canonical, versioned, machine-readable registry"
 readme = "README.md"
 license = {text = "Apache-2.0"}

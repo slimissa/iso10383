@@ -1,6 +1,6 @@
 -- ISO 10383 MIC registry export
 -- dialect: sqlite
--- version: 1.0.0
+-- version: 1.0.1
 -- updated: 2026-09-23
 -- source_snapshot: 2026-09-23
 -- source_hash: sha256:79de0f7704e260bd49b0d2439f3084891cabc93481da8bdbaa716e15a27211ed

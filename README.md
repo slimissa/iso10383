@@ -8,7 +8,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Refresh](https://github.com/slimissa/iso10383/actions/workflows/refresh.yml/badge.svg)](https://github.com/slimissa/iso10383/actions/workflows/refresh.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Schema](https://img.shields.io/badge/schema-1.0.0-green.svg)](./schema.json)
-[![Registry](https://img.shields.io/badge/registry-1.0.0-orange.svg)](./CHANGELOG.md)
+[![Registry](https://img.shields.io/badge/registry-1.0.1-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
 [![Tests](https://img.shields.io/badge/tests-145-success.svg)](./tests/)

@@ -1,6 +1,6 @@
 {
   "name": "iso10383-registry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ISO 10383 Market Identifier Codes - canonical, versioned, machine-readable registry",
   "license": "Apache-2.0",
   "type": "commonjs",
