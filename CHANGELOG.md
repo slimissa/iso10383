@@ -14,10 +14,41 @@ lands (Phase 6).
 
 ## [Unreleased]
 
-_Nothing yet. The next release will be discovered from what consumers
-ask for, not planned in advance (D14)._
+## [1.0.1] - 2026-09-25
 
----
+### Added
+
+- `docs/decisions/0005-tag-discipline.md` — the release script's order
+  of operations, the procedure for moving a tag, and the annotated tag
+  object SHA distinction.
+- `docs/decisions/0006-ci-toolchain-parity.md` — every `pip install`
+  line in a workflow job lists the complete set of imports the job's
+  scripts perform.
+- `docs/decisions/0007-cross-registry-allowlist.md` — the explicit
+  allowlist for MICs referenced by Exchange Calendar but absent from
+  the SWIFT file.
+- D17 in the locked decisions register.
+
+### Changed
+
+- `tools/validate.py`: cross-registry checks are blocking by default.
+  MICs in `KNOWN_EXCHANGE_CALENDAR_GAPS` (`XBEK`, `XNBO`, `XQSE`) are
+  warnings; any other gap is an error. `--advisory` restores the
+  previous behavior.
+- `scripts/release.sh`: the verification doc records both the tag
+  object SHA and the tagged commit SHA. Previously it recorded only
+  the object SHA.
+- `scripts/release.sh`: the CI-polling loop's jq expression
+  interpolates correctly. It previously printed the format string
+  literally.
+- `CONTRIBUTING.md`: names the allowlist and the ADR-amendment rule.
+- `docs/PROVENANCE.md`: points at the allowlist for the known
+  cross-registry gap.
+
+### Fixed
+
+- `docs/v1.0.0-verification.md`: records the tagged commit SHA
+  (`753cbbb`), not the annotated tag's object SHA (`737ac097`).
 
 ## [1.0.0] - 2026-09-24
 
@@ -239,6 +270,7 @@ Phases 0 through 4: foundation, fetcher, schema, validator, exports.
 
 ## References
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/slimissa/iso10383/releases/tag/v1.0.1
 [1.0.0]: https://github.com/slimissa/iso10383/releases/tag/v1.0.0
 [0.1.0]: https://github.com/slimissa/iso10383/releases/tag/v0.1.0
