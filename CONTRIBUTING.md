@@ -447,6 +447,22 @@ itself. If the fixture changes, the anchors change with it.
 SWIFT publishes on the **second Monday** of each month. The refresh
 runs automatically on the 15th. You will almost never do it by hand.
 
+### Cross-registry checks
+
+The validator checks every MIC against the Exchange Calendar
+snapshot and every country code against the ISO 3166 snapshot.
+Cross-registry checks are blocking by default in v1.0.1. Three
+MICs are in the allowlist at
+`tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS`:
+`XBEK`, `XNBO`, `XQSE`.
+
+Adding a MIC to the allowlist requires an ADR amendment. See
+[ADR 0007](./docs/decisions/0007-cross-registry-allowlist.md).
+Removing one requires the sibling registry to be updated first.
+
+`python3 tools/validate.py --advisory` reverts to the v1.0.0
+behavior: cross-registry gaps become warnings, not errors.
+
 If the automated refresh fails or you need to run it manually:
 
 ```bash

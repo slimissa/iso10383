@@ -362,8 +362,15 @@ drop them. CI reports this as a **warning**, not a failure. This is
 the advisory behavior of D6: cross-registry checks are advisory in
 v1.0.0 and blocking in v1.0.1.
 
-The warning is visible in the validator's stderr and does not affect
-the exit code unless `--strict` is passed.
+The three MICs are in an explicit allowlist at
+`tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS`. Adding a MIC to
+the allowlist requires an ADR amendment; see
+[ADR 0007](./decisions/0007-cross-registry-allowlist.md).
+
+Cross-registry checks are **blocking by default** in v1.0.1: any
+MIC outside the allowlist that is referenced by Exchange Calendar
+but absent from the registry fails the validator. Pass
+`--advisory` to revert to the v1.0.0 behavior.
 
 ---
 

@@ -38,6 +38,15 @@ from typing import Any
 
 import jsonschema
 
+# MICs referenced by a sibling registry that are known to be absent
+# from SWIFT's published file. Adding to this set requires an ADR
+# amendment. See docs/decisions/0007-cross-registry-allowlist.md.
+KNOWN_EXCHANGE_CALENDAR_GAPS = frozenset({
+    "XBEK",  # Beirut Stock Exchange
+    "XNBO",  # Nairobi Securities Exchange
+    "XQSE",  # Qatar Exchange
+})
+
 MIC_RE = re.compile(r"^[A-Z0-9]{4}$")
 COUNTRY_RE = re.compile(r"^[A-Z]{2}$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -99,7 +108,7 @@ def load_optional(path: Path) -> Any | None:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def validate(data, schema, iso3166, exchange_mics, skip):
+def validate(data, schema, iso3166, exchange_mics, skip, advisory=False):
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -153,7 +162,7 @@ def validate(data, schema, iso3166, exchange_mics, skip):
 
     if check("cross-reference"):
         by_mic = {m["mic"]: m for m in mics}
-        # Internal: chain resolution. Errors.
+        # Internal: chain resolution. Always errors.
         for m in mics:
             if m["mic_type"] != "SEGMENT":
                 continue
@@ -161,7 +170,10 @@ def validate(data, schema, iso3166, exchange_mics, skip):
             if not ok:
                 errors.append(f"[cross-ref] {m['mic']}: chain {reason}")
 
-        # Cross-registry: advisory in v1.0.0. Warnings.
+        # Cross-registry: blocking by default (D6, v1.0.1).
+        # --advisory redirects unexpected gaps to warnings.
+        unexpected_sink = warnings if advisory else errors
+
         if iso3166 is not None:
             alpha2 = set(iso3166.get("alpha_2_set", []))
             if not alpha2:
@@ -169,7 +181,7 @@ def validate(data, schema, iso3166, exchange_mics, skip):
             for m in mics:
                 c = m.get("country_code")
                 if c and c not in alpha2 and c not in NON_ISO3166_PLACEHOLDERS:
-                    warnings.append(
+                    unexpected_sink.append(
                         f"[cross-ref] {m['mic']}: country {c} not in ISO 3166"
                     )
 
@@ -177,10 +189,21 @@ def validate(data, schema, iso3166, exchange_mics, skip):
             have = {m["mic"] for m in mics}
             wanted = set(exchange_mics.get("mics", []))
             missing = sorted(wanted - have)
-            if missing:
+
+            known = [m for m in missing if m in KNOWN_EXCHANGE_CALENDAR_GAPS]
+            unexpected = [m for m in missing
+                          if m not in KNOWN_EXCHANGE_CALENDAR_GAPS]
+
+            if known:
                 warnings.append(
-                    f"[cross-ref] {len(missing)} MIC(s) referenced by "
-                    f"Exchange Calendar not in registry: {missing[:10]}"
+                    f"[cross-ref] {len(known)} MIC(s) missing and in the "
+                    f"allowlist: {known}"
+                )
+            if unexpected:
+                unexpected_sink.append(
+                    f"[cross-ref] {len(unexpected)} MIC(s) referenced by "
+                    f"Exchange Calendar but not in the registry and not in "
+                    f"the allowlist: {unexpected[:10]}"
                 )
 
     if check("ground-truth"):
@@ -221,7 +244,10 @@ def main() -> int:
                             "cross-reference", "ground-truth", "coverage"])
     p.add_argument("--skip", action="append", default=[])
     p.add_argument("--strict", action="store_true",
-                   help="Promote cross-registry warnings to errors.")
+                   help="Promote all warnings to errors.")
+    p.add_argument("--advisory", action="store_true",
+                   help="Revert cross-registry checks to advisory. "
+                        "Unexpected gaps become warnings, not errors.")
     p.add_argument("--quiet", action="store_true")
     args = p.parse_args()
 
@@ -243,7 +269,7 @@ def main() -> int:
                       "cross-reference", "ground-truth", "coverage"}
         skip = all_layers - set(args.only)
 
-    errors, warnings = validate(data, schema, iso, ec, skip)
+    errors, warnings = validate(data, schema, iso, ec, skip, advisory=args.advisory)
 
     if args.strict and warnings:
         errors.extend(warnings)

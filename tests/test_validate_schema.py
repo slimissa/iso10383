@@ -64,3 +64,46 @@ def test_help_lists_every_layer():
     for layer in ("schema", "integrity", "business",
                   "cross-reference", "ground-truth", "coverage"):
         assert layer in r.stdout, f"{layer} not in --help"
+
+
+def test_cross_registry_default_is_blocking_on_unexpected_gap(tmp_path):
+    """An unexpected Exchange Calendar gap is an error by default."""
+    import json
+    snapshot = json.loads(
+        (ROOT / "tools" / "exchange_calendar_snapshot.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    snapshot["mics"] = sorted(set(snapshot["mics"]) | {"ZZZZ"})
+    p = tmp_path / "ec.json"
+    p.write_text(json.dumps(snapshot), encoding="utf-8")
+
+    r = subprocess.run(
+        [sys.executable, str(VALIDATE), str(REGISTRY),
+         "--exchange-calendar", str(p)],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert r.returncode == 1
+    assert "ZZZZ" in r.stderr
+    assert "allowlist" in r.stderr
+
+
+def test_cross_registry_advisory_opt_out(tmp_path):
+    """--advisory turns the unexpected gap back into a warning."""
+    import json
+    snapshot = json.loads(
+        (ROOT / "tools" / "exchange_calendar_snapshot.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    snapshot["mics"] = sorted(set(snapshot["mics"]) | {"ZZZZ"})
+    p = tmp_path / "ec.json"
+    p.write_text(json.dumps(snapshot), encoding="utf-8")
+
+    r = subprocess.run(
+        [sys.executable, str(VALIDATE), str(REGISTRY),
+         "--exchange-calendar", str(p), "--advisory"],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert r.returncode == 0
+    assert "ZZZZ" in r.stderr
