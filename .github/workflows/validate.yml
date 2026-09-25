@@ -12,10 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install jsonschema pyarrow pytest
+      - uses: ./.github/actions/setup-python
       - run: python3 tools/validate.py
       - run: python3 tools/check_version_consistency.py
       - run: python3 tools/check_snapshot_freshness.py
@@ -28,10 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install pyarrow
+      - uses: ./.github/actions/setup-python
       - run: python3 tools/export_csv.py --check
       - run: python3 tools/export_sql.py --check
       - run: python3 tools/export_parquet.py --check
@@ -41,10 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install jsonschema pyarrow pytest
+      - uses: ./.github/actions/setup-python
       - run: python3 tools/iso10383_cli.py check
       - run: python3 -m pytest tests/test_cli.py -q
 
@@ -55,7 +46,7 @@ jobs:
       matrix:
         include:
           - lang: python
-            setup: pip install -e wrappers/python pytest
+            setup: pip install -e wrappers/python
             test: python3 -m pytest wrappers/python/tests -q
           - lang: javascript
             setup: "true"
@@ -68,9 +59,7 @@ jobs:
             test: cd wrappers/go && go test ./... -count=1
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - uses: ./.github/actions/setup-python
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -96,5 +85,5 @@ jobs:
         with:
           go-version: "1.22"
       - uses: dtolnay/rust-toolchain@stable
-      - run: pip install -e wrappers/python pytest
+      - run: pip install -e wrappers/python
       - run: bash tools/check_cross_language.sh
