@@ -267,6 +267,19 @@ under a different procedure that does not create a normal release tag.
 
 ---
 
+## v1.0.1 addendum
+
+The tag-discipline procedure worked as designed for v1.0.1. The
+release script's CI-polling loop reported the actual run status,
+refused to tag on a red commit, and created `v1.0.1` on the commit
+whose run reached `completed success`. The verification doc records
+both the commit SHA and the annotated tag object SHA.
+
+The v1.0.0 incident remains the only tag move in the registry's
+history.
+
+---
+
 ## References
 
 - ADR [0001](./0001-source-format.md) — the source format

@@ -206,6 +206,23 @@ verify that contract on one machine.
 
 ---
 
+## v1.0.1 addendum
+
+A composite action was attempted during v1.0.1 to consolidate the
+per-job `pip install` lines. It broke CI twice. The nested
+`actions/setup-python@v5` inside a composite action does not reliably
+update PATH for the calling job's subsequent steps.
+
+The composite action was rolled back. The per-job install lines
+remain. The rule in this ADR stands: every `pip install` line lists
+every package the job's scripts import.
+
+A future attempt should keep `actions/setup-python@v5` in each job's
+`steps:` and move only the `pip install -r requirements-dev.txt`
+line into the composite action. That shape has not been tested.
+
+---
+
 ## Open questions
 
 **What if a job needs a package only on Linux?** The install line
