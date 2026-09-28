@@ -40,6 +40,31 @@ if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     exit 2
 fi
 
+check_no_orphan_variables() {
+    # A variable expanded in a heredoc but never assigned fails at
+    # expansion time under set -u. By then the release has started.
+    # This runs before step 0 and warns on the class.
+    #
+    # Adapted from ISO 3166 v1.6.3.
+    local orphans
+    orphans="$(grep -nE '\$\{[A-Z_]+\}|\$[A-Z_]{3,}' scripts/release.sh \
+        | grep -vE '^\s*#' \
+        | grep -oE '\$\{?[A-Z_]+' \
+        | sort -u \
+        | while read -r v; do
+            v="${v#\$}"
+            v="${v#\{}"
+            if ! grep -qE "(^|\s)${v}=" scripts/release.sh; then
+                echo "$v"
+            fi
+        done || true)"
+
+    if [ -n "$orphans" ]; then
+        echo "  WARN orphan variables (expanded nowhere assigned):"
+        echo "$orphans" | sed 's/^/    /'
+    fi
+}
+
 step() { echo; echo "=== $* ==="; }
 run()  {
     if [[ "$DRY_RUN" == "--dry-run" ]]; then
@@ -52,6 +77,8 @@ run()  {
 # --- Preconditions ---------------------------------------------------------
 
 step "Preconditions"
+
+check_no_orphan_variables
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 [[ "$BRANCH" == "main" ]] || { echo "FAIL: not on main ($BRANCH)" >&2; exit 1; }
