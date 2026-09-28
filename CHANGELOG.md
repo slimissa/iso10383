@@ -14,6 +14,29 @@ lands (Phase 6).
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-09-XX
+
+### Added
+
+- `scripts/release.sh` preflight `check_no_orphan_variables` — warns
+  on variables that are expanded but never assigned. Catches the
+  class of failure that produced ISO 3166's v1.6.2 partial release.
+  Deferred from v1.0.2 due to a patch anchor mismatch.
+- `tools/check_release_claims.py` and `tools/release_claims.json` —
+  a release-claims gate that fails the release if the CHANGELOG's
+  `[X.Y.Z]` section claims something the tree does not contain.
+  Adopted from ISO 3166 v1.6.5.
+
+### Changed
+
+- `.github/workflows/validate.yml` and `scripts/release.sh` run the
+  release-claims check.
+
+### Fixed
+
+- None. Registry data, schema, CLI, and wrapper APIs unchanged from
+  v1.0.2.
+  
 ## [1.0.2] - 2026-09-28
 
 ### Added
