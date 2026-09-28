@@ -14,6 +14,32 @@ lands (Phase 6).
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-09-XX
+
+### Added
+
+- `docs/JOINS.md` — the MIC join graph from the leaf side. Names
+  every registry that references `mic`, the field on each, and the
+  granularity (operating / segment / either). Surfaces the
+  distinction no root registry can see.
+
+### Changed
+
+- `scripts/release.sh` polls every per-push workflow for the
+  release SHA, not just the first. With one workflow today, the
+  behavior is identical; when a second is added, the poll already
+  covers it. Ported from ISO 3166 v1.6.3, which adopted it from
+  ISO 4217 at commit `1f38fb4`.
+- `docs/RELEASE_PATTERN.md` names the monthly-cadence shape:
+  `meta.source_snapshot` as the freshness field for a registry
+  whose source is a calendar publication, 60 days as two missed
+  cycles. Contributed by ISO 10383.
+
+### Fixed
+
+- None. Registry data, schema, CLI, and wrapper APIs unchanged
+  from v1.0.3.
+  
 ## [1.0.3] - 2026-09-XX
 
 ### Added
@@ -36,7 +62,7 @@ lands (Phase 6).
 
 - None. Registry data, schema, CLI, and wrapper APIs unchanged from
   v1.0.2.
-  
+
 ## [1.0.2] - 2026-09-28
 
 ### Added
