@@ -233,6 +233,34 @@ The schedule is the point.
 
 ---
 
+## Addendum — the `REMOVED > 0` guard
+
+`refresh.yml` refuses to open a pull request when the monthly diff
+removes any MIC. A removal requires human confirmation before merge.
+
+Rationale: removals are the change class most likely to break
+downstream consumers. A consumer that pins a MIC in a risk config or
+an order-routing table will fail at the next registry load. The
+guard makes that a deliberate decision, not a silent one.
+
+The guard is implemented in `tools/refresh_diff.py`, which exits 1
+when any MIC present in the previous snapshot is absent from the new
+one. The workflow runs the diff with `set +e` so the exit code is
+captured and included in the PR body. The PR is opened regardless of
+the exit code; the code is the signal.
+
+Reference for sibling registries: when ISO 3166 or ISO 4217 adds a
+scheduled refresh for its foreign snapshots, cite this section. The
+guard shape is:
+
+1. Compute the diff between old and new.
+2. Count removals.
+3. If removals > 0: exit non-zero, but open the PR anyway with the
+   count and the removed identifiers in the body.
+4. A human reads the PR and confirms before merge.
+
+---
+
 ## Open questions
 
 **What if SWIFT changes the publication cadence?** A future ADR
