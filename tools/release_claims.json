@@ -1,18 +1,48 @@
 {
   "_comment": "Machine-checkable claims per CHANGELOG version. Each entry is {file, contains} or {file, absent}. release.sh and CI run tools/check_release_claims.py against the version being checked; any failing claim stops the release. A missing manifest for a released version is a hard error.",
   "1.0.3": [
-    {"file": "scripts/release.sh", "contains": "check_no_orphan_variables"},
-    {"file": "scripts/release.sh", "contains": "check_release_claims"},
-    {"file": ".github/workflows/validate.yml", "contains": "check_release_claims"},
-    {"file": "tools/check_release_claims.py"},
-    {"file": "tools/release_claims.json"},
-    {"file": "CHANGELOG.md", "contains": "## [1.0.3]"}
+    {
+      "file": "scripts/release.sh",
+      "contains": "check_no_orphan_variables"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "check_release_claims"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "check_release_claims"
+    },
+    {
+      "file": "tools/check_release_claims.py"
+    },
+    {
+      "file": "tools/release_claims.json"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.0.3]"
+    }
   ],
   "1.0.4": [
-    {"file": "scripts/release.sh", "contains": "for each run"},
-    {"file": "docs/RELEASE_PATTERN.md", "contains": "source_snapshot"},
-    {"file": "docs/RELEASE_PATTERN.md", "contains": "monthly-cadence"},
-    {"file": "docs/JOINS.md"},
-    {"file": "CHANGELOG.md", "contains": "## [1.0.4]"}
+    {
+      "file": "scripts/release.sh",
+      "contains": "ALL_COMPLETE"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "source_snapshot"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "monthly-cadence"
+    },
+    {
+      "file": "docs/JOINS.md"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.0.4]"
+    }
   ]
 }
