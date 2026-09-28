@@ -17,10 +17,15 @@ V1_0_0_DOC = (ROOT / "docs" / "v1.0.0-verification.md").read_text(
 
 def test_release_sh_jq_expression_interpolates():
     """The jq expression uses single backslashes, not double."""
+    # Status is interpolated with no fallback: the exact form.
     assert r'\(.status)' in RELEASE_SH
-    assert r'\(.conclusion)' in RELEASE_SH
     assert r'\\(.status)' not in RELEASE_SH
-    assert r'\\(.conclusion)' not in RELEASE_SH
+
+    # Conclusion has a // fallback: check the prefix, not the
+    # closing-paren form. The exact string after .conclusion is
+    # ' // "pending")' in the current block.
+    assert r'\(.conclusion' in RELEASE_SH
+    assert r'\\(.conclusion' not in RELEASE_SH
 
 
 def test_release_sh_records_tag_commit():
