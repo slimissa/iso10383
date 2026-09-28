@@ -15,6 +15,13 @@
 # Order of operations is deliberate. The version-consistency check
 # runs AFTER regeneration, because regeneration is what updates the
 # Parquet footer. The check before regeneration would always fail.
+#
+# Conforms to docs/RELEASE_PATTERN.md (eight invariants).
+#
+# Divergences:
+#   - poll scope: one per-push workflow (validate.yml). When a second
+#     is added, port ISO 4217's check_workflows_covered.
+#   - tag-move procedure: ADR 0005 § Scope. Recovery-only.
 
 set -euo pipefail
 
