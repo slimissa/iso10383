@@ -747,6 +747,17 @@ remediation timeline.
 
 ---
 
+### Mojibake
+
+`tools/check_mojibake.py` scans every committed file for the four
+byte patterns that indicate a decode/encode cycle went wrong. Files
+that intentionally contain such bytes (test fixtures, prose examples)
+carry the `# mojibake-scan: skip` marker at the top.
+
+Describe corruption in prose. Do not embed it.
+
+---
+
 ## What this document does not cover
 
 - **How the type system works.** See `docs/action_types.md`.
