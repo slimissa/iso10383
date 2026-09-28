@@ -7,5 +7,12 @@
     {"file": "tools/check_release_claims.py"},
     {"file": "tools/release_claims.json"},
     {"file": "CHANGELOG.md", "contains": "## [1.0.3]"}
+  ],
+  "1.0.4": [
+    {"file": "scripts/release.sh", "contains": "for each run"},
+    {"file": "docs/RELEASE_PATTERN.md", "contains": "source_snapshot"},
+    {"file": "docs/RELEASE_PATTERN.md", "contains": "monthly-cadence"},
+    {"file": "docs/JOINS.md"},
+    {"file": "CHANGELOG.md", "contains": "## [1.0.4]"}
   ]
 }
