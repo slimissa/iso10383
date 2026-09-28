@@ -1,0 +1,11 @@
+{
+  "$comment": "Vendoring metadata for iso3166_snapshot.json. The snapshot stays byte-for-byte; this file records where it came from and when to review it. Read by tools/check_snapshot_freshness.py.",
+  "source": "iso3166",
+  "source_version": "1.6.3",
+  "vendored_at": "2026-09-28",
+  "vendored_from": "https://github.com/slimissa/iso3166/blob/v1.6.3/iso3166.json",
+  "meta": {
+    "review_by": "2027-09-28",
+    "refresh_cadence": "rare"
+  }
+}
