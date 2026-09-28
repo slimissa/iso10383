@@ -167,7 +167,7 @@ run python3 tools/check_version_consistency.py
 step "Validation gate"
 run python3 tools/validate.py
 run python3 tools/check_registry_freshness.py
-run python3 tools/check_release_claims.py
+run python3 tools/check_release_claims.py "$VERSION"
 run python3 tools/export_csv.py --check
 run python3 tools/export_sql.py --check
 run python3 tools/export_parquet.py --check
