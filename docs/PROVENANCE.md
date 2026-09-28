@@ -219,7 +219,7 @@ Modifications become effective on the fourth Monday. Requests received
 by the first Monday are processed for that month's publication.
 
 CI fails if `meta.source_snapshot` is more than **60 days old**
-(`tools/check_snapshot_freshness.py`). Sixty days is one full missed
+(`tools/check_registry_freshness.py`). Sixty days is one full missed
 cycle — a signal that the update process broke, not that the source is
 late.
 

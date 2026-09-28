@@ -132,7 +132,7 @@ run python3 tools/check_version_consistency.py
 
 step "Validation gate"
 run python3 tools/validate.py
-run python3 tools/check_snapshot_freshness.py
+run python3 tools/check_registry_freshness.py
 run python3 tools/export_csv.py --check
 run python3 tools/export_sql.py --check
 run python3 tools/export_parquet.py --check
@@ -196,7 +196,7 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
         echo
         echo "- \`tools/validate.py\` — pass"
         echo "- \`tools/check_version_consistency.py\` — pass"
-        echo "- \`tools/check_snapshot_freshness.py\` — pass"
+        echo "- \`tools/check_registry_freshness.py\` — pass"
         echo "- \`tools/export_csv.py --check\` — pass"
         echo "- \`tools/export_sql.py --check\` — pass"
         echo "- \`tools/export_parquet.py --check\` — pass"

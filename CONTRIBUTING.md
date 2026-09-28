@@ -249,7 +249,7 @@ tools/
   sync_wrappers.py            Bundle the JSON into the wrappers.
   refresh_diff.py             Monthly diff summary.
   check_version_consistency.py
-  check_snapshot_freshness.py
+  check_registry_freshness.py
   check_cross_language.sh     Run all four wrapper suites.
   gen_*_snapshot.py           Regenerate cross-registry snapshots.
   iso10383_cli.py             The CLI.
