@@ -183,21 +183,67 @@ run git commit -m "Release v$VERSION"
 run git push origin main
 
 # --- Poll CI --------------------------------------------------------------
+# Polls every per-push workflow for the release SHA. With one
+# workflow today, this behaves like the earlier single-run check.
+# When a second per-push workflow is added, this needs no change.
+#
+# Ported from ISO 3166 v1.6.3, which adopted it from ISO 4217 at
+# commit 1f38fb4 (function poll_ci).
+
+CI_POLL_INTERVAL=15
+CI_POLL_MAX=40
 
 if [[ "$DRY_RUN" != "--dry-run" ]] && command -v gh >/dev/null 2>&1; then
     step "Waiting for CI"
+
     SHA="$(git rev-parse HEAD)"
-    for i in $(seq 1 60); do
-        STATUS="$(gh run list --commit "$SHA" --json status,conclusion \
-            --jq '.[0] | "\(.status) \(.conclusion)"' 2>/dev/null || echo "unknown")"
-        echo "  [$i] $STATUS"
-        case "$STATUS" in
-            "completed success") break ;;
-            "completed failure"*|"completed cancelled"*)
-                echo "FAIL: CI is $STATUS" >&2; exit 1 ;;
-        esac
-        sleep 10
+    elapsed=0
+
+    while [ "$elapsed" -lt $((CI_POLL_INTERVAL * CI_POLL_MAX)) ]; do
+        sleep "$CI_POLL_INTERVAL"
+        elapsed=$((elapsed + CI_POLL_INTERVAL))
+
+        RUNS=$(gh run list --limit 30 \
+            --json databaseId,headSha,status,conclusion,workflowName \
+            --jq ".[] | select(.headSha == \"$SHA\") | \"\(.databaseId)|\(.status)|\(.conclusion // \"pending\")|\(.workflowName)\"" \
+            2>/dev/null || echo "")
+
+        if [ -z "$RUNS" ]; then
+            echo "  no runs yet (${elapsed}s)"
+            continue
+        fi
+
+        ALL_COMPLETE=true
+        FAILED=false
+        while IFS='|' read -r id status conclusion name; do
+            if [ "$status" != "completed" ]; then
+                ALL_COMPLETE=false
+                break
+            fi
+            if [ "$conclusion" != "success" ]; then
+                FAILED=true
+                echo "  workflow '$name' (run $id) concluded '$conclusion'" >&2
+            fi
+        done <<< "$RUNS"
+
+        if [ "$FAILED" = "true" ]; then
+            echo "FAIL: CI failed on $SHA" >&2
+            exit 1
+        fi
+
+        if [ "$ALL_COMPLETE" = "true" ]; then
+            echo "  CI passed after ${elapsed}s"
+            break
+        fi
+
+        echo "  waiting... (${elapsed}s)"
     done
+
+    if [ "$elapsed" -ge $((CI_POLL_INTERVAL * CI_POLL_MAX)) ]; then
+        echo "FAIL: CI did not complete within " \
+             "$((CI_POLL_INTERVAL * CI_POLL_MAX))s" >&2
+        exit 1
+    fi
 fi
 
 # --- Tag ------------------------------------------------------------------
