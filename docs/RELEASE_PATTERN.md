@@ -252,6 +252,37 @@ of truth is updated by an automated pipeline that runs on every
 push does not — the pipeline is the freshness guarantee. ISO
 3166 is in the second category today; ISO 4217 is in the first.
 
+### The monthly-cadence shape
+
+ISO 10383 refreshes on a calendar: SWIFT publishes the MIC file
+on the second Monday of each month. The registry's freshness check
+uses a threshold of two missed publication cycles — 60 days — and
+keys on `meta.source_snapshot`, the date the JSON's contents
+reflect.
+
+Neither ISO 4217 nor ISO 3166 refreshes on a calendar. Their
+sources change on irregular amendment cycles, and their freshness
+checks use 180-day thresholds keyed on `meta.updated`, the file's
+last-modified date. The field name and the threshold are
+repo-specific; only the pattern is shared.
+
+**`meta.updated` vs `meta.source_snapshot`.** A registry whose
+source of truth is a file the maintainers edit (ISO 4217's
+`iso4217.json`, ISO 3166's `iso3166.json`) should key freshness on
+`meta.updated`: the file's own last-modified date. A registry whose
+source of truth is a publication it consumes (ISO 10383's
+`iso10383.json`, derived from SWIFT's monthly file) should key on
+`meta.source_snapshot`: the date the publication reflects. The two
+can differ — a file can be edited (a bug fix, a formatting change)
+without its upstream snapshot changing, and vice versa.
+
+The pattern is: pick the field that answers "is the data stale?"
+not "was the file touched?" For a maintained file, those coincide.
+For a consumed publication, they do not.
+
+*Contributed by ISO 10383. Ported to other registries' copies as
+they adopt the monthly-refresh shape.*
+
 ## Tagged releases are immutable
 
 Three rules, all consequences of the same principle.
@@ -523,7 +554,7 @@ based check, not just mojibake.
   the pattern. ISO 10383 added to the reviewed-by list. The
   registry's own ADR 0005 gains a Scope section citing the
   tag-immutability exception documented above.
-  
+
 Reviewed-by:
 - `slimissa/iso4217`
 - `slimissa/exchange-calendar`
