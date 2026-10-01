@@ -555,6 +555,11 @@ based check, not just mojibake.
   registry's own ADR 0005 gains a Scope section citing the
   tag-immutability exception documented above.
 
+- 2026-10-01 — adopted Exchange Calendar's § Sources unreachable from
+  CI. Two variants named: network-vantage blocking and
+  client-fingerprint blocking. XKRX regression recorded as an expected
+  event, not a failure. Contributed by Exchange Calendar.
+
 Reviewed-by:
 - `slimissa/iso4217`
 - `slimissa/exchange-calendar`
