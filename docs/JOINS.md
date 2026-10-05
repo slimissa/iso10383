@@ -137,3 +137,7 @@ a PR here or files an issue.
 This document is the leaf-side view of the join graph. Each
 consumer's README links to it. If the pattern moves to a shared
 location later, it moves with its history.
+
+What ISO 10383 does not answer — extend the LEI line:
+
+The lei field on each entry carries SWIFT's published LEI for the operator, when SWIFT has one. GLEIF publishes a separate MIC-to-LEI Mapping Table monthly. The two sources do not always agree. The v1.1.0 companion file mic-lei.json records the reconciliation. See docs/mic_lei_source_format.md.
