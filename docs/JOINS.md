@@ -112,10 +112,14 @@ owns per-exchange trading hours. Better sourced there — the hours
 differ per session, per holiday, per early close, and the calendar
 registry models all three.
 
-3. Legal entity identity. Pending. A MIC→LEI companion is
-planned for v1.1.0, sourced from GLEIF's published mapping. Until
-then, the legal_entity_name field on each entry is the
-published string from SWIFT, not a canonical identifier.
+3. Legal entity identity. The `lei` field on each entry carries
+SWIFT's published LEI for the operator, when SWIFT has one. A
+2026-10-05 reconnaissance found GLEIF's separate MIC-to-LEI
+Mapping Table to be a strict subset of the field: 1,024 pairs,
+all agreeing, 0 disagreements, 0 pairs GLEIF carries that SWIFT
+does not. No companion file ships. See
+`docs/mic_lei_source_format.md` and
+[ADR 0008](./decisions/0008-mic-lei-companion-declined.md).
 Reverse lookup
 
 For each sibling registry, which record resolves to a mic:

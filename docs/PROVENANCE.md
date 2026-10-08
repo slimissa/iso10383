@@ -381,10 +381,12 @@ are tracked for future versions.
 
 ### Data coverage
 
-- **LEI is stored but unused.** The `lei` field is populated from the
-  source when present and is null otherwise. No MIC→LEI mapping file
-  ships in v1.0.0. A companion `mic-lei-mapping.json` is planned for
-  v1.1.0 (D11).
+- **No MIC→LEI companion.** The `lei` field on each entry
+  carries SWIFT's published LEI for the operator, when SWIFT has
+  one. A v1.1.0 Phase 0 reconnaissance found GLEIF's MIC-to-LEI
+  Mapping Table to be a strict subset of the field and declined
+  the companion. See
+  `docs/decisions/0008-mic-lei-companion-declined.md`.
 - **No MIC→BIC mapping.** Out of scope (D11). Planned for v1.2.0.
 - **No MIC→ISIN relationship.** The relationship is many-to-many and
   belongs in an asset-identifiers context. Out of scope.
