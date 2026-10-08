@@ -2,18 +2,17 @@
 
 **Status:** Accepted
 **Date:** 2026-10-05
-**Supersedes:** D11's "MIC→LEI (v1.1.0)" line
+**Supersedes:** D11's inclusion of "MIC→LEI" in the out-of-scope list
 **Superseded by:** none
 
 ---
 
 ## Context
 
-D11 (v1.0.0 locked decisions) listed "MIC→LEI mapping" as out of
-scope for v1.0.0 and planned for v1.1.0. The plan was a companion
-file `mic-lei.json` mapping each operating MIC to the LEI of its
-legal operator, sourced from GLEIF's published MIC-to-LEI Mapping
-Table.
+D11 (v1.0.0 locked decisions) listed "MIC→LEI" in its out-of-scope
+list. The v1.1.0 roadmap proposed a companion file `mic-lei.json`
+mapping each operating MIC to the LEI of its legal operator,
+sourced from GLEIF's published MIC-to-LEI Mapping Table.
 
 Phase 0 of the v1.1.0 roadmap performed source reconnaissance against
 GLEIF's 2026-09-18 publication. The findings are recorded in
@@ -54,9 +53,10 @@ whose findings are empty.
 
 ## Consequences
 
-- **D11 is amended.** The MIC→LEI line changes from "planned for
-  v1.1.0" to "declined; the field carries the data." See the
-  amendment in `docs/decisions/v1.0.0-decisions.md`.
+- **D11 is amended.** An amendment note is appended to D11 naming
+  this finding. The amendment does not edit D11's original list;
+  it adds the reconnaissance result below it. See
+  `docs/decisions/v1.0.0-decisions.md` § D11 Amendment.
 - **v1.1.0 does not ship.** No version bump, no CHANGELOG entry, no
   tag.
 - **The `lei` field is the source of truth.** Consumers that want an
@@ -101,7 +101,8 @@ commit; deferring it costs the next maintainer a session.
   the reconnaissance and the numbers
 - [`docs/decisions/v1.0.0-decisions.md`](./v1.0.0-decisions.md) D11 —
   the plan this ADR declines
-- [`docs/JOINS.md`](../JOINS.md) — the join graph, which now names
-  GLEIF as a source but not as a companion
+- [`docs/JOINS.md`](../JOINS.md) — the join graph. The GLEIF row
+  in the reverse-lookup table was added at Phase 0; the LEI
+  paragraph names the reconnaissance finding.
 - GLEIF MIC-to-LEI Mapping Table, 2026-09-18 publication
 - ISO 10383 `iso10383.json` v1.0.4

@@ -760,7 +760,7 @@ The MIC data in this registry is factual information sourced from SWIFT's publis
 
 ## What's next
 
-- **MIC→LEI companion** — a v1.1.0 file mapping each operating MIC to the LEI of its legal operator. Sourced from GLEIF's published mapping. Trigger: a consumer asks.
+- **MIC→LEI companion** — investigated and declined at v1.1.0 Phase 0. The `lei` field on each entry carries the data; GLEIF's published mapping is a strict subset. See [`docs/decisions/0008-mic-lei-companion-declined.md`](./docs/decisions/0008-mic-lei-companion-declined.md).
 - **MIC→BIC companion** — a v1.2.0 file mapping each MIC to its settlement or clearing institution. Sourced from SWIFT's published mapping. Trigger: a consumer asks.
 - **Wrapper publication** — publish the four wrappers to PyPI, npm, crates.io, and the Go module proxy. Turns "clone the repo" into `pip install iso10383-registry`. Trigger: a consumer tries to install one.
 

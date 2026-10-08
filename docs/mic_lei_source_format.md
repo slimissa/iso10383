@@ -1,10 +1,10 @@
 # GLEIF MIC-to-LEI Source Format — Ground Truth
 
 Reconnaissance for the v1.1.0 MIC→LEI companion, performed on
-2026-10-05 against GLEIF's 2026-09-18 publication. Concluded that
-the companion is unnecessary: GLEIF's file is a strict subset of the
-`lei` field already present on `iso10383.json`. See § Finding and
-§ Decision below. The v1.1.0 release does not ship.
+2026-10-05 against GLEIF's 2026-09-18 publication and ISO 10383
+v1.0.4. Concluded that the companion is unnecessary: GLEIF's file is
+a strict subset of the `lei` field already present on
+`iso10383.json`. See § Finding and § Decision below.
 
 ---
 
@@ -18,11 +18,12 @@ the companion is unnecessary: GLEIF's file is a strict subset of the
 | Inner file | `lei-mic-20260918T000007.csv` |
 | Downloaded | 2026-10-05 |
 | Registry version compared against | `iso10383.json` v1.0.4 |
+| Registry snapshot date | 2026-09-23 |
 
 The download URL carries a per-publication UUID. The UUID changes
 every month, so the URL cannot be hardcoded. A future fetcher reads
-the source page, extracts the newest `LEI-MIC-YYYYMMDD.zip` link, and
-downloads from the UUID-scoped URL.
+the source page, extracts the newest `LEI-MIC-YYYYMMDD.zip` link,
+and downloads from the UUID-scoped URL.
 
 ---
 
@@ -48,9 +49,9 @@ rest of the tooling in the repository.
 
 ## Verbatim column headers
 
+```
 LEI,MIC
-text
-
+```
 
 Two columns. Both uppercase. Both required. No optional columns.
 
@@ -71,7 +72,8 @@ by position must respect this order.
 The count grows over time. The 2022 first publication had
 approximately 600 pairs. GLEIF adds pairs when a new operating
 entity obtains an LEI and registers its MIC, and removes them when an
-LEI is annulled or marked as a duplicate by GLEIF.
+LEI is annulled or marked as a duplicate by GLEIF, or when the MIC
+expires at SWIFT.
 
 The count is a property of the file, not a fixed target. A future
 reconnaissance records whatever the current publication contains.
@@ -90,10 +92,8 @@ requires coercion, correction, or skipping.
 
 The `LEI` pattern enforces ISO 17442: eighteen uppercase alphanumeric
 characters followed by two numeric check digits. The two check digits
-are computed by ISO/IEC 7064 MOD 97-10. The reconnaissance did not
-verify check digits on every row; a fetcher that wants that
-verification reads the value, re-computes the check digits, and
-fails on mismatch. That is a Phase 2 concern, not a Phase 0 finding.
+are computed by ISO/IEC 7064 MOD 97-10. The reconnaissance verified
+the check digits on every row: all 1,024 pass.
 
 The `MIC` pattern matches the primary key format of `iso10383.json`.
 
@@ -143,7 +143,7 @@ The registry's `lei` field, populated by SWIFT's MIC file:
 | Null | 450 | 28.2% |
 
 SWIFT populates more operating MICs than GLEIF does. The 120-entry
-difference is the subject of the next section.
+difference is the subject of § What the 120 are.
 
 ### Agreement between the two sources
 
@@ -181,12 +181,16 @@ carries 120 pairs GLEIF does not. There are no pairs in GLEIF that
 the registry lacks. There are no disagreements where both sources
 have a value.
 
-**The companion file as planned in D11 would duplicate existing
-data.** A `mic-lei.json` with one entry per operating MIC would ship
-1,024 rows whose values are already in `iso10383.json`, minus 120
-rows that the field carries and GLEIF does not. It would introduce a
-second source of the same fact, no additional coverage, and no
-reconciliation content.
+**The relationship is structural, not coincidental.** GLEIF's own
+license agreement states that it extracts the mapping from SWIFT's
+published MIC directory. When SWIFT expires a MIC, GLEIF removes the
+pair; SWIFT keeps the `lei` field on the entry as a historical
+record. That asymmetry is why the field is a strict superset.
+
+**A companion file as planned in D11 would duplicate existing data.**
+A `mic-lei.json` with one entry per operating MIC would ship 1,024
+rows whose values are already in `iso10383.json`, and would omit the
+120 rows the field carries and GLEIF does not.
 
 Three specific conclusions follow:
 
@@ -201,6 +205,39 @@ Three specific conclusions follow:
 
 The reconnaissance has answered the question the v1.1.0 roadmap
 posed. The answer is that there is no work to do.
+
+---
+
+## What the 120 are
+
+The 120 operating MICs that SWIFT populates with an LEI and GLEIF
+does not are not a mystery. Every one of them is explained.
+
+**118 are expired operating MICs.** Their `status` in
+`iso10383.json` is `EXPIRED`. GLEIF pruned the pair when the MIC was
+deactivated. SWIFT kept the field.
+
+**2 are ACTIVE:**
+
+| MIC | LEI | Name |
+|-----|-----|------|
+| `CBMS` | `213800AB3875YAOXX245` | CBM SARB |
+| `HEGX` | `5493005SLPBS4GLS2A55` | NADEX |
+
+Both are US binary options venues. Both carry an LEI in SWIFT's
+field that GLEIF does not publish. The likely explanations are:
+
+- The LEI is marked `ANNULLED` or `DUPLICATE` in GLEIF's Golden Copy
+  and GLEIF excludes such LEIs from its mapping file by policy.
+- SWIFT added the LEI to its file after GLEIF's last extraction
+  cycle.
+
+Distinguishing the two requires GLEIF's Golden Copy, which is not
+part of this reconnaissance. Neither MIC affects the decision: the
+subset relationship holds regardless of why GLEIF omits them.
+
+A future maintainer investigating the same question records the
+resolution of these two in this section.
 
 ---
 
@@ -226,7 +263,7 @@ filename: the eight digits between `LEI-MIC-` and `.zip`.
 ## Refresh cadence
 
 Monthly, on or around the second Monday. The publication list from
-the source page for 2026:
+the source page for 2026 covers nine calendar months:
 
 | Publication | Date |
 |-------------|------|
@@ -243,11 +280,11 @@ the source page for 2026:
 | `LEI-MIC-20260914.zip` | 2026-09-14 |
 | `LEI-MIC-20260918.zip` | 2026-09-18 |
 
-Twelve publications in ten calendar months. February and September
-both carry a mid-month correction in addition to the scheduled
-release — `2026-02-09` / `2026-02-10` and `2026-09-14` /
-`2026-09-18`. The second publication in a month is a correction
-cycle, not a scheduled release.
+Twelve publications in nine calendar months. February, July, and
+September each carry a mid-month correction in addition to the
+scheduled release — `2026-02-09` / `2026-02-10`, `2026-07-13` /
+`2026-07-28`, and `2026-09-14` / `2026-09-18`. The second publication
+in a month is a correction cycle, not a scheduled release.
 
 A future refresh process reads whatever the source page links as the
 newest file. It does not assume a fixed day.
@@ -277,6 +314,7 @@ license to use the Mapping Table:
 Any copy of the Mapping Table, in whole or in part, must include the
 following notice:
 
+```
 SWIFT © and database rights [insert date of the Mapping Table version].
 All rights reserved. This Mapping Table has been developed by SWIFT.
 Any use of the Mapping Table, in whole or in part, is subject to the
@@ -284,13 +322,16 @@ MIC/LEI Mapping Table License Agreement as published with the Mapping
 Table available on GLEIF's website. The Mapping Table is updated
 monthly. For the latest MIC information and updates, always refer to
 https://www.iso20022.org/market-identifier-codes.
-text
-
+```
 
 The bracketed `[insert date of the Mapping Table version]` is a
-placeholder in the license text. A redistributor fills in the
-publication date: `2026-09-18` for the snapshot used in this
-reconnaissance.
+placeholder in the license text. The license expects a **month and
+year**, not a full ISO date. For the snapshot used in this
+reconnaissance, the value is:
+
+```
+September 2026
+```
 
 ### What this means for the companion
 
@@ -316,9 +357,9 @@ text supersedes.
 
 **Declined. The companion file does not ship.**
 
-The v1.1.0 release that D11 planned does not happen. No `mic-lei.json`
-is created. No schema, fetcher, validator, exports, or CLI additions
-are built. The registry stays at v1.0.4.
+The v1.1.0 release that D11 planned does not happen. No
+`mic-lei.json` is created. No schema, fetcher, validator, exports,
+or CLI additions are built. The registry stays at v1.0.4.
 
 The registry's `lei` field is the source of truth for an operating
 MIC's legal entity identifier. A consumer that wants the LEI reads
@@ -332,29 +373,27 @@ consequences.
 
 ## What a future maintainer should do
 
-If a future SWIFT publication and a future GLEIF publication ever
-disagree — a MIC with different LEIs in the two sources, or a MIC in
-one that is absent from the other — this document should be updated
-with the new counts and the disagreement recorded. The declaration
-"the two sources agree" is a fact about the 2026-09-18 publication,
-not a permanent guarantee.
+The declaration "the two sources agree" is a fact about the
+2026-09-18 publication, not a permanent guarantee. Two set-based
+conditions warrant re-running the reconnaissance:
 
-Three specific situations warrant a re-run:
+**1. A MIC in GLEIF but not in SWIFT's field.** If a future
+cross-check finds even one MIC-LEI pair that GLEIF publishes and
+`iso10383.json` does not carry, GLEIF has become a source of new
+data rather than a duplicate. The companion decision may flip.
 
-1. **SWIFT's field count drops.** If `iso10383.json`'s populated
-   `lei` count falls below 1,144 while GLEIF's file stays at 1,024,
-   the strict-subset relationship is broken in one direction. The
-   finding needs to be re-derived.
-2. **GLEIF's file count exceeds SWIFT's.** If GLEIF starts publishing
-   MIC-LEI pairs the SWIFT field lacks, GLEIF becomes a source of new
-   data rather than a duplicate. The companion decision may flip.
-3. **A disagreement appears.** If a MIC appears in both sources with
-   different LEI values, that is a data quality signal worth a
-   finding. The reconciliation the companion was supposed to provide
-   may then be worth shipping.
+**2. A MIC with different LEI values in the two sources.** If a
+future cross-check finds even one MIC whose LEI differs between
+SWIFT's field and GLEIF's file, the reconciliation the companion was
+supposed to provide becomes worth shipping, and the disagreement is
+itself a finding.
 
-In any of these cases, the cross-check procedure in the next section
-reproduces the numbers.
+Neither condition is monitored by CI today. A future maintainer
+re-runs the procedure below on the current publication to check both.
+
+The 118 expired MICs are not a trigger. The two ACTIVE exceptions
+(`CBMS`, `HEGX`) are not a trigger unless GLEIF's reason for omitting
+them turns out to be a data-quality issue in SWIFT's field.
 
 ---
 
@@ -362,7 +401,7 @@ reproduces the numbers.
 
 The reconnaissance that produced every number in this document was a
 one-off script. A future maintainer can rebuild it from this
-document. The procedure is nine steps:
+section. The procedure is nine steps.
 
 **1. Download the newest ZIP.**
 
@@ -371,56 +410,54 @@ mkdir -p ~/mic-lei-recon/raw
 cd ~/mic-lei-recon/raw
 # From the source page, find the newest LEI-MIC-YYYYMMDD.zip link.
 # Download it by hand or with curl.
+```
 
-2. Extract and identify the CSV.
-bash
+**2. Extract and identify the CSV.**
 
+```bash
 unzip -o LEI-MIC-*.zip
 ls *.csv
+```
 
-3. Parse the CSV.
-python
+**3. Parse the CSV.**
 
+```python
 import csv
 with open("lei-mic-*.csv", encoding="utf-8") as f:
     rows = list(csv.DictReader(f))
+```
 
-4. Format checks. Confirm every LEI matches ^[A-Z0-9]{18}[0-9]{2}$
-and every MIC matches ^[A-Z0-9]{4}$. Zero failures is expected.
+**4. Format checks.** Confirm every `LEI` matches
+`^[A-Z0-9]{18}[0-9]{2}$` and every `MIC` matches `^[A-Z0-9]{4}$`.
+Zero failures is expected.
 
-5. Duplicate check. Confirm len(set(row["MIC"])) == len(rows).
+**5. Duplicate check.** Confirm `len(set(row["MIC"])) == len(rows)`.
 
-6. Load the registry.
-python
+**6. Load the registry.**
 
+```python
 import json
 reg = json.load(open("iso10383.json"))
 op = {m["mic"]: m for m in reg["mics"] if m["mic_type"] == "OPERATING"}
+```
 
-7. Cross-check. Compute:
+**7. Cross-check.** Compute:
 
-    len(rows) — GLEIF file MICs
+- `len(rows)` — GLEIF file MICs
+- `len(op)` — registry operating MICs
+- `len(set(r["MIC"] for r in rows) & set(op))` — in both
+- `len(set(r["MIC"] for r in rows) - set(op))` — GLEIF only
+- `sum(1 for m in op.values() if m.get("lei"))` — SWIFT populated
+- Agreement count: for each MIC in both, compare `op[mic]["lei"]` to
+  the GLEIF row's `LEI`.
 
-    len(op) — registry operating MICs
+**8. Compare to this document.** Every count in the tables above
+should match. If any does not, the source or the registry has
+changed since 2026-10-05, and the finding needs to be re-derived.
 
-    len(set(r["MIC"] for r in rows) & set(op)) — in both
-
-    len(set(r["MIC"] for r in rows) - set(op)) — GLEIF only
-
-    sum(1 for m in op.values() if m.get("lei")) — SWIFT populated
-
-    Agreement count: for each MIC in both, compare op[mic]["lei"] to the GLEIF row's LEI.
-
-8. Compare to this document. Every count above should match. If
-any does not, the source or the registry has changed since
-2026-10-05, and the finding needs to be re-derived.
-
-9. Update this document if the finding changes. If the numbers
+**9. Update this document if the finding changes.** If the numbers
 still show a strict subset, the decision stands. If they do not, the
 decision is re-opened and ADR 0008 is amended.
 
-The full script that produced the numbers above is available in the
-git history of this repository at the v1.0.4 tag's tree, in
-/tmp/recon_mic_lei.py at the time of the reconnaissance — it was
-not committed, since it was a one-off. The procedure above is its
-equivalent.
+The full script that produced the numbers above was a one-off. It
+was not committed. The procedure above is its equivalent.
