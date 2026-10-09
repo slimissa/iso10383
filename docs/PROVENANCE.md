@@ -387,7 +387,10 @@ are tracked for future versions.
   Mapping Table to be a strict subset of the field and declined
   the companion. See
   `docs/decisions/0008-mic-lei-companion-declined.md`.
-- **No MIC→BIC mapping.** Out of scope (D11). Planned for v1.2.0.
+- **No MIC→BIC companion.** No SWIFT-published MIC-to-BIC
+  mapping file exists; three first-party sources were checked.
+  `iso10383.json` has no `bic` field. The companion is declined.
+  See `docs/decisions/0009-mic-bic-companion-declined.md`.
 - **No MIC→ISIN relationship.** The relationship is many-to-many and
   belongs in an asset-identifiers context. Out of scope.
 - **No trading currency per MIC.** Derived from `country_code` → ISO
