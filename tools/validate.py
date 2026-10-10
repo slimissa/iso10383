@@ -41,11 +41,11 @@ import jsonschema
 # MICs referenced by a sibling registry that are known to be absent
 # from SWIFT's published file. Adding to this set requires an ADR
 # amendment. See docs/decisions/0007-cross-registry-allowlist.md.
-KNOWN_EXCHANGE_CALENDAR_GAPS = frozenset({
-    "XBEK",  # Beirut Stock Exchange
-    "XNBO",  # Nairobi Securities Exchange
-    "XQSE",  # Qatar Exchange
-})
+#
+# Empty as of 2026-10-10: the three previous entries (XBEK, XNBO, XQSE)
+# were renamed upstream at Exchange Calendar v2.4.2 to XBEY, XNAI, DSMD,
+# which are in iso10383.json. See ADR 0007 § Amendment.
+KNOWN_EXCHANGE_CALENDAR_GAPS: frozenset[str] = frozenset()
 
 MIC_RE = re.compile(r"^[A-Z0-9]{4}$")
 COUNTRY_RE = re.compile(r"^[A-Z]{2}$")

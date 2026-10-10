@@ -27,12 +27,19 @@ def test_real_file_passes():
     assert "OK" in r.stdout
 
 
-def test_strict_fails_on_warning():
-    # The real file has one Exchange Calendar warning. --strict promotes.
-    r = subprocess.run(
-        [sys.executable, str(VALIDATE), str(REGISTRY), "--strict"],
-        capture_output=True, text=True, cwd=ROOT,
-    )
+def test_strict_fails_on_warning(tmp_path):
+    # The allowlist is empty, so the real file produces no warning. Build
+    # one: a snapshot naming a MIC the registry lacks, under --advisory
+    # (gap becomes a warning). --strict promotes it to a failure.
+    snap = tmp_path / "ec.json"
+    snap.write_text('{"mics": ["XNYS", "QQQQ"]}', encoding="utf-8")
+    base = [sys.executable, str(VALIDATE), str(REGISTRY),
+            "--exchange-calendar", str(snap)]
+    r = subprocess.run(base + ["--advisory"], capture_output=True,
+                       text=True, cwd=ROOT)
+    assert r.returncode == 0
+    r = subprocess.run(base + ["--advisory", "--strict"],
+                       capture_output=True, text=True, cwd=ROOT)
     assert r.returncode == 1
     assert "FAIL" in r.stderr
 
