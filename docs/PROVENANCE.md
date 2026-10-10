@@ -230,17 +230,18 @@ late.
 
 1. Downloads the current SWIFT file.
 2. Snapshots the old registry to `/tmp/iso10383.old.json`.
-3. Runs `tools/fetch_swift_mic.py` with `--snapshot-date` set to the
-   current UTC date.
+3. Runs `tools/fetch_swift_mic.py` with `--version` set to `VERSION`
+   and `--snapshot-date` set to the current UTC date.
 4. Diffs the two registries with `tools/refresh_diff.py`.
 5. Regenerates all nine distribution artifacts.
 6. Regenerates the four wrapper bundle copies.
 7. Runs the six-layer validator and the root test suite.
 8. Opens a pull request.
 
-The PR body carries the diff summary. A refresh with `REMOVED > 0`
-fails the job's diff step and requires human confirmation before
-merging. This is D10.
+The workflow log carries the diff (step "Diff"); the PR body says
+whether removals were found. A refresh with `REMOVED > 0` opens the
+PR as a draft with the removal count in the body. Draft status
+requires explicit conversion by a human before merge. This is D10.
 
 ### The monthly process, manual
 

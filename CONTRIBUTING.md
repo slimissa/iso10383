@@ -488,7 +488,7 @@ REMOVED:  0 (0 operating, 0 segment)
 **Stop.** Do not regenerate artifacts. Do not commit.
 
 A removed MIC is the change class most likely to break downstream
-consumers. The refresh workflow fails the diff step and requires
+consumers. The refresh workflow opens the PR as a draft and requires
 human confirmation. D10.
 
 Investigate:

@@ -188,8 +188,8 @@ cross-registry warnings to errors.
 ### How it is refreshed
 
 Monthly, from a new Layer 0. The diff policy is documented in
-`docs/PROVENANCE.md` § Refresh cadence. `REMOVED > 0` fails the
-refresh until a human confirms (D10).
+`docs/PROVENANCE.md` § Refresh cadence. `REMOVED > 0` opens the
+refresh PR as a draft until a human confirms (D10).
 
 ### What makes it irreplaceable
 

@@ -486,7 +486,7 @@ python3 tools/validate.py
 python3 -m pytest tests/ -q
 ```
 
-**A refresh with `REMOVED > 0` fails the PR** until a human confirms the removal is intentional. See [`docs/decisions/0003-monthly-refresh.md`](./docs/decisions/0003-monthly-refresh.md) § REMOVED > 0 guard. A removed MIC is the change class most likely to break downstream consumers.
+**A refresh with `REMOVED > 0` opens the PR as a draft** with the removal count in the body. Draft status requires explicit conversion by a human before merge, so the removal is confirmed on purpose. See [`docs/decisions/0003-monthly-refresh.md`](./docs/decisions/0003-monthly-refresh.md) § REMOVED > 0 guard. A removed MIC is the change class most likely to break downstream consumers.
 
 ### Audit
 

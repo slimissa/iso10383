@@ -78,8 +78,10 @@ CI runs the check on every push. A stale snapshot fails the
 
 ## Decision 2 — REMOVED > 0 is a hard failure
 
-A refresh that removes a MIC from the registry fails the refresh
-pull request and requires human confirmation before merging.
+A refresh that removes a MIC from the registry requires human
+confirmation before merging. The refresh workflow opens the pull
+request as a draft with the removal count in the body (see the
+Amendment of 2026-10-10 at the end of this ADR).
 
 Enforced by `tools/refresh_diff.py`, which compares the old registry
 to a newly generated one and exits 1 if any MIC present in the old
@@ -108,8 +110,8 @@ unreviewed removal is a broken order.
 ### How it is enforced
 
 `.github/workflows/refresh.yml` runs the diff step with `set +e` to
-capture the exit code, then includes it in the PR body. The PR is
-opened regardless. The signal is the exit code — `1` means removed
+capture the exit code, then writes it to `GITHUB_OUTPUT`. The PR is
+opened regardless, as a draft when the code is `1`. The signal is the exit code — `1` means removed
 MICs exist. A reviewer must check the diff and confirm before
 merging.
 
@@ -235,7 +237,7 @@ The schedule is the point.
 
 ## Addendum — the `REMOVED > 0` guard
 
-`refresh.yml` refuses to open a pull request when the monthly diff
+`refresh.yml` opens the pull request as a draft when the monthly diff
 removes any MIC. A removal requires human confirmation before merge.
 
 Rationale: removals are the change class most likely to break
@@ -255,8 +257,9 @@ guard shape is:
 
 1. Compute the diff between old and new.
 2. Count removals.
-3. If removals > 0: exit non-zero, but open the PR anyway with the
-   count and the removed identifiers in the body.
+3. If removals > 0: exit non-zero, but open the PR anyway as a draft
+   with the count in the body. The removed identifiers are in the
+   workflow log.
 4. A human reads the PR and confirms before merge.
 
 ---
@@ -308,3 +311,19 @@ The lesson is operator-hygiene rule 5 from
 last command's exit.** A guard that does not fire is worse
 than no guard, because this ADR claimed it did. The
 reconnaissance that found it is ADR 0011.
+
+---
+
+## Amendment (2026-10-10) — the guard's mechanism is a draft PR
+
+Decision 2 says a removal "fails the refresh pull request". It does
+not, and the workflow never did: the diff step exits 0 and the PR
+opens regardless (see the amendment above and ADR 0011). The
+heading's "hard failure" is policy, not mechanism.
+
+The mechanism, made explicit on 2026-10-10: when `refresh_diff.py`
+exits 1, the PR opens as a **draft** whose body says `REMOVED > 0` and
+requires human confirmation. A draft cannot be merged until a human
+marks it ready for review, so the diff is visible and the merge is
+blocked. The removed MICs are in the workflow log, not in the PR body.
+The policy (D10) is unchanged; the claim is what changed.
