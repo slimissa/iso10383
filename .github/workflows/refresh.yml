@@ -37,9 +37,16 @@ jobs:
       - name: Diff
         id: diff
         run: |
+          # Capture the tool's exit code directly. Piping through
+          # tee would give tee's exit code, not the tool's.
+          # See RELEASE_PATTERN.md operator-hygiene rule 5.
           set +e
-          python3 tools/refresh_diff.py /tmp/iso10383.old.json iso10383.json | tee /tmp/diff.txt
-          echo "code=$?" >> "$GITHUB_OUTPUT"
+          python3 tools/refresh_diff.py /tmp/iso10383.old.json iso10383.json \
+            > /tmp/diff.txt 2>&1
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          cat /tmp/diff.txt
+          exit 0
 
       - name: Regenerate artifacts
         run: |

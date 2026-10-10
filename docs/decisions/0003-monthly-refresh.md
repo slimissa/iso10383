@@ -286,3 +286,25 @@ requires a code change, not a silent absorb. This is intentional.
 - `tools/refresh_diff.py`
 - `.github/workflows/refresh.yml`
 - ISO 10383 FAQ (publication cadence)
+
+---
+
+## Amendment (2026-10-10) — the `REMOVED > 0` guard did not fire
+
+The `REMOVED > 0` guard was found **non-functional** on
+2026-10-09 during the séance 3–4 coursework review (ADR
+0011). The workflow piped `refresh_diff.py` through `tee`
+and read `$?`, which is `tee`'s exit code, not the tool's.
+On a synthetic removal of `XNYS`, `refresh_diff.py` exited 1
+but the workflow's step printed `code=0`. The guard had
+never fired.
+
+The defect is fixed in the same commit. The workflow now
+redirects both streams to the same file, captures the exit
+code directly, and records it in `GITHUB_OUTPUT`.
+
+The lesson is operator-hygiene rule 5 from
+`RELEASE_PATTERN.md`: **the exit code of a pipeline is the
+last command's exit.** A guard that does not fire is worse
+than no guard, because this ADR claimed it did. The
+reconnaissance that found it is ADR 0011.
