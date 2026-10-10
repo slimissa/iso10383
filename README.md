@@ -448,13 +448,7 @@ Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error, 3 schema vio
 
 Cross-registry validation is **blocking by default** as of v1.0.1 (D6, D17). Every `country_code` must exist in the ISO 3166 snapshot, and every MIC referenced by Exchange Calendar must exist in the registry or be explicitly allowlisted.
 
-Three MICs are in the allowlist at `tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS`:
-
-- `XBEK` — Beirut Stock Exchange
-- `XNBO` — Nairobi Securities Exchange
-- `XQSE` — Qatar Exchange
-
-These are referenced by the Exchange Calendar registry but absent from SWIFT's published file. Adding a MIC to the allowlist requires an ADR amendment. See [`docs/decisions/0007-cross-registry-allowlist.md`](./docs/decisions/0007-cross-registry-allowlist.md).
+The allowlist at `tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS` is **empty**. The three codes previously allowlisted (`XBEK`, `XNBO`, `XQSE`) were renamed upstream at Exchange Calendar v2.4.2 to `XBEY`, `XNAI`, `DSMD`, all present in this registry. The mechanism stays: a referenced MIC that is absent from the registry is an error. Adding a MIC to the allowlist requires an ADR amendment. See [`docs/decisions/0007-cross-registry-allowlist.md`](./docs/decisions/0007-cross-registry-allowlist.md).
 
 Pass `--advisory` to revert to the v1.0.0 behavior: cross-registry gaps become warnings, not errors.
 

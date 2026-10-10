@@ -483,25 +483,18 @@ other:
 Every arrow is a committed snapshot. No repository is a runtime
 dependency of any other. The snapshots are the interface.
 
-### The known gap
+### The known gap (resolved)
 
-Three MICs referenced by Exchange Calendar do not exist in this
-registry's Layer 1:
+Until 2026-10-10 three MICs referenced by Exchange Calendar (`XBEK`,
+`XNBO`, `XQSE`) did not exist in this registry's Layer 1 and were
+tolerated by an allowlist. The gap was not a difference in what the two
+registries measure. Exchange Calendar had the wrong codes and renamed
+them at v2.4.2 to `XBEY`, `XNAI`, `DSMD`, all present in Layer 1.
 
-- `XBEK` (Beirut Stock Exchange)
-- `XNBO` (Nairobi Securities Exchange)
-- `XQSE` (Qatar Exchange)
-
-The validator reports this as a warning. It is documented in
-`docs/PROVENANCE.md` § Cross-registry snapshots.
-
-The gap exists because the two registries measure different things:
-Exchange Calendar covers exchanges that operate (74 of them), while
-ISO 10383 covers exchanges that SWIFT has assigned a MIC to. The
-three above were either removed from SWIFT's file or never had one.
-
-This is not a bug. It is a finding. Documenting it is what makes the
-advisory check useful.
+The allowlist is empty; the mechanism stays. A MIC that Exchange
+Calendar references and Layer 1 lacks is now an error. See
+`docs/decisions/0007-cross-registry-allowlist.md` § Amendment
+(2026-10-10).
 
 ---
 

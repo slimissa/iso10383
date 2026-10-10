@@ -32,7 +32,7 @@ maintained under the release discipline in `docs/RELEASE_PATTERN.md`.
 
 | Consumer | Use | Basis |
 |----------|-----|-------|
-| Exchange Calendar | Every MIC it references must exist here, or be allowlisted | README § consumers; `tools/exchange_calendar_snapshot.json` holds its 74 MICs; D17, ADR 0007 |
+| Exchange Calendar | Every MIC it references must exist here, or be allowlisted (the allowlist is empty as of 2026-10-10) | README § consumers; `tools/exchange_calendar_snapshot.json` holds its 74 MICs; D17, ADR 0007 |
 | Asset Identifiers | `exchange` and `listings[].exchange` join on `mic` | `docs/JOINS.md` |
 | Corporate Actions (planned) | Each action's `exchange` joins on `mic` | `docs/JOINS.md`, marked "Not yet implemented" |
 | Tempus | `@market_context` type-level validation | README only |

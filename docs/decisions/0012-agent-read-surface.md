@@ -42,7 +42,7 @@ agent and no code.
 | View | Artifact | What it shows | What it costs to keep fresh |
 |------|----------|---------------|-----------------------------|
 | Registry view | `iso10383.json` | The MICs themselves | Nothing extra. The monthly refresh regenerates it. |
-| Materialised view of other registries | `tools/iso3166_snapshot.json`, `tools/exchange_calendar_snapshot.json` | Country codes and the MICs Exchange Calendar uses | A manual re-vendor. `review_by` dates force the review: 2026-12-28 and 2027-09-28. |
+| Materialised view of other registries | `tools/iso3166_snapshot.json`, `tools/exchange_calendar_snapshot.json` | Country codes and the MICs Exchange Calendar uses | A manual re-vendor. `review_by` dates force the review: 2027-01-10 and 2027-09-28. |
 | Cross-registry view | `docs/JOINS.md` | Who joins on `mic`, at what granularity | Hand-edited prose. No check ties it to the code. |
 | Human view | `python3 tools/iso10383_cli.py info` | Version, dates, source hash, counts | Free. It reads Layer 1 each time. |
 | Decision view | `docs/decisions/`, `docs/mic_lei_source_format.md`, `docs/mic_bic_source_format.md` | Why things are as they are | Hand-edited prose. A stale one misleads silently. |

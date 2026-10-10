@@ -350,27 +350,21 @@ CI.
 
 ### Known cross-registry gap
 
-Three MICs referenced by the Exchange Calendar registry do not appear
-in the 2026-09-23 ISO 10383 source file:
+**Resolved 2026-10-10.** Three MICs referenced by the Exchange Calendar
+registry (`XBEK`, `XNBO`, `XQSE`) were absent from the 2026-09-23
+ISO 10383 source file and tolerated by an allowlist. Exchange Calendar
+renamed them at v2.4.2 (2026-09-30) to `XBEY`, `XNAI`, `DSMD`, all of
+which are in this registry. See
+[ADR 0007](./decisions/0007-cross-registry-allowlist.md) § Amendment
+(2026-10-10).
 
-- `XBEK` (Beirut Stock Exchange)
-- `XNBO` (Nairobi Securities Exchange)
-- `XQSE` (Qatar Exchange)
+The allowlist at `tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS` is
+empty and the mechanism is preserved. Adding a MIC to it requires an
+ADR amendment.
 
-Either they were removed from the source, or Exchange Calendar should
-drop them. CI reports this as a **warning**, not a failure. This is
-the advisory behavior of D6: cross-registry checks are advisory in
-v1.0.0 and blocking in v1.0.1.
-
-The three MICs are in an explicit allowlist at
-`tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS`. Adding a MIC to
-the allowlist requires an ADR amendment; see
-[ADR 0007](./decisions/0007-cross-registry-allowlist.md).
-
-Cross-registry checks are **blocking by default** in v1.0.1: any
-MIC outside the allowlist that is referenced by Exchange Calendar
-but absent from the registry fails the validator. Pass
-`--advisory` to revert to the v1.0.0 behavior.
+Cross-registry checks are **blocking by default** in v1.0.1: any MIC
+referenced by Exchange Calendar but absent from the registry fails the
+validator. Pass `--advisory` to revert to the v1.0.0 behavior.
 
 ---
 

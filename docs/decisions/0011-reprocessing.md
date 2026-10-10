@@ -114,8 +114,8 @@ Layer 4 snapshots.
 |-------|------|-----------|--------|
 | Removal | `refresh_diff.py` | A MIC in old is absent in new | Exit 1, but see above |
 | Registry age | `check_registry_freshness.py` | `meta.source_snapshot` older than 60 days | Fails CI |
-| Snapshot review | `check_snapshot_freshness.py` | Today is past a snapshot's `review_by` | Fails CI. Today: 2026-12-28 (Exchange Calendar), 2027-09-28 (ISO 3166). |
-| Allowlist | `KNOWN_EXCHANGE_CALENDAR_GAPS` in `validate.py` | A MIC referenced by Exchange Calendar is absent and not in the frozenset of `XBEK`, `XNBO`, `XQSE` | Fails the validator. Edits need an ADR amendment (D17). |
+| Snapshot review | `check_snapshot_freshness.py` | Today is past a snapshot's `review_by` | Fails CI. Today: 2027-01-10 (Exchange Calendar), 2027-09-28 (ISO 3166). |
+| Allowlist | `KNOWN_EXCHANGE_CALENDAR_GAPS` in `validate.py` | A MIC referenced by Exchange Calendar is absent and not in the frozenset (empty as of 2026-10-10) | Fails the validator. Edits need an ADR amendment (D17). |
 
 The last three block in CI. The first only advises, and by the wiring
 above it does not even advise reliably.

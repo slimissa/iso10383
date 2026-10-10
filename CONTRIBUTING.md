@@ -193,8 +193,8 @@ OK (with warnings): 2883 MICs validated
 OK: 5 suite(s) passed, all wrappers agree
 ```
 
-The one warning — `3 MIC(s) referenced by Exchange Calendar not in
-registry: XBEK, XNBO, XQSE` — is documented and expected. See
+The validator prints no cross-registry warnings. Before 2026-10-10 it
+printed one, for three MICs since renamed upstream. See
 `docs/PROVENANCE.md` § Known cross-registry gap.
 
 Toolchain:
@@ -451,10 +451,10 @@ runs automatically on the 15th. You will almost never do it by hand.
 
 The validator checks every MIC against the Exchange Calendar
 snapshot and every country code against the ISO 3166 snapshot.
-Cross-registry checks are blocking by default in v1.0.1. Three
-MICs are in the allowlist at
-`tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS`:
-`XBEK`, `XNBO`, `XQSE`.
+Cross-registry checks are blocking by default in v1.0.1. The
+allowlist at `tools/validate.py::KNOWN_EXCHANGE_CALENDAR_GAPS` is
+empty as of 2026-10-10; its three former entries (`XBEK`, `XNBO`,
+`XQSE`) were renamed upstream.
 
 Adding a MIC to the allowlist requires an ADR amendment. See
 [ADR 0007](./docs/decisions/0007-cross-registry-allowlist.md).
