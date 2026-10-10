@@ -284,3 +284,54 @@ for the case where one appears.
 - `docs/PROVENANCE.md` § Known cross-registry gap
 - `docs/LAYERS.md` § Layer 4 — the cross-referenced layer
 - `tools/validate.py` — the validator and the allowlist
+
+---
+
+## Amendment (2026-10-10)
+
+**The gap this ADR records no longer exists. The allowlist is empty.
+The mechanism stays.**
+
+Exchange Calendar renamed the three codes at v2.4.2 on 2026-09-30:
+`XBEK` → `XBEY`, `XNBO` → `XNAI`, `XQSE` → `DSMD`. All three new codes
+are in `iso10383.json` as of the 2026-09-23 source snapshot, which is
+the same file this ADR investigated: `XBEY` (Bourse de Beyrouth, LB),
+`XNAI` (Nairobi Stock Exchange, KE), `DSMD` (Qatar Stock Exchange, QA),
+each OPERATING and ACTIVE.
+
+**What the original investigation missed.** It grepped the raw CSV for
+the three codes. It never searched by venue name or country. A name
+search in this repository's own data finds all three current codes. The
+Context's claim that the codes were ones "SWIFT either never assigned or
+has since removed" was never tested against the possibility that
+Exchange Calendar's codes were wrong. They were. Resolution option 1 in
+the Context ("replace them with the correct MICs") is what happened.
+
+**What changed.**
+
+- `tools/exchange_calendar_snapshot.json` regenerated from Exchange
+  Calendar v2.13.0: 74 MICs, `XBEY`, `XNAI`, `DSMD` added, `XBEK`,
+  `XNBO`, `XQSE` removed.
+- `KNOWN_EXCHANGE_CALENDAR_GAPS` in `tools/validate.py` is
+  `frozenset()`. The code path that separates known from unexpected
+  gaps is unchanged, so a future gap is an error, not a tolerated
+  warning.
+- `tools/check_exchange_calendar_current.py` runs with `--strict` in
+  CI (same change series).
+
+**The lesson.** An allowlist entry is a claim about another registry's
+data. When that registry changes, the claim goes false without anything
+in this repository changing. `check_exchange_calendar_current.py`
+detected the drift (`stale: 3 added, 3 removed`) but CI ran it without
+`--strict`, and `check_snapshot_freshness.py` checks only the
+`review_by` date, not content. The drift was reported and ignored.
+
+**Reopening triggers.** Any of:
+
+1. Exchange Calendar renames or replaces a MIC it references. This is
+   the trigger that actually fired. Regenerate the snapshot.
+2. A SWIFT publication adds or removes a MIC an allowlist entry names.
+3. A sibling registry references a MIC absent from `iso10383.json`
+   after a name and country search of this registry has ruled out a
+   rename. Only then does an allowlist entry, with its ADR amendment,
+   apply.
