@@ -74,12 +74,14 @@ jobs:
           title: "Refresh: ISO 10383 snapshot ${{ steps.refresh.outputs.date }}"
           body: |
             Automated monthly refresh.
-            ${{ steps.diff.outputs.code }}
-            See /tmp/diff.txt content in the workflow log.
+
+            ${{ steps.diff.outputs.code == '1' && '**REMOVED > 0. This draft requires human confirmation before merge.**' || 'No removals. Safe to review.' }}
+            The removed MICs and the full diff are in the workflow log (step "Diff").
 
             **Before merging:**
-            - Review the diff summary above.
+            - Review the diff in the workflow log.
             - If `REMOVED > 0`, confirm the removal is intentional.
             - Add a `CHANGELOG.md` entry.
-            commit-message: "Refresh: ISO 10383 snapshot"
-            delete-branch: true
+          draft: ${{ steps.diff.outputs.code == '1' }}
+          commit-message: "Refresh: ISO 10383 snapshot"
+          delete-branch: true
