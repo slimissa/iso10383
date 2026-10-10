@@ -1,7 +1,14 @@
 """Generate tools/exchange_calendar_snapshot.json from Exchange Calendar.
 
 Reads all MICs referenced by the exchanges/ directory of the sibling
-repo. Run this manually and commit; CI verifies freshness."""
+repo. Run this manually and commit; CI verifies freshness.
+
+This script writes only exchange_calendar_snapshot.json. The sibling
+tools/exchange_calendar_snapshot.meta.json (source_version, vendored_at,
+vendored_from, review_by) is maintained by hand, like its ISO 3166
+counterpart. It clones the sibling's default branch, so set
+source_version and vendored_from to the tag whose HEAD you cloned.
+"""
 import json, subprocess, tempfile
 from pathlib import Path
 
