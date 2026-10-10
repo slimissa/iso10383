@@ -22,6 +22,12 @@ jobs:
       - name: Install
         run: pip install jsonschema pyarrow pytest
 
+      - name: Compute refresh identifiers
+        id: refresh
+        run: |
+          echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
       - name: Download current SWIFT file
         run: python3 -c "from tools.fetch_swift_mic import download; download(force=True, target=__import__('pathlib').Path('raw/MIC_new.csv'))"
 
@@ -33,7 +39,7 @@ jobs:
           python3 tools/fetch_swift_mic.py \
             --raw raw/MIC_new.csv \
             --version "$(cat VERSION)" \
-            --snapshot-date "$(date -u +%Y-%m-%d)"
+            --snapshot-date "${{ steps.refresh.outputs.date }}"
 
       - name: Diff
         id: diff
@@ -64,8 +70,8 @@ jobs:
       - name: Open pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: refresh/$(date -u +%Y-%m)
-          title: "Refresh: ISO 10383 snapshot $(date -u +%Y-%m-%d)"
+          branch: refresh/${{ steps.refresh.outputs.month }}
+          title: "Refresh: ISO 10383 snapshot ${{ steps.refresh.outputs.date }}"
           body: |
             Automated monthly refresh.
             ${{ steps.diff.outputs.code }}
