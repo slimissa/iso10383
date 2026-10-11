@@ -135,9 +135,11 @@ something. For this registry the boundary is:
 1. An agent may **propose**. A proposal is a document, not a commit.
 2. A deterministic validator **decides** whether anything enters the
    pipeline.
-3. No non-deterministic code writes Layers 0–4. Layer 1 is written
-   only by `tools/fetch_swift_mic.py`, whose output is
-   byte-identical for identical input.
+3. No non-deterministic code writes Layers 0–4. Layer 1 is written by
+   two tools: `tools/fetch_swift_mic.py`, which produces the registry
+   from Layer 0 and whose output is byte-identical for identical
+   input, and `scripts/release.sh`, which updates only
+   `meta.version` during a release. No other tool writes Layer 1.
 
 What an agent may read, at what version, with what freshness
 guarantee, is decided in ADR 0012. This charter does not decide it.
@@ -214,3 +216,37 @@ writes and `LAYERS.md` calls Layer 1.
 - [`docs/decisions/0011-reprocessing.md`](./0011-reprocessing.md)
 - [`docs/decisions/0012-agent-read-surface.md`](./0012-agent-read-surface.md)
 - [`docs/decisions/v1.0.0-decisions.md`](./v1.0.0-decisions.md) — D1–D17
+
+---
+
+## Amendment (2026-10-10)
+
+The original text said "Layer 1 is written only by
+`tools/fetch_swift_mic.py`." That was wrong: `scripts/release.sh`
+sets `meta.version` in `iso10383.json` when it cuts a release (the
+`d["meta"]["version"] = v` line in its version-bump step). The
+amendment names both writers and restricts `release.sh` to that one
+field.
+
+**Why Option A (amend the ADR) and not a new writer or a re-parse.** A
+version bump is a release-time concern, not a fetch-time one. Extracting
+`tools/set_version.py` for one assignment adds a tool. Calling the
+fetcher from `release.sh` would re-parse the raw CSV, which is
+gitignored and may be stale, and a version bump should not do that.
+
+**What was checked.** `release.sh` serializes with
+`json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False)` plus a
+trailing newline. Round-tripping the committed `iso10383.json` through
+that call reproduces it byte for byte (checked 2026-10-10), so the
+bump changes only the version value.
+
+**What is not enforced.** "Only `meta.version`" is a convention. No
+test compares `iso10383.json` before and after the bump.
+
+**Open question, not resolved here.** A search of `tools/` and
+`scripts/` finds no writer of `meta.updated` other than the fetcher,
+which always sets `updated` equal to `source_snapshot` (both are
+`--snapshot-date`). `release.sh` does not write `meta.updated`. The
+committed file has `updated` 2026-09-28 and `source_snapshot`
+2026-09-23, which the fetcher cannot produce. How they diverged is
+unknown.
