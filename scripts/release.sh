@@ -21,6 +21,15 @@
 #
 # Conforms to docs/RELEASE_PATTERN.md (eight invariants).
 #
+# Step 4 shape: multi-generator. Four generators (export_csv,
+# export_sql, export_parquet, sync_wrappers) regenerate thirteen
+# artifacts: nine distribution exports and four wrapper copies of
+# iso10383.json. check_version_consistency.py then compares all
+# eight version sites. Each generator is re-run with --check in the
+# gate; that catches a generator that is not deterministic, not
+# drift against HEAD (the files were just regenerated). See
+# RELEASE_PATTERN.md, "Two shapes of step 4".
+#
 # Divergences:
 #   - poll scope: one per-push workflow (validate.yml). When a second
 #     is added, port ISO 4217's check_workflows_covered.
@@ -221,7 +230,9 @@ run git push origin main
 # --- Poll CI --------------------------------------------------------------
 # Polls every per-push workflow for the release SHA. With one
 # workflow today, this behaves like the earlier single-run check.
-# When a second per-push workflow is added, this needs no change.
+# When a second per-push workflow is added, port check_workflows_covered
+# first: this poll sees only the runs that exist when it polls, and
+# cannot tell that an expected workflow has not started yet.
 #
 # Ported from ISO 3166 v1.6.3, which adopted it from ISO 4217 at
 # commit 1f38fb4 (function poll_ci).
@@ -234,6 +245,7 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
 
     SHA="$(git rev-parse HEAD)"
     elapsed=0
+    CI_GREEN=false
 
     while [ "$elapsed" -lt $((CI_POLL_INTERVAL * CI_POLL_MAX)) ]; do
         sleep "$CI_POLL_INTERVAL"
@@ -269,13 +281,14 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
 
         if [ "$ALL_COMPLETE" = "true" ]; then
             echo "  CI passed after ${elapsed}s"
+            CI_GREEN=true
             break
         fi
 
         echo "  waiting... (${elapsed}s)"
     done
 
-    if [ "$elapsed" -ge $((CI_POLL_INTERVAL * CI_POLL_MAX)) ]; then
+    if [ "$CI_GREEN" != "true" ]; then
         echo "FAIL: CI did not complete within " \
              "$((CI_POLL_INTERVAL * CI_POLL_MAX))s" >&2
         exit 1
