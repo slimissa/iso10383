@@ -292,9 +292,24 @@ m = re.search(r"## \[$VERSION\][^\n]*\n(.*?)(?=\n## |\Z)", text, re.S)
 print((m.group(1).strip() if m else "")[:4000])
 PY
 )"
-run git tag -a "v$VERSION" -m "Release v$VERSION
-
-$TAG_MSG"
+[[ -n "$TAG_MSG" ]] || {
+    echo "FAIL: CHANGELOG.md [$VERSION] section has no body" >&2
+    exit 1
+}
+TAG_MSG_FILE="$(mktemp)"
+printf 'Release v%s\n\n%s\n' "$VERSION" "$TAG_MSG" > "$TAG_MSG_FILE"
+# Read the file back and verify it before anything is tagged.
+[[ -s "$TAG_MSG_FILE" ]] || { echo "FAIL: empty tag message" >&2; exit 1; }
+[[ "$(head -n 1 "$TAG_MSG_FILE")" == "Release v$VERSION" ]] || {
+    echo "FAIL: tag message header is wrong" >&2
+    exit 1
+}
+if grep -qE '\[(TODO|TBD|PASTE|N|M|K|J)\]' "$TAG_MSG_FILE"; then
+    echo "FAIL: tag message contains a placeholder" >&2
+    exit 1
+fi
+run git tag -a "v$VERSION" -F "$TAG_MSG_FILE"
+rm -f "$TAG_MSG_FILE"
 run git push origin "v$VERSION"
 
 # --- Verification doc -----------------------------------------------------
