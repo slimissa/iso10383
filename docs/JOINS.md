@@ -89,13 +89,17 @@ root = entry["operating_mic"]
 while root != entry["mic"]:
     entry = by_mic[root]
     root = entry["operating_mic"]
+```
 
-There is no separate parent_mic field or root_mic field. The
+There is no separate `parent_mic` field or `root_mic` field. The
 chain is computed, not stored. This is deliberate: storing the root
 would create a second value to keep in sync during a parent change.
 
-See docs/action_types.md for the full type system.
-What ISO 10383 does not answer
+See `docs/action_types.md` for the full type system.
+
+---
+
+## What ISO 10383 does not answer
 
 Three things a consumer may expect from a venue registry that this
 one does not contain:
@@ -120,17 +124,25 @@ all agreeing, 0 disagreements, 0 pairs GLEIF carries that SWIFT
 does not. No companion file ships. See
 `docs/mic_lei_source_format.md` and
 [ADR 0008](./decisions/0008-mic-lei-companion-declined.md).
-Reverse lookup
 
-For each sibling registry, which record resolves to a mic:
-Registry	Record	Field
-Exchange Calendar	exchanges/<file>.json	Top-level mic (or code)
-Asset Identifiers	identifiers.json → each entry	exchange, and listings[].exchange
-Corporate Actions	actions.json → each action (planned)	exchange
+---
+
+## Reverse lookup
+
+For each sibling registry, which record resolves to a `mic`:
+
+| Registry | Record | Field |
+|----------|--------|-------|
+| Exchange Calendar | `exchanges/<file>.json` | Top-level `mic` (or `code`) |
+| Asset Identifiers | `identifiers.json` → each entry | `exchange`, and `listings[].exchange` |
+| Corporate Actions | `actions.json` → each action (planned) | `exchange` |
 
 A consumer that finds a MIC in one of these fields and wants the
-full entry reads iso10383.json and looks up mics[] by mic.
-Editing this document
+full entry reads `iso10383.json` and looks up `mics[]` by `mic`.
+
+---
+
+## Editing this document
 
 A change to any edge — a new registry that references mic, or a
 change to an existing reference's granularity — is a change to this
@@ -141,5 +153,3 @@ a PR here or files an issue.
 This document is the leaf-side view of the join graph. Each
 consumer's README links to it. If the pattern moves to a shared
 location later, it moves with its history.
-
-The lei field on each entry carries SWIFT's published LEI for the operator, when SWIFT has one. GLEIF publishes a separate MIC-to-LEI Mapping Table monthly. See docs/mic_lei_source_format.md.
