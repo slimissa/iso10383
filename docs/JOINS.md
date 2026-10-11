@@ -24,14 +24,23 @@ The registry is at https://github.com/slimissa/iso10383.
 
 | Registry | Field | Granularity | Notes |
 |----------|-------|-------------|-------|
-| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files today. |
-| Asset Identifiers | each entry's `exchange` | Either | Primary listing venue. |
+| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files at v2.15.0: 68 active operating, 3 active segment, 3 expired here. |
+| Asset Identifiers | each entry's `exchange` | Either | Primary listing venue. Declared in its `schema.json`. |
 | Asset Identifiers | `listings[].exchange` | Either | Per-listing venue. |
 | Corporate Actions (planned) | each action's `exchange` | Either | Per action. Not yet implemented. |
 
 "Either" means the consumer does not state whether it means an
 *operating* MIC, a *segment* MIC, or tolerates both. The registry
 accepts any valid MIC on a join. The ambiguity is the consumer's.
+
+Two of the rows are verified against a schema, not against records.
+Asset Identifiers' public repository carries `schema.json` (which
+declares `exchange` and `listings[].exchange` as ISO 10383 MICs) and
+a test fixture, not identifier data: its CHANGELOG records, at
+[1.4.0] (2026-09-14), that real identifier data was removed from the
+public repository. Corporate Actions has an `actions.json` with 240
+actions as of 2026-10-11, and none carries an `exchange` field,
+which is why that row is marked planned.
 
 ---
 
@@ -45,9 +54,20 @@ holidays, the venue whose legal entity has an LEI.
 The distinction matters for three consumer patterns:
 
 **1. "The venue that closed for a holiday."** Exchange Calendar's
-model is per-exchange, and it uses the operating MIC. A segment MIC
-that closes independently of its operating MIC (rare, but the model
-allows it) is not visible from Exchange Calendar's current schema.
+model is per-exchange, and it carries segment MICs as well as
+operating MICs. Of its 74 MICs (v2.15.0, checked against this
+registry's 2026-09-23 data on 2026-10-11), 68 are active operating
+MICs, 3 are active segment MICs (`XATH` under `ASEX`, `XTKS` under
+`XJPX`, `XMAD` under `BMEX`), and 3 are operating MICs that are
+**expired** in this registry (`XJKT`, expired 2008-04-28; `XBSP`,
+2010-05-24; `XTAD`, 2005-09-26). The validator checks that each
+referenced MIC exists, never its type or status. A consumer that
+treats "the MIC exists" as "the MIC is active" will treat those
+three venues as live. Whether Exchange Calendar's entries for them
+are right is Exchange Calendar's question; this registry does not
+decide it. A segment MIC that closes independently of its operating
+MIC (rare, but the model allows it) is not visible from Exchange
+Calendar's current schema.
 
 **2. "The specific segment where this instrument trades."** Asset
 Identifiers' `listings[].exchange` should be a segment MIC in
@@ -134,7 +154,7 @@ For each sibling registry, which record resolves to a `mic`:
 | Registry | Record | Field |
 |----------|--------|-------|
 | Exchange Calendar | `exchanges/<file>.json` | Top-level `mic` (or `code`) |
-| Asset Identifiers | `identifiers.json` → each entry | `exchange`, and `listings[].exchange` |
+| Asset Identifiers | each record its `schema.json` describes (no `identifiers.json` in the public repository) | `exchange`, and `listings[].exchange` |
 | Corporate Actions | `actions.json` → each action (planned) | `exchange` |
 
 A consumer that finds a MIC in one of these fields and wants the
@@ -150,6 +170,8 @@ document in the same commit as the schema change on the consumer
 side. The consumer's PR adds the row; the consumer's PR also opens
 a PR here or files an issue.
 
-This document is the leaf-side view of the join graph. Each
-consumer's README links to it. If the pattern moves to a shared
-location later, it moves with its history.
+This document is the leaf-side view of the join graph. As of
+2026-10-11, Exchange Calendar's README links to it; the READMEs of
+Asset Identifiers and Corporate Actions do not. A consumer's README
+should link here when it adds an edge to `mic`. If the pattern moves
+to a shared location later, it moves with its history.

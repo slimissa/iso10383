@@ -101,8 +101,9 @@ commit; deferring it costs the next maintainer a session.
   the reconnaissance and the numbers
 - [`docs/decisions/v1.0.0-decisions.md`](./v1.0.0-decisions.md) D11 —
   the plan this ADR declines
-- [`docs/JOINS.md`](../JOINS.md) — the join graph. The GLEIF row
-  in the reverse-lookup table was added at Phase 0; the LEI
-  paragraph names the reconnaissance finding.
+- [`docs/JOINS.md`](../JOINS.md) — the join graph. Its "What ISO
+  10383 does not answer" section names the reconnaissance finding.
+  There is no GLEIF row in the reverse-lookup table: GLEIF is a
+  source of LEIs, not a registry that references `mic`.
 - GLEIF MIC-to-LEI Mapping Table, 2026-09-18 publication
 - ISO 10383 `iso10383.json` v1.0.4
