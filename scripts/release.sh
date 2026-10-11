@@ -7,10 +7,12 @@
 #
 # Refuses on:
 #   dirty tree / wrong branch / CHANGELOG section missing
+#   HEAD different from a freshly fetched origin/main
+#   VERSION already equal to the target
 #   version sites not in agreement AFTER regeneration
 #   failing test gate
 #   red CI on the pushed commit
-#   an already-existing tag
+#   an already-existing tag (local or on origin)
 #
 # Order of operations is deliberate. The version-consistency check
 # runs AFTER regeneration, because regeneration is what updates the
@@ -80,9 +82,21 @@ step "Preconditions"
 
 check_no_orphan_variables
 
+git fetch origin main \
+    || { echo "FAIL: git fetch origin main failed" >&2; exit 1; }
+echo "  fetched origin/main"
+
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 [[ "$BRANCH" == "main" ]] || { echo "FAIL: not on main ($BRANCH)" >&2; exit 1; }
 echo "  on branch: $BRANCH"
+
+LOCAL_SHA="$(git rev-parse HEAD)"
+REMOTE_SHA="$(git rev-parse origin/main)"
+[[ "$LOCAL_SHA" == "$REMOTE_SHA" ]] || {
+    echo "FAIL: HEAD ($LOCAL_SHA) != origin/main ($REMOTE_SHA)" >&2
+    exit 1
+}
+echo "  HEAD matches origin/main"
 
 if [[ -n "$(git status --porcelain)" ]]; then
     echo "FAIL: working tree is not clean" >&2
@@ -92,10 +106,18 @@ fi
 echo "  tree clean"
 
 if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-    echo "FAIL: tag v$VERSION already exists" >&2
+    echo "FAIL: tag v$VERSION already exists locally" >&2
     exit 1
 fi
-echo "  tag v$VERSION is free"
+# Capture the output instead of piping into grep -q: under pipefail,
+# grep -q can exit early and fail the pipeline even when the tag exists.
+REMOTE_TAG="$(git ls-remote --tags origin "refs/tags/v$VERSION")" \
+    || { echo "FAIL: git ls-remote against origin failed" >&2; exit 1; }
+if [[ -n "$REMOTE_TAG" ]]; then
+    echo "FAIL: tag v$VERSION already exists on origin" >&2
+    exit 1
+fi
+echo "  tag v$VERSION is free (local and origin)"
 
 grep -q "## \[$VERSION\]" CHANGELOG.md \
     || { echo "FAIL: CHANGELOG.md has no [${VERSION}] section" >&2; exit 1; }
@@ -108,6 +130,11 @@ step "Version sites"
 CURRENT="$(cat VERSION)"
 echo "  current VERSION: $CURRENT"
 echo "  new VERSION:     $VERSION"
+
+if [[ "$CURRENT" == "$VERSION" ]]; then
+    echo "FAIL: VERSION is already $VERSION" >&2
+    exit 1
+fi
 
 if [[ "$DRY_RUN" != "--dry-run" ]]; then
     echo "$VERSION" > VERSION
