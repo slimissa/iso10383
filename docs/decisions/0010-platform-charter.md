@@ -203,6 +203,26 @@ writes and `LAYERS.md` calls Layer 1.
 
 ---
 
+## Reopening condition
+
+Reopen this charter if any of these is found:
+
+1. **A consumer asks for a feature the Out of scope table does not
+   decide.** The table lists six features and where each was decided; a
+   seventh is a new decision, not an extension of this one.
+2. **A consumer shows a need this ADR says the tree does not show.**
+   The Consumers section records that nothing in the tree shows a
+   consumer that pays, requires wrapper publication, or needs updates
+   more often than SWIFT publishes. Evidence of any of the three
+   reopens the charter.
+3. **A non-deterministic component is attached to any layer.** The
+   Non-determinism section records that none exists today; adding one
+   makes the layer rule and the cognitive-layer boundary live questions.
+4. **`docs/LAYERS.md` changes a layer's definition.** This ADR defers to
+   it for vocabulary, so a change there is a change here.
+
+---
+
 ## References
 
 - [`README.md`](../../README.md)

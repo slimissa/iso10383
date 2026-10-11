@@ -765,9 +765,17 @@ Describe corruption in prose. Do not embed it.
 ## What this document does not cover
 
 - **How the type system works.** See `docs/action_types.md`.
-- **Why each architectural decision was made.** See the four ADRs
+- **Why each architectural decision was made.** See the twelve ADRs
   in `docs/decisions/` and the D-register in
   `docs/decisions/v1.0.0-decisions.md`.
+  **ADR section headers vary by ADR.** ADRs 0001–0009 open with
+  `## Context`; ADRs 0010–0012 open with `## Problem`. Every ADR
+  except 0001 has a `## Decision` section or numbered `## Decision N`
+  sections. Every ADR has `## Consequences`, `## Alternatives
+  considered` and `## References`; `## Rationale`, `## Open questions`,
+  `## Reopening condition`, addenda and amendments appear where the
+  ADR needs them. There is no uniform template, and no CI check
+  requires one.
 - **How the five layers relate.** See `docs/LAYERS.md`.
 - **How to refresh from a changed source file.** See
   `docs/PROVENANCE.md` § Refresh cadence.

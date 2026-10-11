@@ -182,6 +182,29 @@ times. Reading them adds cost and no information.
 
 ---
 
+## Reopening condition
+
+Reopen this ADR if any of these is found:
+
+1. **The read-surface table changes.** A file is added to it or removed
+   from it, a sibling registry adds a file an agent should consult, or a
+   file's version or freshness rule changes (for example a new vendored
+   snapshot, or a new `review_by` semantics).
+2. **The freshness checks the agent relies on change.** Decision 4
+   delegates staleness to the existing checks, so a change to
+   `check_registry_freshness.py`, `check_snapshot_freshness.py`, or their
+   thresholds changes what this ADR promises.
+3. **An agent is built.** The proposal schema and its validator are
+   separate, later work. Writing them amends this ADR with the real
+   schema in place of the sketch.
+4. **A check appears that fails when `docs/JOINS.md` or the decision view
+   drifts from the data.** The decision view is `docs/decisions/` and the
+   two reconnaissance documents. The Problem section records that no CI
+   gate covers them and Consequences names the check as the first thing
+   an agent needs. When it exists, this ADR records it.
+
+---
+
 ## References
 
 - [`docs/LAYERS.md`](../LAYERS.md)

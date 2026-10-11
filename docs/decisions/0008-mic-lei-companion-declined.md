@@ -95,6 +95,26 @@ commit; deferring it costs the next maintainer a session.
 
 ---
 
+## Reopening condition
+
+Reopen this decision if either of two set-based conditions is found,
+as stated in `docs/mic_lei_source_format.md` § What a future maintainer
+should do:
+
+1. **A MIC–LEI pair in GLEIF's file that `iso10383.json` does not
+   carry.** Even one such pair makes GLEIF a source of new data rather
+   than a duplicate of the `lei` field.
+2. **A MIC whose LEI differs between SWIFT's `lei` field and GLEIF's
+   file.** Even one disagreement makes the reconciliation a companion
+   would provide worth shipping.
+
+Neither condition is monitored by CI. A maintainer checks them by
+re-running the procedure in that document's Reproduction section on a
+current GLEIF publication. The 118 expired MICs and the two ACTIVE
+exceptions it names are not triggers.
+
+---
+
 ## References
 
 - [`docs/mic_lei_source_format.md`](../mic_lei_source_format.md) —
