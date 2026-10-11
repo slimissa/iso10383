@@ -476,7 +476,8 @@ Automated: [`.github/workflows/refresh.yml`](./.github/workflows/refresh.yml) ru
 Manual, if needed:
 
 ```bash
-python3 tools/fetch_swift_mic.py --download --force --strict
+python3 tools/fetch_swift_mic.py --download --force --strict \
+  --version "$(cat VERSION)"
 python3 tools/refresh_diff.py /tmp/iso10383.old.json iso10383.json
 python3 tools/export_csv.py
 python3 tools/export_sql.py

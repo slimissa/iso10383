@@ -73,7 +73,8 @@ Two reasons:
 By hand, or by the fetcher:
 
 ```bash
-python3 tools/fetch_swift_mic.py --download --force
+python3 tools/fetch_swift_mic.py --download --force \
+  --version "$(cat VERSION)"
 ```
 
 The download is the **only** network step in the entire build. Every
@@ -135,7 +136,8 @@ downstream consumer.
 By `tools/fetch_swift_mic.py`:
 
 ```bash
-python3 tools/fetch_swift_mic.py --raw raw/MIC_20260923.csv --snapshot-date 2026-09-23
+python3 tools/fetch_swift_mic.py --raw raw/MIC_20260923.csv \
+  --snapshot-date 2026-09-23 --version "$(cat VERSION)"
 ```
 
 The fetcher's contract:

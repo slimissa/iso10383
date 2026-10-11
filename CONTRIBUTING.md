@@ -359,7 +359,8 @@ If you believe a new field is warranted:
 3. Regenerate the registry and every artifact.
 
    ```bash
-   python3 tools/fetch_swift_mic.py --raw raw/MIC_YYYYMMDD.csv
+   python3 tools/fetch_swift_mic.py --raw raw/MIC_YYYYMMDD.csv \
+     --version "$(cat VERSION)"
    python3 tools/export_sql.py
    python3 tools/export_csv.py
    python3 tools/export_parquet.py
@@ -466,11 +467,13 @@ behavior: cross-registry gaps become warnings, not errors.
 If the automated refresh fails or you need to run it manually:
 
 ```bash
-python3 tools/fetch_swift_mic.py --download --force --strict
+python3 tools/fetch_swift_mic.py --download --force --strict \
+  --version "$(cat VERSION)"
 
 # Compare against the previous snapshot
 cp iso10383.json /tmp/old.json
-python3 tools/fetch_swift_mic.py --raw raw/MIC_new.csv
+python3 tools/fetch_swift_mic.py --raw raw/MIC_new.csv \
+  --version "$(cat VERSION)"
 python3 tools/refresh_diff.py /tmp/old.json iso10383.json
 ```
 
