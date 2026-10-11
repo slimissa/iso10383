@@ -12,6 +12,7 @@
 #   version sites not in agreement AFTER regeneration
 #   failing test gate
 #   red CI on the pushed commit
+#   the gh CLI missing (CI could not be polled, so nothing is tagged)
 #   an already-existing tag (local or on origin)
 #
 # Order of operations is deliberate. The version-consistency check
@@ -123,6 +124,12 @@ grep -q "## \[$VERSION\]" CHANGELOG.md \
     || { echo "FAIL: CHANGELOG.md has no [${VERSION}] section" >&2; exit 1; }
 echo "  CHANGELOG.md has [$VERSION]"
 
+command -v gh >/dev/null 2>&1 || {
+    echo "FAIL: gh CLI is required to poll CI before tagging" >&2
+    exit 1
+}
+echo "  gh CLI present"
+
 # --- Version sites ---------------------------------------------------------
 
 step "Version sites"
@@ -220,7 +227,7 @@ run git push origin main
 CI_POLL_INTERVAL=15
 CI_POLL_MAX=40
 
-if [[ "$DRY_RUN" != "--dry-run" ]] && command -v gh >/dev/null 2>&1; then
+if [[ "$DRY_RUN" != "--dry-run" ]]; then
     step "Waiting for CI"
 
     SHA="$(git rev-parse HEAD)"
