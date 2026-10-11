@@ -226,6 +226,8 @@ expand. `git check-ref-format` rejects the literal branch name. A step
 now writes `month` and `date` to `GITHUB_OUTPUT`, and the inputs use
 those.
 
-Not changed: the `meta.updated` / `meta.source_snapshot` ownership
-question (the fetcher sets them equal, `release.sh` writes
-`meta.updated` afterwards). That is a separate finding.
+Not changed: the `meta.updated` / `meta.source_snapshot` question.
+The fetcher always sets both to `--snapshot-date`, and no tool in the
+tree writes `meta.updated` afterwards (`release.sh` writes only
+`meta.version`), yet the committed file has them different. How they
+diverged is unexplained. That is a separate finding.
