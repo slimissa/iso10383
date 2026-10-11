@@ -261,7 +261,7 @@ Every MIC carries an ISO 3166-1 alpha-2 country code. `ZZ` is ISO 10383's placeh
 
 ## Data model
 
-Seventeen fields per entry. Five are always present; the rest may be `null`.
+Seventeen fields per entry. The schema requires ten keys to be present: `mic`, `mic_type`, `status` and `operating_mic` (never `null`), and `market_name`, `country_code`, `creation_date`, `last_update_date`, `last_validation_date` and `expiration_date` (present, but the schema allows `null`). The other seven are optional and nullable. In the 2026-09-23 data every entry carries all seventeen keys, and ten fields are never `null`: the four above plus `market_name`, `country_code`, `creation_date`, `last_update_date`, `market_category` and `city`.
 
 | Field | Type | Notes |
 |-------|------|-------|
@@ -362,13 +362,13 @@ Every lookup returns a fresh copy in Python and JavaScript; every lookup returns
 bash tools/check_cross_language.sh
 ```
 
-Runs all four test suites and exits 0 only when every wrapper produces the same answers for the same fixture cases.
+Runs the Python, JavaScript, Rust and Go suites, then `sync_wrappers.py --check`. A suite whose toolchain is not installed (`node`, `cargo` or `go`) prints `SKIP` and does not fail the script, so exit 0 means every suite that ran agreed, not that all four wrappers ran. The summary line says how many suites ran. Exit 1 means a suite failed; exit 2 means `python3` is missing.
 
 ---
 
 ## Command-line interface
 
-The `iso10383` command is installed by the Python wrapper. Nine subcommands:
+The CLI is `tools/iso10383_cli.py`, a repository artifact: it needs a checkout of this repository, and no wrapper installs it as a command. (The Python wrapper's `python -m iso10383` is a shim that looks for `tools/iso10383_cli.py` in a source checkout and exits 3 when it cannot find it.) The examples below write `iso10383` for `python3 tools/iso10383_cli.py`. Nine subcommands:
 
 | Subcommand | Purpose |
 |------------|---------|
@@ -623,6 +623,8 @@ iso10383/
 │   ├── JOINS.md                  # The MIC join graph from the leaf side
 │   ├── action_types.md           # OPERATING vs SEGMENT reference
 │   ├── source_format.md          # Verbatim source-file ground truth
+│   ├── mic_lei_source_format.md  # MIC→LEI reconnaissance (ADR 0008)
+│   ├── mic_bic_source_format.md  # MIC→BIC reconnaissance (ADR 0009)
 │   ├── exchange_calendar_mics.txt
 │   ├── v1.0.0-verification.md through v1.0.4-verification.md
 │   └── decisions/
@@ -633,7 +635,12 @@ iso10383/
 │       ├── 0004-market-category-codes.md
 │       ├── 0005-tag-discipline.md
 │       ├── 0006-ci-toolchain-parity.md
-│       └── 0007-cross-registry-allowlist.md
+│       ├── 0007-cross-registry-allowlist.md
+│       ├── 0008-mic-lei-companion-declined.md
+│       ├── 0009-mic-bic-companion-declined.md
+│       ├── 0010-platform-charter.md
+│       ├── 0011-reprocessing.md
+│       └── 0012-agent-read-surface.md
 │
 ├── iso10383.sql                  # ANSI SQL-92
 ├── iso10383.postgresql.sql       # PostgreSQL 12+
@@ -696,7 +703,7 @@ iso10383/
 │   └── test_scripts.py
 │
 └── .github/workflows/
-    ├── validate.yml              # Five jobs on every push
+    ├── validate.yml              # Six jobs on every push
     └── refresh.yml               # Monthly refresh, opens PR
 ```
 
@@ -726,7 +733,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). The short version:
 3. Run `python3 tools/validate.py` — must exit 0.
 4. Run `python3 -m pytest tests/ -q` — must pass.
 5. Run `bash tools/check_cross_language.sh` — must pass.
-6. Submit a PR. CI runs five jobs.
+6. Submit a PR. CI runs six jobs.
 
 **Source discipline.** SWIFT's published MIC file is the only accepted source. No third-party lists, no mirrors, no Wikipedia, no aggregators. If a value cannot be traced to the published file, the field stays `null`.
 
@@ -756,6 +763,7 @@ The MIC data in this registry is factual information sourced from SWIFT's publis
 ## What's next
 
 - **MIC→LEI companion** — investigated and declined at v1.1.0 Phase 0. The `lei` field on each entry carries the data; GLEIF's published mapping is a strict subset. See [`docs/decisions/0008-mic-lei-companion-declined.md`](./docs/decisions/0008-mic-lei-companion-declined.md).
+- **MIC→BIC companion** — investigated and declined at v1.2.0 Phase 0. SWIFT publishes no MIC-to-BIC mapping file; three first-party sources were checked, and `iso10383.json` has no `bic` field. See [`docs/decisions/0009-mic-bic-companion-declined.md`](./docs/decisions/0009-mic-bic-companion-declined.md).
 - **Wrapper publication** — publish the four wrappers to PyPI, npm, crates.io, and the Go module proxy. Turns "clone the repo" into `pip install iso10383-registry`. Trigger: a consumer tries to install one.
 
 No other work is planned. D14: no roadmap until the previous release shipped, and v1.0.4 has. The next release follows the first trigger that fires.

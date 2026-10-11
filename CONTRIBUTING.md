@@ -667,7 +667,7 @@ REMOVED:  0 (0 operating, 0 segment)
 5. **Open the PR.** The description should name the issue, explain
    the change, and include the output of the gate commands.
 
-6. **CI runs five jobs.** See `.github/workflows/validate.yml`:
+6. **CI runs six jobs.** See `.github/workflows/validate.yml`:
 
    | Job | Purpose |
    |-----|---------|
@@ -676,6 +676,7 @@ REMOVED:  0 (0 operating, 0 segment)
    | `check-cli` | CLI smoke test and CLI tests |
    | `check-wrappers` | Four-language matrix |
    | `check-cross-language` | Shared fixture across all four wrappers |
+   | `check-mojibake` | Scans committed files for UTF-8 / Latin-1 corruption |
 
    A red CI is a signal, not an obstacle. Read the failing job's log
    and fix the underlying issue. Do not push a second commit that
