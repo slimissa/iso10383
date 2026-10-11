@@ -184,7 +184,7 @@ two-level tree. See ADR [0002](./0002-operating-segment-model.md).
 ## What this ADR does not decide
 
 - Whether the registry bundles or fetches the JSON. See
-  [D15](../v1.0.0-decisions.md).
+  [D15](./v1.0.0-decisions.md).
 - Which market category codes belong in the enum. See
   [0004](./0004-market-category-codes.md).
 - How often the registry refreshes. See
