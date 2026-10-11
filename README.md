@@ -476,6 +476,9 @@ Automated: [`.github/workflows/refresh.yml`](./.github/workflows/refresh.yml) ru
 Manual, if needed:
 
 ```bash
+# Snapshot the old registry BEFORE anything runs
+cp iso10383.json /tmp/iso10383.old.json
+
 python3 tools/fetch_swift_mic.py --download --force --strict \
   --version "$(cat VERSION)"
 python3 tools/refresh_diff.py /tmp/iso10383.old.json iso10383.json
@@ -484,6 +487,7 @@ python3 tools/export_sql.py
 python3 tools/export_parquet.py
 python3 tools/sync_wrappers.py
 python3 tools/validate.py
+python3 tools/check_version_consistency.py
 python3 -m pytest tests/ -q
 ```
 

@@ -467,13 +467,13 @@ behavior: cross-registry gaps become warnings, not errors.
 If the automated refresh fails or you need to run it manually:
 
 ```bash
+# Snapshot the old registry BEFORE anything runs
+cp iso10383.json /tmp/old.json
+
 python3 tools/fetch_swift_mic.py --download --force --strict \
   --version "$(cat VERSION)"
 
 # Compare against the previous snapshot
-cp iso10383.json /tmp/old.json
-python3 tools/fetch_swift_mic.py --raw raw/MIC_new.csv \
-  --version "$(cat VERSION)"
 python3 tools/refresh_diff.py /tmp/old.json iso10383.json
 ```
 
