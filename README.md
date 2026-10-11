@@ -582,11 +582,11 @@ Wrapper package versions track the registry version.
 
 Releases are cut by [`scripts/release.sh`](./scripts/release.sh) `<version>`. The script:
 
-1. Verifies preconditions (clean tree, on `main`, `CHANGELOG` section present, tag free)
+1. Verifies preconditions (fetches `origin/main` and requires `HEAD` to equal it, clean tree, on `main`, `CHANGELOG` section present, `VERSION` differs from the target, tag free locally and on `origin`, `gh` installed)
 2. Bumps the eight version sites
 3. Regenerates all nine artifacts and four bundle copies
 4. Runs the version-consistency check
-5. Runs the full gate: validate, registry freshness, snapshot freshness, release-claims, three export `--check`s, sync, root tests, cross-language
+5. Runs the full gate: validate, registry freshness, snapshot freshness, mojibake, release-claims, ISO 3166 and Exchange Calendar drift (`--strict`), CLI check, three export `--check`s, sync, root tests, cross-language
 6. Commits, pushes, polls every per-push workflow
 7. Tags with a message derived from `CHANGELOG.md`
 8. Writes `docs/v<version>-verification.md` with both the commit SHA and the tag object SHA
@@ -673,7 +673,7 @@ iso10383/
 │   ├── check_cross_language.sh       # Four-wrapper agreement
 │   ├── check_iso3166_current.py      # Snapshot vs live sibling
 │   ├── check_exchange_calendar_current.py
-│   ├── check_iso4217_current.py
+│   ├── check_iso4217_current.py      # Not run: no ISO 4217 snapshot exists
 │   ├── gen_iso3166_snapshot.py
 │   ├── gen_exchange_calendar_snapshot.py
 │   ├── iso10383_cli.py               # CLI

@@ -6,6 +6,10 @@ Exit 1 if drifted and --strict.
 
 The ISO 4217 snapshot does not yet exist. This script exits 0 with a
 note when the snapshot is absent.
+
+Not run by CI or by scripts/release.sh. ISO 10383 has no currency
+field and no join to ISO 4217, so it carries no ISO 4217 snapshot.
+The file is retained in case a future consumer needs one.
 """
 
 import argparse

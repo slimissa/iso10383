@@ -213,6 +213,9 @@ run python3 tools/check_registry_freshness.py
 run python3 tools/check_snapshot_freshness.py
 run python3 tools/check_mojibake.py
 run python3 tools/check_release_claims.py "$VERSION"
+run python3 tools/check_iso3166_current.py --strict
+run python3 tools/check_exchange_calendar_current.py --strict
+run python3 tools/iso10383_cli.py check
 run python3 tools/export_csv.py --check
 run python3 tools/export_sql.py --check
 run python3 tools/export_parquet.py --check
@@ -344,6 +347,10 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
         echo "- \`tools/check_registry_freshness.py\` — pass"
         echo "- \`tools/check_snapshot_freshness.py\` — pass"
         echo "- \`tools/check_mojibake.py\` — pass"
+        echo "- \`tools/check_release_claims.py\` — pass"
+        echo "- \`tools/check_iso3166_current.py --strict\` — pass"
+        echo "- \`tools/check_exchange_calendar_current.py --strict\` — pass"
+        echo "- \`tools/iso10383_cli.py check\` — pass"
         echo "- \`tools/export_csv.py --check\` — pass"
         echo "- \`tools/export_sql.py --check\` — pass"
         echo "- \`tools/export_parquet.py --check\` — pass"
