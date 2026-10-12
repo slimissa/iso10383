@@ -262,6 +262,14 @@
     {
       "file": "tools/iso3166_snapshot.json",
       "contains": "\"source_version\": \"1.6.7\""
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "GATE_LOG"
+    },
+    {
+      "file": "scripts/release.sh",
+      "absent": "— pass\""
     }
   ]
 }

@@ -86,6 +86,20 @@ run()  {
     fi
 }
 
+# gate: run a gate command, record "<exit code>|<command>" for the
+# verification doc, and stop the release if it failed. The doc is written
+# from this log, so a gate added here cannot be missing from the doc.
+GATE_LOG=()
+gate() {
+    local rc=0
+    run "$@" || rc=$?
+    GATE_LOG+=("$rc|$*")
+    if [[ "$rc" -ne 0 ]]; then
+        echo "FAIL: gate failed (exit $rc): $*" >&2
+        exit "$rc"
+    fi
+}
+
 # --- Preconditions ---------------------------------------------------------
 
 step "Preconditions"
@@ -211,23 +225,23 @@ run python3 tools/sync_wrappers.py
 # --- Gate -----------------------------------------------------------------
 
 step "Version consistency (after regeneration)"
-run python3 tools/check_version_consistency.py
+gate python3 tools/check_version_consistency.py
 
 step "Validation gate"
-run python3 tools/validate.py
-run python3 tools/check_registry_freshness.py
-run python3 tools/check_snapshot_freshness.py
-run python3 tools/check_mojibake.py
-run python3 tools/check_release_claims.py "$VERSION"
-run python3 tools/check_iso3166_current.py --strict
-run python3 tools/check_exchange_calendar_current.py --strict
-run python3 tools/iso10383_cli.py check
-run python3 tools/export_csv.py --check
-run python3 tools/export_sql.py --check
-run python3 tools/export_parquet.py --check
-run python3 tools/sync_wrappers.py --check
-run python3 -m pytest tests/ -q
-run bash tools/check_cross_language.sh
+gate python3 tools/validate.py
+gate python3 tools/check_registry_freshness.py
+gate python3 tools/check_snapshot_freshness.py
+gate python3 tools/check_mojibake.py
+gate python3 tools/check_release_claims.py "$VERSION"
+gate python3 tools/check_iso3166_current.py --strict
+gate python3 tools/check_exchange_calendar_current.py --strict
+gate python3 tools/iso10383_cli.py check
+gate python3 tools/export_csv.py --check
+gate python3 tools/export_sql.py --check
+gate python3 tools/export_parquet.py --check
+gate python3 tools/sync_wrappers.py --check
+gate python3 -m pytest tests/ -q
+gate bash tools/check_cross_language.sh
 
 # --- Commit, push ---------------------------------------------------------
 
@@ -348,21 +362,13 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
         echo
         echo "## Gates"
         echo
-        echo "- \`tools/validate.py\` — pass"
-        echo "- \`tools/check_version_consistency.py\` — pass"
-        echo "- \`tools/check_registry_freshness.py\` — pass"
-        echo "- \`tools/check_snapshot_freshness.py\` — pass"
-        echo "- \`tools/check_mojibake.py\` — pass"
-        echo "- \`tools/check_release_claims.py\` — pass"
-        echo "- \`tools/check_iso3166_current.py --strict\` — pass"
-        echo "- \`tools/check_exchange_calendar_current.py --strict\` — pass"
-        echo "- \`tools/iso10383_cli.py check\` — pass"
-        echo "- \`tools/export_csv.py --check\` — pass"
-        echo "- \`tools/export_sql.py --check\` — pass"
-        echo "- \`tools/export_parquet.py --check\` — pass"
-        echo "- \`tools/sync_wrappers.py --check\` — pass"
-        echo "- \`pytest tests/\` — pass"
-        echo "- \`tools/check_cross_language.sh\` — pass"
+        echo "Exit codes, in the order the gates ran. A gate that failed would have stopped the release before this file was written."
+        echo
+        for g in "${GATE_LOG[@]}"; do
+            echo "- \`${g#*|}\` — exit ${g%%|*}"
+        done
+        echo
+        echo "Exit codes only. \`tools/check_cross_language.sh\` exits 0 when a toolchain is missing and its suite is skipped; this list does not record skips."
     } > "$DOC"
     git add "$DOC"
     git commit -m "docs: v$VERSION verification"
