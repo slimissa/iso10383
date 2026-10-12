@@ -83,9 +83,6 @@ must match `VERSION`. CI enforces this with
   document. ISO 10383's copy records this registry's divergences:
   one per-push workflow (the pattern assumes the general case), and
   the ADR 0005 tag-move exception.
-- `scripts/release.sh` preflight `check_no_orphan_variables` — warns
-  on variables that are expanded but never assigned. Catches the
-  class of failure that produced ISO 3166's v1.6.2 partial release.
 - ADR 0005 Scope section, citing `RELEASE_PATTERN.md`'s
   tag-immutability exception. Names both cases: pipeline-failure
   before verification, and post-tag-step failure.

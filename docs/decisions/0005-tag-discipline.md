@@ -137,11 +137,11 @@ three reasons:
 The procedure, in this exact order:
 
 ```bash
-# 1. Delete the tag locally
-git tag -d vX.Y.Z
-
-# 2. Delete the tag on the remote
+# 1. Delete the tag on the remote
 git push origin :refs/tags/vX.Y.Z
+
+# 2. Delete the tag locally
+git tag -d vX.Y.Z
 
 # 3. Recreate the tag on the correct commit
 TAG_MSG=$(python3 - <<'PY'

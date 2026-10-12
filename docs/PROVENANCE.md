@@ -376,8 +376,8 @@ validator. Pass `--advisory` to revert to the v1.0.0 behavior.
 
 ## Known gaps
 
-The following are documented, deliberate limitations of v0.1.0. They
-are tracked for future versions.
+The following are documented, deliberate limitations of the current
+release. They are tracked for future versions.
 
 ### Data coverage
 
@@ -422,12 +422,13 @@ are tracked for future versions.
 
 ### Distribution
 
-- **Wrappers are not published to PyPI, npm, or crates.io** at
-  v0.1.0. They install from the repository:
+- **Wrappers are not published to PyPI, npm, or crates.io.** They
+  install from the repository:
   `pip install -e wrappers/python`,
   `npm install ./wrappers/javascript`,
   `cargo add --path wrappers/rust`. The Go module resolves from git
-  via its own tag. Publication is planned for v1.0.0.
+  via its own tag. Publication waits for a consumer that needs it
+  (README, What's next).
 - **No HTML or XML distribution.** The source file is available as
   XLSX and XML from SWIFT; this registry publishes JSON, SQL, CSV,
   TSV, and Parquet only. If XLSX or XML is needed, use SWIFT's

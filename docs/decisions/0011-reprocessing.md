@@ -88,11 +88,11 @@ pipeline and the guard never fired. That history, and the claims it
 contradicted in ADR 0003, `docs/PROVENANCE.md`, the README, LAYERS and
 CONTRIBUTING, is recorded in the amendments of this ADR and ADR 0003.
 
-One wiring note remains open. ADR 0003 names
-`check_snapshot_freshness.py` as the 60-day gate (Decision 1 and
-References). The 60-day gate is `check_registry_freshness.py`.
-`check_snapshot_freshness.py` checks the `review_by` dates of the two
-Layer 4 snapshots.
+One wiring note was open when this ADR was written: ADR 0003 named
+`check_snapshot_freshness.py` as the 60-day gate. That name was right
+until v1.0.2 renamed the tool to `check_registry_freshness.py`, and
+ADR 0003 has since been corrected. `check_snapshot_freshness.py` now
+checks the `review_by` dates of the two Layer 4 snapshots.
 
 ### Guard rails compared
 
@@ -171,8 +171,8 @@ state. The workflow now marks the PR as a draft on a removal.
 - **The wiring defect is fixed** (Amendment, 2026-10-10). The removed
   MICs are still in the workflow log only, not in the PR body.
 - **ADR 0003 and the docs that described the guard** were corrected
-  on 2026-10-10. The wrong tool name in ADR 0003 (Decision 1 and
-  References) is not yet corrected.
+  on 2026-10-10. The stale tool name in ADR 0003 was corrected
+  afterwards.
 - **ADR 0010** defines the layer vocabulary used here.
 - **ADR 0012** defines what an agent may read of the registry. The
   refresh described here is the deterministic path it must not write

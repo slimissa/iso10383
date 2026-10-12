@@ -241,12 +241,13 @@ Reopen this charter if any of these is found:
 
 ## Amendment (2026-10-10)
 
-The original text said "Layer 1 is written only by
-`tools/fetch_swift_mic.py`." That was wrong: `scripts/release.sh`
-sets `meta.version` in `iso10383.json` when it cuts a release (the
-`d["meta"]["version"] = v` line in its version-bump step). The
-amendment names both writers and restricts `release.sh` to that one
-field.
+The third clause of the cognitive-layer boundary has been corrected
+in place; this amendment records why. Before the correction it read
+"Layer 1 is written only by `tools/fetch_swift_mic.py`." That was
+wrong: `scripts/release.sh` sets `meta.version` in `iso10383.json`
+when it cuts a release (the `d["meta"]["version"] = v` line in its
+version-bump step). The clause now names both writers and restricts
+`release.sh` to that one field.
 
 **Why Option A (amend the ADR) and not a new writer or a re-parse.** A
 version bump is a release-time concern, not a fetch-time one. Extracting

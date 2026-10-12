@@ -353,7 +353,7 @@ command. It does not apply to post-shipment discoveries (rule
 
 ## Operator hygiene
 
-Four rules that emerged from specific failure modes across the
+Five rules that emerged from specific failure modes across the
 three implementations.
 
 ### 1. No heredocs for multi-line scripts
@@ -385,23 +385,7 @@ other value.
 The failure mode: a tag created while the second workflow was
 still running. The tag landed on a commit that failed.
 
-### 4. Any construct that requires the shell to parse structure
-   goes into a file
-
-### 5. The exit code of a pipeline is the last command's exit
-
-`python3 tool.py | tail -3; echo $?` prints `tail`'s exit code,
-not `tool.py`'s. `tail` always succeeds. The failure is invisible.
-
-Redirect to a file, capture the exit code, then read the file:
-
-python3 tool.py > /tmp/out 2>&1
-echo "exit: $?"
-tail -3 /tmp/out
-
-The failure mode: a validator ran with a broken import, exited 1,
-and the piped `tail -3` printed `0`. The release proceeded with
-the validator broken.
+### 4. Any construct that requires the shell to parse structure goes into a file
 
 The class is not "multi-line constructs." It is "any construct
 that requires the shell to parse structure." A single-line
@@ -417,6 +401,21 @@ Run the file. Check the exit code. Then proceed.
 
 The failure mode: a `for` loop pasted into an interactive shell
 that referenced functions defined inside a script. Twice.
+
+### 5. The exit code of a pipeline is the last command's exit
+
+`python3 tool.py | tail -3; echo $?` prints `tail`'s exit code,
+not `tool.py`'s. `tail` always succeeds. The failure is invisible.
+
+Redirect to a file, capture the exit code, then read the file:
+
+python3 tool.py > /tmp/out 2>&1
+echo "exit: $?"
+tail -3 /tmp/out
+
+The failure mode: a validator ran with a broken import, exited 1,
+and the piped `tail -3` printed `0`. The release proceeded with
+the validator broken.
 
 ---
 

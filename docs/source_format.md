@@ -3,7 +3,7 @@
 **Source URL:** https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv
 **Downloaded:** 2026-09-23
 **Size:** 589,482 bytes
-**Data rows:** [output of the Python script's "rows:" line]
+**Data rows:** 2883
 
 ## File format
 
@@ -18,6 +18,7 @@
 
 ## Verbatim column headers (17 columns)
 
+```text
 1 MIC
 2 OPERATING MIC
 3 OPRT/SGMT
@@ -35,7 +36,7 @@
 15 LAST VALIDATION DATE
 16 EXPIRY DATE
 17 COMMENTS
-text
+```
 
 
 Mapping to JSON field names (from `v1.0.0-decisions.md`):
@@ -62,26 +63,45 @@ Mapping to JSON field names (from `v1.0.0-decisions.md`):
 
 ## OPRT/SGMT value set
 
+```text
 1594 OPRT
 1289 SGMT
-text
+```
 
 
 Two values. **Confirms D5**: `mic_type` ∈ {OPERATING, SEGMENT}.
 
 ## STATUS value set
 
-2096 ACTIVE
-527 EXPIRED
-19 UPDATED
-text
+```text
+2296 ACTIVE
+566 EXPIRED
+21 UPDATED
+```
 
 
 Three values. **Confirms D2**: `status` ∈ {ACTIVE, UPDATED, EXPIRED}.
 
 ## MARKET CATEGORY CODE value set
 
-[paste output of the Python script's MARKET CATEGORY section]
+```text
+1307 NSPD
+381 MLTF
+351 SINT
+303 RMKT
+143 ATSS
+129 OTHR
+128 OTFS
+30 CASP
+30 SEFS
+27 RMOS
+26 APPA
+22 DCMS
+5 TRFS
+1 IDQS
+```
+
+The file uses 14 of the 16 codes in the ISO 10383 category set; `ARMS` and `CTPS` do not occur.
 
 
 ## Self-reference case
@@ -122,7 +142,7 @@ download date: **2026-09-23**.
 
 ## Consequences for Phase 2 (schema)
 
-1. The `market_category` enum is the set shown above, closed.
+1. The `market_category` enum is the 16-code ISO set, closed (the file uses 14 of them).
 2. The `status` enum is `{ACTIVE, UPDATED, EXPIRED}`, closed.
 3. The `mic_type` enum is `{OPERATING, SEGMENT}`, closed.
 4. `operating_mic` has the same `^[A-Z0-9]{4}$` pattern as `mic` and is

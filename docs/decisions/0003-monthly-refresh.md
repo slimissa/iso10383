@@ -44,7 +44,7 @@ publication day.
 ## Decision 1 — Freshness gate at 60 days
 
 CI fails if `meta.source_snapshot` is more than **60 days old**.
-Enforced by `tools/check_snapshot_freshness.py`.
+Enforced by `tools/check_registry_freshness.py`.
 
 Sixty days is one full missed cycle. A snapshot that is 60 days old
 means the refresh process did not run in September *or* October. That
@@ -64,7 +64,7 @@ mid-month query without a false failure.
 ### How it is enforced
 
 ```bash
-python3 tools/check_snapshot_freshness.py
+python3 tools/check_registry_freshness.py
 ```
 
 Reads `iso10383.json`'s `meta.source_snapshot`, computes the age in
@@ -176,7 +176,7 @@ against a synthetic fixture older than 60 days.
 
 ### For the release script
 
-`scripts/release.sh` runs `check_snapshot_freshness.py` as part of
+`scripts/release.sh` runs `check_registry_freshness.py` as part of
 its gate. A release cannot be cut against a stale snapshot.
 
 ### For the tests
@@ -285,7 +285,7 @@ requires a code change, not a silent absorb. This is intentional.
 - ADR [0001](./0001-source-format.md) — source format
 - `docs/PROVENANCE.md` § Refresh cadence
 - `docs/LAYERS.md` § Layer 1
-- `tools/check_snapshot_freshness.py`
+- `tools/check_registry_freshness.py`
 - `tools/refresh_diff.py`
 - `.github/workflows/refresh.yml`
 - ISO 10383 FAQ (publication cadence)

@@ -629,7 +629,7 @@ python3 tools/sync_wrappers.py
 
 **How:** `tools/validate.py` layer 4.
 
-**Failure mode:** warnings on stderr. Exit 0 unless `--strict`.
+**Failure mode:** errors by default (exit 1). `--advisory` downgrades them to warnings. The list of tolerated gaps, `KNOWN_EXCHANGE_CALENDAR_GAPS`, is empty.
 
 **Examples:**
 
@@ -661,7 +661,7 @@ Every CI job maps to a layer.
 | Job | Layer | Command | Fails on |
 |-----|-------|---------|----------|
 | `validate-json` | 1 | `tools/validate.py` | Data error, schema violation |
-| `validate-json` | 1 | `tools/check_snapshot_freshness.py` | `source_snapshot` older than 60 days |
+| `validate-json` | 1 | `tools/check_registry_freshness.py` | `source_snapshot` older than 60 days |
 | `validate-json` | 1 | `tools/check_version_consistency.py` | Any of eight version sites disagree |
 | `check-exports` | 2 | `export_*.py --check` (×3) | Stale artifact |
 | `check-exports` | 3 | `sync_wrappers.py --check` | Bundle drift |
