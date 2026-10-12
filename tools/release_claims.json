@@ -1,5 +1,5 @@
 {
-  "_comment": "Machine-checkable claims per CHANGELOG version. Each entry is {file, contains} or {file, absent}. release.sh and CI run tools/check_release_claims.py against the version being checked; any failing claim stops the release. A missing manifest for a released version is a hard error.",
+  "_comment": "Machine-checkable claims per CHANGELOG version. Each entry is {file, contains} or {file, absent} (both may be combined; any other key is an error). Version keys hold claims about one release. The doc-facts key holds claims about the documentation, checked on every run. release.sh and CI run tools/check_release_claims.py against the version being checked; any failing claim stops the release. A missing manifest for a released version is a hard error.",
   "1.0.3": [
     {
       "file": "scripts/release.sh",
@@ -43,6 +43,169 @@
     {
       "file": "CHANGELOG.md",
       "contains": "## [1.0.4]"
+    }
+  ],
+  "doc-facts": [
+    {
+      "file": "README.md"
+    },
+    {
+      "file": "README.md",
+      "contains": "CI runs six jobs"
+    },
+    {
+      "file": "README.md",
+      "absent": "five jobs"
+    },
+    {
+      "file": "README.md",
+      "absent": "Five jobs"
+    },
+    {
+      "file": "README.md",
+      "absent": "installed by the Python wrapper"
+    },
+    {
+      "file": "README.md",
+      "contains": "no wrapper installs it as a command"
+    },
+    {
+      "file": "README.md",
+      "absent": "Five are always present"
+    },
+    {
+      "file": "README.md",
+      "contains": "0012-agent-read-surface.md"
+    },
+    {
+      "file": "CONTRIBUTING.md"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "CI runs six jobs"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "five jobs"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "check-mojibake"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "four ADRs"
+    },
+    {
+      "file": "docs/decisions/0003-monthly-refresh.md"
+    },
+    {
+      "file": "docs/decisions/0003-monthly-refresh.md",
+      "contains": "check_registry_freshness.py"
+    },
+    {
+      "file": "docs/decisions/0003-monthly-refresh.md",
+      "absent": "check_snapshot_freshness.py"
+    },
+    {
+      "file": "docs/LAYERS.md"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "contains": "check_registry_freshness.py"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "absent": "check_snapshot_freshness.py"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "absent": "Exit 0 unless"
+    },
+    {
+      "file": "docs/source_format.md"
+    },
+    {
+      "file": "docs/source_format.md",
+      "contains": "2296 ACTIVE"
+    },
+    {
+      "file": "docs/source_format.md",
+      "absent": "2096 ACTIVE"
+    },
+    {
+      "file": "docs/source_format.md",
+      "absent": "[output of"
+    },
+    {
+      "file": "docs/source_format.md",
+      "absent": "[paste output"
+    },
+    {
+      "file": "docs/PROVENANCE.md"
+    },
+    {
+      "file": "docs/PROVENANCE.md",
+      "absent": "v0.1.0"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.0.1]"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.0.0]"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [0.1.0]"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "Deferred from v1.0.2"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "absent": "v1.6.2 partial release.\n- ADR 0005 Scope section"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "absent": "Four rules that emerged"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "### 4. Any construct that requires the shell to parse structure goes into a file\n\nThe class is not"
+    },
+    {
+      "file": "docs/decisions/0005-tag-discipline.md",
+      "contains": "# 1. Delete the tag on the remote"
+    },
+    {
+      "file": "docs/decisions/0005-tag-discipline.md",
+      "absent": "# 1. Delete the tag locally"
+    },
+    {
+      "file": "docs/decisions/0010-platform-charter.md",
+      "absent": "The original text said"
+    },
+    {
+      "file": "docs/decisions/0011-reprocessing.md",
+      "absent": "One wiring note remains open"
+    },
+    {
+      "file": "docs/decisions/0008-mic-lei-companion-declined.md",
+      "absent": "was added at Phase 0"
+    },
+    {
+      "file": "docs/JOINS.md",
+      "contains": "## Reverse lookup"
+    },
+    {
+      "file": "docs/JOINS.md",
+      "absent": "uses the operating MIC"
     }
   ]
 }

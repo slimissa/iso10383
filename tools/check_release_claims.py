@@ -9,6 +9,19 @@ Each claim is one of:
 
   {"file": "path"}                     — path must exist
   {"file": "path", "contains": "text"} — path must exist and include text
+  {"file": "path", "absent": "text"}   — path must not include text
+                                         (a missing path passes; pair the
+                                         claim with a {"file": "path"}
+                                         claim to require the path)
+
+`contains` and `absent` may be combined in one claim. Any other key is
+an error: a misspelled key must not silently weaken a claim.
+
+The manifest holds two kinds of section: one list of claims per
+released version (checked only for the version named on the command
+line), and a "doc-facts" list checked on every run. Doc-facts are
+claims about the documentation that must stay true on every commit:
+counts, tool names, version strings, structural markers.
 
 Usage:
     python3 tools/check_release_claims.py 1.6.5
@@ -47,18 +60,52 @@ def load_manifest() -> dict:
         raise FatalError(f"{MANIFEST}: invalid JSON: {exc}") from exc
 
 
+ALLOWED_KEYS = {"file", "contains", "absent"}
+DOC_FACTS_KEY = "doc-facts"
+
+
+def describe_claim(claim: object) -> str:
+    if not isinstance(claim, dict):
+        return f"not an object: {claim!r}"
+    parts = [str(claim.get("file", "<no file>"))]
+    if "contains" in claim:
+        parts.append(f"contains {claim['contains']!r}")
+    if "absent" in claim:
+        parts.append(f"absent {claim['absent']!r}")
+    if len(parts) == 1:
+        parts.append("exists")
+    return ": ".join([parts[0], ", ".join(parts[1:])])
+
+
 def check_claim(claim: dict) -> tuple[bool, str]:
     if "file" not in claim:
         return False, "claim has no 'file' key"
+    unknown = sorted(set(claim) - ALLOWED_KEYS)
+    if unknown:
+        return False, (f"{claim['file']}: unknown claim key(s) {unknown}; "
+                       f"allowed: contains, absent")
     path = PROJECT_ROOT / claim["file"]
     if not path.exists():
+        if "absent" in claim and "contains" not in claim:
+            return True, (f"{claim['file']} is missing, so it does not "
+                          f"contain {claim['absent']!r}")
         return False, f"missing file: {claim['file']}"
+    text = path.read_text(encoding="utf-8")
+    notes = []
     if "contains" in claim:
         needle = claim["contains"]
-        if needle not in path.read_text(encoding="utf-8"):
+        if needle not in text:
             return False, f"{claim['file']} does not contain {needle!r}"
-        return True, f"{claim['file']} contains {needle!r}"
-    return True, f"{claim['file']} exists"
+        notes.append(f"contains {needle!r}")
+    if "absent" in claim:
+        needle = claim["absent"]
+        if needle in text:
+            return False, (f"{claim['file']} contains {needle!r}, "
+                           f"which must be absent")
+        notes.append(f"does not contain {needle!r}")
+    if not notes:
+        return True, f"{claim['file']} exists"
+    return True, f"{claim['file']} " + " and ".join(notes)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -80,12 +127,26 @@ def main(argv: list[str] | None = None) -> int:
     if not isinstance(claims, list):
         raise FatalError(f"claims for {args.version} is not a list")
 
+    doc_facts = manifest.get(DOC_FACTS_KEY, [])
+    if not isinstance(doc_facts, list):
+        raise FatalError(f"{DOC_FACTS_KEY!r} is not a list")
+
+    labelled = [(args.version, c) for c in claims]
+    labelled += [(DOC_FACTS_KEY, c) for c in doc_facts]
+
+    if args.list:
+        for section, claim in labelled:
+            print(f"[{section}] {describe_claim(claim)}")
+        return 0
+
     results = []
-    for claim in claims:
+    for section, claim in labelled:
+        prefix = "" if section == args.version else f"[{section}] "
         if not isinstance(claim, dict):
-            results.append((False, f"not an object: {claim!r}"))
+            results.append((False, f"{prefix}not an object: {claim!r}"))
             continue
-        results.append(check_claim(claim))
+        ok, detail = check_claim(claim)
+        results.append((ok, prefix + detail))
 
     if args.json:
         print(json.dumps({
