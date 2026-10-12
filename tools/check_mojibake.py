@@ -29,6 +29,11 @@ A file can opt out of scanning by placing the marker
 `# mojibake-scan: skip` within its first 200 bytes. Intended for test
 fixtures that deliberately contain corrupted bytes.
 
+Markdown files get a second rule: the number of code-fence lines (lines
+that begin with three backticks) must be even. An odd count means a
+fence was opened and never closed, so everything after it renders as
+code. The same skip marker applies.
+
 Scanned extensions: md, txt, json, jsonl, py, sh, js, ts, rs, go, toml,
 yaml, yml, csv, tsv, sql, html, cfg, ini.
 
@@ -152,6 +157,48 @@ def scan_file(path: Path) -> list[tuple[int, bytes]]:
     return deduped
 
 
+FENCE = "`" * 3
+
+
+def count_fences(path: Path) -> Optional[int]:
+    """Number of code-fence lines in a Markdown file.
+
+    A fence line is a line that begins, after any indentation, with three
+    backticks. Returns None for non-Markdown files, unreadable files, and
+    files carrying the skip marker.
+    """
+    if path.suffix.lower() != ".md":
+        return None
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return None
+    if SKIP_MARKER in data[:SKIP_MARKER_WINDOW]:
+        return None
+    text = data.decode("utf-8", errors="replace")
+    return sum(1 for line in text.splitlines()
+               if line.lstrip().startswith(FENCE))
+
+
+def report_fences(root: Path, odd_fences: dict[Path, int]) -> str:
+    if not odd_fences:
+        return ""
+    rule = "=" * 78
+    lines = [rule, "  Unbalanced code fences", rule]
+    for path in sorted(odd_fences):
+        try:
+            rel = path.relative_to(root)
+        except ValueError:
+            rel = path
+        lines.append(f"  {rel}: {odd_fences[path]} fence line(s) "
+                     f"(odd: a fence is never closed)")
+    lines.append(rule)
+    lines.append(f"  FAIL: {len(odd_fences)} Markdown file(s) with an "
+                 f"unclosed code fence")
+    lines.append(rule)
+    return "\n".join(lines)
+
+
 def report_text(
     root: Path,
     hits_by_file: dict[Path, list[tuple[int, bytes]]],
@@ -201,12 +248,22 @@ def report_json(
     root: Path,
     hits_by_file: dict[Path, list[tuple[int, bytes]]],
     files_scanned: int,
+    odd_fences: Optional[dict[Path, int]] = None,
 ) -> str:
     payload = {
         "root": str(root),
         "files_scanned": files_scanned,
         "files_with_hits": len(hits_by_file),
         "total_hits": sum(len(h) for h in hits_by_file.values()),
+        "unbalanced_fences": [
+            {
+                "file": str(path.relative_to(root))
+                if path.is_relative_to(root)
+                else str(path),
+                "fence_lines": n,
+            }
+            for path, n in sorted((odd_fences or {}).items())
+        ],
         "hits": [
             {
                 "file": str(path.relative_to(root))
@@ -277,12 +334,21 @@ def main(argv: Optional[list[str]] = None) -> int:
                 rel = path
             print(f"  ok  {rel}")
 
+    odd_fences: dict[Path, int] = {}
+    for path in sorted(files):
+        n = count_fences(path)
+        if n is not None and n % 2:
+            odd_fences[path] = n
+
     if args.json:
-        print(report_json(root, hits_by_file, len(files)))
+        print(report_json(root, hits_by_file, len(files), odd_fences))
     else:
         print(report_text(root, hits_by_file, len(files), args.verbose))
+        fence_report = report_fences(root, odd_fences)
+        if fence_report:
+            print(fence_report)
 
-    return EXIT_FOUND if hits_by_file else EXIT_OK
+    return EXIT_FOUND if (hits_by_file or odd_fences) else EXIT_OK
 
 
 if __name__ == "__main__":

@@ -15,5 +15,6 @@ for (const seg of reg.segments("XJPX")) {
 
 console.log(reg.operatingMic("XTKS"));       // XJPX
 console.log(reg.expired("2024-01-01").length);
+```
 
 No dependencies. No network. The bundled snapshot ships with the package.

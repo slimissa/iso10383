@@ -21,5 +21,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+```
 
 No runtime file dependency. The snapshot is embedded via include_str!.

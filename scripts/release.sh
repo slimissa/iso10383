@@ -25,7 +25,7 @@
 # export_sql, export_parquet, sync_wrappers) regenerate thirteen
 # artifacts: nine distribution exports and four wrapper copies of
 # iso10383.json. check_version_consistency.py then compares all
-# eight version sites. Each generator is re-run with --check in the
+# nine version sites. Each generator is re-run with --check in the
 # gate; that catches a generator that is not deterministic, not
 # drift against HEAD (the files were just regenerated). See
 # RELEASE_PATTERN.md, "Two shapes of step 4".
@@ -170,6 +170,12 @@ p.write_text(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False) + "\\n"
 # wrappers/python/pyproject.toml
 p = Path("wrappers/python/pyproject.toml")
 p.write_text(re.sub(r'^version\s*=\s*"[^"]+"', f'version = "{v}"',
+                    p.read_text(encoding="utf-8"), count=1, flags=re.M),
+             encoding="utf-8")
+
+# wrappers/python/src/iso10383/__init__.py -> __version__
+p = Path("wrappers/python/src/iso10383/__init__.py")
+p.write_text(re.sub(r'^__version__\s*=\s*"[^"]+"', f'__version__ = "{v}"',
                     p.read_text(encoding="utf-8"), count=1, flags=re.M),
              encoding="utf-8")
 

@@ -206,6 +206,62 @@
     {
       "file": "docs/JOINS.md",
       "absent": "uses the operating MIC"
+    },
+    {
+      "file": "README.md",
+      "contains": "tests-156"
+    },
+    {
+      "file": "README.md",
+      "contains": "One version number, nine sites"
+    },
+    {
+      "file": "README.md",
+      "absent": "eight sites"
+    },
+    {
+      "file": "README.md",
+      "contains": "wrappers/python/src/iso10383/__init__.py"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "Bumps the nine version sites"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "eight version sites"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "contains": "Any of nine version sites"
+    },
+    {
+      "file": "docs/PROVENANCE.md",
+      "contains": "One version number, nine sites"
+    },
+    {
+      "file": "docs/PROVENANCE.md",
+      "absent": "eight sites"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "ISO 10383 (`scripts/release.sh`, nine version sites"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "nine version sites"
+    },
+    {
+      "file": "wrappers/python/src/iso10383/__init__.py",
+      "absent": "\"0.1.0\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.json",
+      "absent": "\"1.5.2\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.json",
+      "contains": "\"source_version\": \"1.6.7\""
     }
   ]
 }

@@ -11,6 +11,12 @@ Three states for review_by:
   "closed"               -> never checked (static snapshot)
   null or missing        -> warn, do not fail
 
+Version agreement: when both the snapshot and its sibling .meta.json
+declare a source_version, the two must be equal. A snapshot that says
+it came from one version while its metadata says another is a
+provenance claim nothing else would catch. A snapshot that declares no
+source_version (the Exchange Calendar snapshot) is not compared.
+
 Exit codes:
   0  every snapshot fresh (warnings allowed)
   1  at least one snapshot past its review_by date
@@ -53,11 +59,19 @@ def read_review_by(snapshot: Path) -> tuple[str | None, str]:
     return value, f"{snapshot.name} (embedded)"
 
 
-def main() -> int:
+def read_version_pair(snapshot: Path) -> tuple[str | None, str | None]:
+    """Return (snapshot source_version, sibling meta source_version)."""
+    data = load_json(snapshot)
+    sibling = snapshot.parent / (snapshot.stem + ".meta.json")
+    meta = load_json(sibling) if sibling.is_file() else {}
+    return data.get("source_version"), meta.get("source_version")
+
+
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--today", default=date.today().isoformat(),
                    help="Override today's date (YYYY-MM-DD). For tests.")
-    args = p.parse_args()
+    args = p.parse_args(argv)
 
     try:
         today = datetime.strptime(args.today, "%Y-%m-%d").date()
@@ -76,6 +90,15 @@ def main() -> int:
 
     for snap in snapshots:
         review_by, source_label = read_review_by(snap)
+
+        snap_version, meta_version = read_version_pair(snap)
+        if snap_version and meta_version and snap_version != meta_version:
+            failures.append(
+                f"[snapshot] {snap.name}: source_version mismatch: the "
+                f"snapshot declares {snap_version}, its metadata declares "
+                f"{meta_version}"
+            )
+            continue
 
         if review_by == "closed":
             fresh += 1

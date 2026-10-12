@@ -557,7 +557,7 @@ The script:
 
 1. Verifies preconditions: clean tree, on `main`, no existing tag,
    `CHANGELOG.md` has a `[<version>]` section.
-2. Bumps the eight version sites.
+2. Bumps the nine version sites.
 3. Regenerates all nine Layer 2 artifacts and all four Layer 3
    bundles.
 4. Runs the full gate: validator, freshness, three export `--check`

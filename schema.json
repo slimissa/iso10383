@@ -259,5 +259,6 @@
     "mics"
   ],
   "title": "ISO 10383 MIC Registry",
-  "type": "object"
+  "type": "object",
+  "version": "1.0.0"
 }

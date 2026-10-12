@@ -24,6 +24,7 @@ func main() {
     fmt.Println(reg.OperatingMIC("XTKS"))          // XJPX
     fmt.Println(len(reg.Expired("2024-01-01")))
 }
+```
 
 No dependencies outside the standard library. No network. The
 bundled snapshot is embedded via //go:embed.

@@ -11,7 +11,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-150-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-156-success.svg)](./tests/)
 
 ---
 
@@ -531,12 +531,12 @@ Only Layer 0 cannot be regenerated from the repository. **Back up `raw/`.**
 
 | Suite | Tests |
 |-------|-------|
-| Python (root) | 71 |
+| Python (root) | 77 |
 | Python (wrapper) | 19 |
 | JavaScript | 21 |
 | Rust | 19 |
 | Go | 20 |
-| **Total** | **150** |
+| **Total** | **156** |
 
 ```bash
 python3 -m pytest tests/ -q                    # root
@@ -555,18 +555,19 @@ Tests must not hardcode fixture values. Every assertion reads its expected value
 
 ## Versioning
 
-One version number, eight sites, all enforced by [`tools/check_version_consistency.py`](./tools/check_version_consistency.py):
+One version number, nine sites, all enforced by [`tools/check_version_consistency.py`](./tools/check_version_consistency.py):
 
 - `VERSION` (text file, the source of truth)
 - `CHANGELOG.md` top released heading
 - `iso10383.json` → `meta.version`
 - `iso10383.parquet` footer → `iso10383.version`
 - `wrappers/python/pyproject.toml`
+- `wrappers/python/src/iso10383/__init__.py` → `__version__`
 - `wrappers/javascript/package.json`
 - `wrappers/rust/Cargo.toml`
 - `README.md` badge
 
-CI fails if any disagree.
+CI fails if any disagree. The schema has its own version (`schema.json` → `version`), checked against the schema badge.
 
 The registry follows [Semantic Versioning](https://semver.org/):
 
@@ -583,7 +584,7 @@ Wrapper package versions track the registry version.
 Releases are cut by [`scripts/release.sh`](./scripts/release.sh) `<version>`. The script:
 
 1. Verifies preconditions (fetches `origin/main` and requires `HEAD` to equal it, clean tree, on `main`, `CHANGELOG` section present, `VERSION` differs from the target, tag free locally and on `origin`, `gh` installed)
-2. Bumps the eight version sites
+2. Bumps the nine version sites
 3. Regenerates all nine artifacts and four bundle copies
 4. Runs the version-consistency check
 5. Runs the full gate: validate, registry freshness, snapshot freshness, mojibake, release-claims, ISO 3166 and Exchange Calendar drift (`--strict`), CLI check, three export `--check`s, sync, root tests, cross-language

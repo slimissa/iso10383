@@ -438,13 +438,14 @@ release. They are tracked for future versions.
 
 ## Versioning
 
-One version number, eight sites:
+One version number, nine sites:
 
 - `VERSION` (text file, the source of truth)
 - `CHANGELOG.md` top released heading
 - `iso10383.json` → `meta.version`
 - `iso10383.parquet` footer → `iso10383.version`
 - `wrappers/python/pyproject.toml` → `version`
+- `wrappers/python/src/iso10383/__init__.py` → `__version__`
 - `wrappers/javascript/package.json` → `version`
 - `wrappers/rust/Cargo.toml` → `version`
 - `README.md` badge

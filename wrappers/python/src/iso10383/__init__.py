@@ -3,4 +3,4 @@
 from .registry import MIC, MICRegistry
 
 __all__ = ["MIC", "MICRegistry"]
-__version__ = "0.1.0"
+__version__ = "1.0.4"

@@ -662,7 +662,7 @@ Every CI job maps to a layer.
 |-----|-------|---------|----------|
 | `validate-json` | 1 | `tools/validate.py` | Data error, schema violation |
 | `validate-json` | 1 | `tools/check_registry_freshness.py` | `source_snapshot` older than 60 days |
-| `validate-json` | 1 | `tools/check_version_consistency.py` | Any of eight version sites disagree |
+| `validate-json` | 1 | `tools/check_version_consistency.py` | Any of nine version sites disagree |
 | `check-exports` | 2 | `export_*.py --check` (×3) | Stale artifact |
 | `check-exports` | 3 | `sync_wrappers.py --check` | Bundle drift |
 | `check-cli` | 1 | `iso10383_cli.py check` | Registry invariants |
