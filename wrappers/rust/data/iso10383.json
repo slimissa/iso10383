@@ -2,17 +2,17 @@
   "meta": {
     "broken_chains": [],
     "counts": {
-      "active": 2296,
-      "expired": 566,
-      "operating": 1594,
-      "segment": 1289,
-      "total": 2883,
-      "updated": 21
+      "active": 2313,
+      "expired": 574,
+      "operating": 1596,
+      "segment": 1293,
+      "total": 2889,
+      "updated": 2
     },
-    "source_hash": "sha256:79de0f7704e260bd49b0d2439f3084891cabc93481da8bdbaa716e15a27211ed",
-    "source_snapshot": "2026-09-23",
+    "source_hash": "sha256:09a0d07b7b8348147453a2d8b18bc6638e3c5b16f749462582c9b1edf0fd0e38",
+    "source_snapshot": "2026-10-15",
     "source_url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv",
-    "updated": "2026-09-23",
+    "updated": "2026-10-15",
     "version": "1.0.4"
   },
   "mics": [
@@ -6150,7 +6150,7 @@
       "mic_type": "OPERATING",
       "note": null,
       "operating_mic": "BSEE",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "HTTPS://MADRIDSA.ES/"
     },
     {
@@ -8829,7 +8829,7 @@
       "mic_type": "OPERATING",
       "note": null,
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -9629,6 +9629,25 @@
       "operating_mic": "CMSF",
       "status": "ACTIVE",
       "website": "WWW.CLEAR-MARKETS.COM"
+    },
+    {
+      "acronym": null,
+      "city": "PRAGUE",
+      "country_code": "CZ",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "COINMATE A.S.",
+      "lei": "3157005QCM6Y91CUV844",
+      "market_category": "CASP",
+      "market_name": "COINMATE",
+      "mic": "CMTE",
+      "mic_type": "OPERATING",
+      "note": "TRADING PLATFORM FOR CRYPTO-ASSETS OPERATED BY A CASP AUTHORISED BY THE CZECH NATIONAL BANK UNDER REGULATION (EU) 2023/1114 (MICA).",
+      "operating_mic": "CMTE",
+      "status": "ACTIVE",
+      "website": "HTTPS://COINMATE.IO/EN"
     },
     {
       "acronym": null,
@@ -10748,7 +10767,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE LIMIT VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10767,7 +10786,7 @@
       "mic_type": "SEGMENT",
       "note": null,
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10786,7 +10805,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE MARKET PEG (FARPOINT) VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10824,7 +10843,7 @@
       "mic_type": "SEGMENT",
       "note": null,
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10843,7 +10862,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE MARKET ON CLOSE VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10862,7 +10881,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE PRIMARY PEG (NEARPOINT) VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10881,7 +10900,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE MID-POINT VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10919,7 +10938,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE TCR MARKET.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10938,7 +10957,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCHANGE VWAP VENUE.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -10957,7 +10976,7 @@
       "mic_type": "SEGMENT",
       "note": "TMX AUSTRALIA EXCANGE WARRANTS.",
       "operating_mic": "CHIA",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TMXAUSTRALIA.COM"
     },
     {
@@ -16210,17 +16229,17 @@
       "country_code": "NL",
       "creation_date": "2026-09-28",
       "expiration_date": null,
-      "last_update_date": "2026-09-28",
-      "last_validation_date": "2026-09-28",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "SGX FX MARKETS NL B.V.",
       "lei": "8945007PRF1RRI73BF23",
       "market_category": "MLTF",
-      "market_name": "SGX FX MARKETS",
+      "market_name": "SGX FX MARKETS EU",
       "mic": "FXEU",
       "mic_type": "OPERATING",
       "note": null,
       "operating_mic": "FXEU",
-      "status": "ACTIVE",
+      "status": "UPDATED",
       "website": "WWW.SGX.COM/FX/"
     },
     {
@@ -17330,7 +17349,7 @@
       "city": "CHICAGO",
       "country_code": "US",
       "creation_date": "2017-05-22",
-      "expiration_date": null,
+      "expiration_date": "2026-09-28",
       "last_update_date": "2026-09-28",
       "last_validation_date": "2026-09-28",
       "legal_entity_name": "ARCHIPELAGO TRADING SERVICES, INC.",
@@ -17341,7 +17360,7 @@
       "mic_type": "OPERATING",
       "note": "ELECTRONIC TRADING PLATFORM FOR OTC EQUITY SECURITIES.",
       "operating_mic": "GOTC",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.GLOBALOTC.COM"
     },
     {
@@ -19530,6 +19549,25 @@
       "website": null
     },
     {
+      "acronym": "ICF",
+      "city": "FRANKFURT AM MAIN",
+      "country_code": "DE",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "ICF BANK AG WERTPAPIERHANDELSBANK",
+      "lei": "529900E89HA1I45HB613",
+      "market_category": "OTHR",
+      "market_name": "ICF MARKETS",
+      "mic": "ICFX",
+      "mic_type": "OPERATING",
+      "note": null,
+      "operating_mic": "ICFX",
+      "status": "ACTIVE",
+      "website": "HTTPS://ICF-MARKETS.DE/"
+    },
+    {
       "acronym": null,
       "city": "TOKYO",
       "country_code": "JP",
@@ -20522,9 +20560,9 @@
       "city": "LONDON",
       "country_code": "GB",
       "creation_date": "2020-07-27",
-      "expiration_date": null,
-      "last_update_date": "2022-08-22",
-      "last_validation_date": "2022-08-22",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "TP ICAP BROKING LIMITED",
       "lei": "549300BMVW85YF9FGN67",
       "market_category": "OTFS",
@@ -20533,7 +20571,7 @@
       "mic_type": "SEGMENT",
       "note": null,
       "operating_mic": "IOTF",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "HTTPS://REGULATORY.TPICAP.COM/"
     },
     {
@@ -21240,23 +21278,23 @@
       "website": "WWW.INGBANK.PL"
     },
     {
-      "acronym": "NSE IFSC",
+      "acronym": "NSEIX",
       "city": "GANDHINAGAR",
       "country_code": "IN",
       "creation_date": "2018-06-25",
       "expiration_date": null,
-      "last_update_date": "2018-06-25",
-      "last_validation_date": null,
-      "legal_entity_name": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "NSE IFSC LIMITED",
       "lei": "335800Z9BHFE6RABLT37",
-      "market_category": "NSPD",
+      "market_category": "RMKT",
       "market_name": "NSE IFSC LIMITED",
       "mic": "INSE",
       "mic_type": "SEGMENT",
       "note": "FULLY OWNED SUBSIDIARY COMPANY OF NATIONAL STOCK EXCHANGE OF INDIA LIMITED (NSE).",
       "operating_mic": "XNSE",
-      "status": "ACTIVE",
-      "website": "WWW.NSEIFSC.COM"
+      "status": "UPDATED",
+      "website": "WWW.NSEIX.COM"
     },
     {
       "acronym": null,
@@ -21396,9 +21434,9 @@
       "city": "LONDON",
       "country_code": "GB",
       "creation_date": "2017-11-27",
-      "expiration_date": null,
-      "last_update_date": "2026-08-24",
-      "last_validation_date": "2026-08-24",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "TP ICAP BROKING LIMITED",
       "lei": "549300BMVW85YF9FGN67",
       "market_category": "OTFS",
@@ -21407,7 +21445,7 @@
       "mic_type": "SEGMENT",
       "note": "OTF FOR THE TRADING OF FX DERIVATIVES.",
       "operating_mic": "IOTF",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -21472,9 +21510,9 @@
       "city": "LONDON",
       "country_code": "GB",
       "creation_date": "2017-11-27",
-      "expiration_date": null,
-      "last_update_date": "2026-08-24",
-      "last_validation_date": "2026-08-24",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "TP ICAP BROKING LIMITED",
       "lei": "549300BMVW85YF9FGN67",
       "market_category": "OTFS",
@@ -21483,7 +21521,7 @@
       "mic_type": "SEGMENT",
       "note": "OTF FOR THE TRADING OF MONEY MARKET INSTRUMENTS.",
       "operating_mic": "IOTF",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -23957,6 +23995,44 @@
       "website": "WWW.LISE.COM"
     },
     {
+      "acronym": "LISE",
+      "city": "PARIS",
+      "country_code": "FR",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "LISE SA",
+      "lei": "894500LNKGRT1I5QBU56",
+      "market_category": "MLTF",
+      "market_name": "LISE - GROWTH SEGMENT",
+      "mic": "LISG",
+      "mic_type": "SEGMENT",
+      "note": null,
+      "operating_mic": "LISE",
+      "status": "ACTIVE",
+      "website": "WWW.LISE.COM"
+    },
+    {
+      "acronym": "LISE",
+      "city": "PARIS",
+      "country_code": "FR",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "LISE SA",
+      "lei": "894500LNKGRT1I5QBU56",
+      "market_category": "MLTF",
+      "market_name": "LISE - STANDARD SEGMENT",
+      "mic": "LISS",
+      "mic_type": "SEGMENT",
+      "note": null,
+      "operating_mic": "LISE",
+      "status": "ACTIVE",
+      "website": "WWW.LISE.COM"
+    },
+    {
       "acronym": "CBOE  LIS",
       "city": "LONDON",
       "country_code": "GB",
@@ -26371,6 +26447,25 @@
     },
     {
       "acronym": null,
+      "city": "NEW YORK",
+      "country_code": "US",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "MORGAN STANLEY AND CO. LLC",
+      "lei": "9R7GPTSO7KV3UQJZQ078",
+      "market_category": "ATSS",
+      "market_name": "MORGAN STANLEY CLOSING CROSS",
+      "mic": "MSAB",
+      "mic_type": "SEGMENT",
+      "note": null,
+      "operating_mic": "MSCO",
+      "status": "ACTIVE",
+      "website": "WWW.MORGANSTANLEY.COM"
+    },
+    {
+      "acronym": null,
       "city": "SYDNEY",
       "country_code": "AU",
       "creation_date": "2015-07-27",
@@ -26431,9 +26526,9 @@
       "city": "NEW YORK",
       "country_code": "US",
       "creation_date": "2026-07-27",
-      "expiration_date": null,
-      "last_update_date": "2026-07-27",
-      "last_validation_date": "2026-07-27",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "MORGAN STANLEY AND CO. LLC",
       "lei": "9R7GPTSO7KV3UQJZQ078",
       "market_category": "ATSS",
@@ -26442,7 +26537,7 @@
       "mic_type": "SEGMENT",
       "note": null,
       "operating_mic": "MSCO",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.MORGANSTANLEY.COM"
     },
     {
@@ -28046,7 +28141,7 @@
       "city": "CHICAGO",
       "country_code": "US",
       "creation_date": "2026-09-28",
-      "expiration_date": null,
+      "expiration_date": "2026-09-28",
       "last_update_date": "2026-09-28",
       "last_validation_date": "2026-09-28",
       "legal_entity_name": "ARCHIPELAGO TRADING SERVICES, INC.",
@@ -28236,9 +28331,9 @@
       "city": "FRANKFURT",
       "country_code": "DE",
       "creation_date": "2018-07-23",
-      "expiration_date": null,
-      "last_update_date": "2024-09-23",
-      "last_validation_date": "2024-09-23",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "NOMURA FINANCIAL PRODUCTS EUROPE GMBH",
       "lei": "5493002XYZZ0CGQ6CB58",
       "market_category": "SINT",
@@ -28247,7 +28342,7 @@
       "mic_type": "OPERATING",
       "note": null,
       "operating_mic": "NESI",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.NOMURA.COM"
     },
     {
@@ -29653,7 +29748,7 @@
       "mic_type": "SEGMENT",
       "note": null,
       "operating_mic": "U360",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.360T.COM"
     },
     {
@@ -32264,9 +32359,9 @@
       "city": "LONDON",
       "country_code": "GB",
       "creation_date": "2020-12-28",
-      "expiration_date": null,
-      "last_update_date": "2020-12-28",
-      "last_validation_date": null,
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "RABOBANK INTERNATIONAL LONDON",
       "lei": "DG3RU1DBUFHT4ZF9WN62",
       "market_category": "SINT",
@@ -32275,7 +32370,7 @@
       "mic_type": "OPERATING",
       "note": "SYSTEMATIC INTERNALISER.",
       "operating_mic": "RABL",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.RABOBANK.COM"
     },
     {
@@ -32283,9 +32378,9 @@
       "city": "UTRECHT",
       "country_code": "NL",
       "creation_date": "2017-11-27",
-      "expiration_date": null,
-      "last_update_date": "2017-11-27",
-      "last_validation_date": null,
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": null,
       "lei": "DG3RU1DBUFHT4ZF9WN62",
       "market_category": "SINT",
@@ -32294,7 +32389,7 @@
       "mic_type": "OPERATING",
       "note": "SYSTEMATIC INTERNALISER.",
       "operating_mic": "RABO",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.RABOBANK.COM"
     },
     {
@@ -39248,7 +39343,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF CREDIT DERIVATIVES.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39267,7 +39362,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF EQUITY DERIVATIVES.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39343,7 +39438,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF CORPORATE BONDS AND SECURITISED DEBT.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39381,7 +39476,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF GOVERNMENT BONDS EXCLUDING UK GILTS.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39400,7 +39495,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF GOVERNMENT BONDS - UK GILTS.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39438,7 +39533,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF INTEREST RATE DERIVATIVES.",
       "operating_mic": "IOTF",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39522,9 +39617,9 @@
       "city": "LONDON",
       "country_code": "GB",
       "creation_date": "2017-10-23",
-      "expiration_date": null,
-      "last_update_date": "2022-05-23",
-      "last_validation_date": "2022-05-23",
+      "expiration_date": "2026-10-26",
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
       "legal_entity_name": "TP ICAP BROKING LIMITED",
       "lei": "549300BMVW85YF9FGN67",
       "market_category": "OTFS",
@@ -39533,7 +39628,7 @@
       "mic_type": "SEGMENT",
       "note": "ORGANISED TRADING FACILITY FOR THE TRADING OF MONEY MARKET INSTRUMENTS.",
       "operating_mic": "TPSO",
-      "status": "ACTIVE",
+      "status": "EXPIRED",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
     },
     {
@@ -39611,6 +39706,25 @@
       "operating_mic": "TPSO",
       "status": "ACTIVE",
       "website": "WWW.TPICAP.COM/TPICAP/REGULATORY-HUB"
+    },
+    {
+      "acronym": null,
+      "city": "AMSTERDAM",
+      "country_code": "NL",
+      "creation_date": "2026-10-26",
+      "expiration_date": null,
+      "last_update_date": "2026-10-26",
+      "last_validation_date": "2026-10-26",
+      "legal_entity_name": "TRADEWEB EU BV",
+      "lei": "724500D4BFEWKWVC1G62",
+      "market_category": "OTHR",
+      "market_name": "TRADEWEB EU BV - DLT TSS",
+      "mic": "TWDT",
+      "mic_type": "SEGMENT",
+      "note": null,
+      "operating_mic": "TWEU",
+      "status": "ACTIVE",
+      "website": "WWW.TRADEWEB.COM"
     },
     {
       "acronym": null,
@@ -42820,7 +42934,7 @@
       "mic_type": "OPERATING",
       "note": null,
       "operating_mic": "XARM",
-      "status": "UPDATED",
+      "status": "ACTIVE",
       "website": "WWW.AMX.AM"
     },
     {
