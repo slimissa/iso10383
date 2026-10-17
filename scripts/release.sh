@@ -241,7 +241,7 @@ gate python3 tools/export_sql.py --check
 gate python3 tools/export_parquet.py --check
 gate python3 tools/sync_wrappers.py --check
 gate python3 -m pytest tests/ -q
-gate bash tools/check_cross_language.sh
+gate bash tools/check_cross_language.sh --strict
 
 # --- Commit, push ---------------------------------------------------------
 
@@ -344,7 +344,7 @@ if grep -qE '\[(TODO|TBD|PASTE|N|M|K|J)\]' "$TAG_MSG_FILE"; then
     echo "FAIL: tag message contains a placeholder" >&2
     exit 1
 fi
-run git tag -a "v$VERSION" -F "$TAG_MSG_FILE"
+run git tag -a "v$VERSION" -F "$TAG_MSG_FILE" --cleanup=verbatim
 rm -f "$TAG_MSG_FILE"
 run git push origin "v$VERSION"
 
@@ -368,7 +368,7 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
             echo "- \`${g#*|}\` — exit ${g%%|*}"
         done
         echo
-        echo "Exit codes only. \`tools/check_cross_language.sh\` exits 0 when a toolchain is missing and its suite is skipped; this list does not record skips."
+        echo "Exit codes only. \`tools/check_cross_language.sh\` runs with --strict, so exit 0 means no suite was skipped."
     } > "$DOC"
     git add "$DOC"
     git commit -m "docs: v$VERSION verification"

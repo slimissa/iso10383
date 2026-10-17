@@ -11,7 +11,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-168-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-171-success.svg)](./tests/)
 
 ---
 
@@ -362,7 +362,7 @@ Every lookup returns a fresh copy in Python and JavaScript; every lookup returns
 bash tools/check_cross_language.sh
 ```
 
-Runs the Python, JavaScript, Rust and Go suites, then `sync_wrappers.py --check`. A suite whose toolchain is not installed (`node`, `cargo` or `go`) prints `SKIP` and does not fail the script, so exit 0 means every suite that ran agreed, not that all four wrappers ran. The summary line says how many suites ran. Exit 1 means a suite failed; exit 2 means `python3` is missing.
+Runs the Python, JavaScript, Rust and Go suites, then `sync_wrappers.py --check`. A suite whose toolchain is not installed (`node`, `cargo` or `go`) prints `SKIP`; without `--strict` that does not fail the script, and the summary line says how many suites ran and which were skipped. The release gate runs the script with `--strict`, where a skipped suite exits 1. Exit 1 also means a suite failed; exit 2 means `python3` is missing.
 
 ---
 
@@ -531,12 +531,12 @@ Only Layer 0 cannot be regenerated from the repository. **Back up `raw/`.**
 
 | Suite | Tests |
 |-------|-------|
-| Python (root) | 77 |
+| Python (root) | 80 |
 | Python (wrapper) | 24 |
 | JavaScript | 23 |
 | Rust | 21 |
 | Go | 23 |
-| **Total** | **168** |
+| **Total** | **171** |
 
 ```bash
 python3 -m pytest tests/ -q                    # root

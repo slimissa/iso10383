@@ -119,3 +119,74 @@ def test_manifest_has_no_unknown_keys():
         for claim in claims:
             assert "file" in claim, (name, claim)
             assert set(claim) <= allowed, (name, sorted(set(claim) - allowed))
+
+
+# --- shell scripts ---------------------------------------------------------
+
+import os  # noqa: E402
+import shlex  # noqa: E402
+import shutil  # noqa: E402
+import subprocess  # noqa: E402
+
+
+def _toolchain_free_path(tmp_path):
+    """A PATH with python3, node and the bare minimum: no cargo, no go."""
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    (bindir / "python3").symlink_to(sys.executable)
+    for tool in ("bash", "dirname", "node", "env"):
+        found = shutil.which(tool)
+        if found:
+            (bindir / tool).symlink_to(found)
+    return str(bindir)
+
+
+def _run_cross_language(tmp_path, *args):
+    env = {**os.environ, "PATH": _toolchain_free_path(tmp_path)}
+    return subprocess.run(
+        [shutil.which("bash"), str(ROOT / "tools" / "check_cross_language.sh"),
+         *args],
+        cwd=ROOT, env=env, capture_output=True, text=True, timeout=300,
+    )
+
+
+def test_cross_language_reports_skips_instead_of_claiming_agreement(tmp_path):
+    r = _run_cross_language(tmp_path)
+    out = r.stdout
+    assert r.returncode == 0, out + r.stderr
+    assert "SKIP: cargo not installed" in out
+    assert "SKIP: go not installed" in out
+    assert "skipped (SKIP:" in out
+    assert "all wrappers agree" not in out
+
+
+def test_cross_language_strict_fails_when_a_suite_is_skipped(tmp_path):
+    r = _run_cross_language(tmp_path, "--strict")
+    assert r.returncode == 1, r.stdout + r.stderr
+    assert "--strict requires every suite to run" in r.stdout
+
+
+def test_release_tag_keeps_hash_lines(tmp_path):
+    """The tag command in release.sh must not strip lines starting with #."""
+    lines = (ROOT / "scripts" / "release.sh").read_text(
+        encoding="utf-8").splitlines()
+    tag_lines = [ln.strip() for ln in lines if ln.strip().startswith("run git tag")]
+    assert len(tag_lines) == 1, tag_lines
+
+    msg = tmp_path / "message.txt"
+    msg.write_text("Release v9.9.9\n\n### Fixed\n\n- a thing\n",
+                   encoding="utf-8")
+    cmd = (tag_lines[0].replace("run ", "", 1)
+           .replace('"v$VERSION"', "v9.9.9")
+           .replace('"$TAG_MSG_FILE"', str(msg)))
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+    for args in (["init", "-q"], ["commit", "-q", "--allow-empty", "-m", "c"]):
+        subprocess.run(["git", *args], cwd=repo, env=env, check=True)
+    subprocess.run(shlex.split(cmd), cwd=repo, env=env, check=True)
+    body = subprocess.run(["git", "cat-file", "-p", "v9.9.9"], cwd=repo,
+                          capture_output=True, text=True, check=True).stdout
+    assert "### Fixed" in body

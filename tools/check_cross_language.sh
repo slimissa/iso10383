@@ -3,16 +3,20 @@
 # Run every wrapper's test suite in one command.
 #
 # Each wrapper reads the same tests/cross_language_consistency.json.
-# This script verifies that all four languages agree on the same
-# expectations against the same bundled snapshot.
+# This script runs each wrapper's own suite against that shared fixture
+# and reports which suites ran and which were skipped. It does not diff
+# wrapper output: each suite checks the fixture independently.
 #
 # Usage:
-#   bash tools/check_cross_language.sh
+#   bash tools/check_cross_language.sh [--strict]
 #
 # Exit codes:
-#   0  every wrapper passed
-#   1  at least one wrapper failed
-#   2  a required tool is not installed
+#   0  every suite that ran passed (skipped suites are reported)
+#   1  a suite failed, or --strict and a suite was skipped
+#   2  python3 is not installed, or an unknown argument was given
+#
+# --strict is for the release gate: a missing toolchain must not pass
+# silently.
 
 set -euo pipefail
 
@@ -20,6 +24,15 @@ cd "$(dirname "$0")/.."
 
 failures=0
 ran=0
+strict=0
+skipped=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --strict) strict=1 ;;
+        *) echo "FAIL: unknown argument: $arg" >&2; exit 2 ;;
+    esac
+done
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
@@ -56,6 +69,7 @@ if have node; then
 else
     echo "=== javascript (node --test) ==="
     echo "    SKIP: node not installed"
+    skipped+=("javascript")
     echo
 fi
 
@@ -67,6 +81,7 @@ if have cargo; then
 else
     echo "=== rust (cargo test) ==="
     echo "    SKIP: cargo not installed"
+    skipped+=("rust")
     echo
 fi
 
@@ -78,6 +93,7 @@ if have go; then
 else
     echo "=== go (go test) ==="
     echo "    SKIP: go not installed"
+    skipped+=("go")
     echo
 fi
 
@@ -93,4 +109,13 @@ if [[ "$failures" -gt 0 ]]; then
     echo "FAIL: $failures of $ran suite(s) failed"
     exit 1
 fi
-echo "OK: $ran suite(s) passed, all wrappers agree"
+if [[ "${#skipped[@]}" -gt 0 ]]; then
+    if [[ "$strict" -eq 1 ]]; then
+        echo "FAIL: ${#skipped[@]} suite(s) skipped (SKIP: ${skipped[*]}); --strict requires every suite to run"
+        exit 1
+    fi
+    echo "OK: $ran suite(s) passed, ${#skipped[@]} skipped (SKIP: ${skipped[*]})"
+    echo "    Skipped suites were not tested."
+    exit 0
+fi
+echo "OK: $ran suite(s) passed, 0 skipped"

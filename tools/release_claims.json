@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-168"
+      "contains": "tests-171"
     },
     {
       "file": "README.md",
@@ -286,6 +286,22 @@
     {
       "file": "wrappers/go/registry.go",
       "absent": "sort.Slice("
+    },
+    {
+      "file": "tools/check_cross_language.sh",
+      "contains": "skipped (SKIP:"
+    },
+    {
+      "file": "tools/check_cross_language.sh",
+      "absent": "all wrappers agree"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "--cleanup=verbatim"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "check_cross_language.sh --strict"
     }
   ]
 }
