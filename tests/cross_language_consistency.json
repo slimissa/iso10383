@@ -144,6 +144,18 @@
       "expect_ok": true,
       "id": "validate_all_present",
       "op": "validate"
+    },
+    {
+      "args": [
+        [
+          "xnys",
+          "xlON",
+          "xtks"
+        ]
+      ],
+      "expect_ok": true,
+      "id": "validate_lowercase_input",
+      "op": "validate"
     }
   ],
   "description": "Shared test vectors for all ISO 10383 wrappers. Every wrapper must produce byte-identical output for every case."

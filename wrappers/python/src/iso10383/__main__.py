@@ -5,6 +5,8 @@ prints a one-line message and exits 3. The CLI is a repo artifact for
 now; it moves into the package in a later phase.
 """
 
+from __future__ import annotations
+
 import importlib.util
 import sys
 from pathlib import Path

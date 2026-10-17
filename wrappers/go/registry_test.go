@@ -282,6 +282,23 @@ func TestContractByMICTypeSegment(t *testing.T) {
 	}
 }
 
+func TestContractValidateLowercaseInput(t *testing.T) {
+	c := loadContract(t)["validate_lowercase_input"]
+	args := c["args"].([]any)[0].([]any)
+	mics := make([]string, len(args))
+	for i, a := range args {
+		mics[i] = a.(string)
+	}
+	want := c["expect_ok"].(bool)
+	ok, missing := load(t).Validate(mics)
+	if ok != want {
+		t.Fatalf("ok = %v, want %v", ok, want)
+	}
+	if len(missing) != 0 {
+		t.Fatalf("missing: %v", missing)
+	}
+}
+
 func TestContractValidateAllPresent(t *testing.T) {
 	c := loadContract(t)["validate_all_present"]
 	args := c["args"].([]any)[0].([]any)

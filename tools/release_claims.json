@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-156"
+      "contains": "tests-163"
     },
     {
       "file": "README.md",
@@ -270,6 +270,14 @@
     {
       "file": "scripts/release.sh",
       "absent": "— pass\""
+    },
+    {
+      "file": "wrappers/python/src/iso10383/registry.py",
+      "contains": "m.upper()"
+    },
+    {
+      "file": "wrappers/python/src/iso10383/__main__.py",
+      "contains": "from __future__ import annotations"
     }
   ]
 }

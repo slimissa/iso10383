@@ -220,6 +220,20 @@ fn contract_by_mic_type_segment() {
 }
 
 #[test]
+fn contract_validate_lowercase_input() {
+    let c = contract();
+    let cs = case(&c, "validate_lowercase_input");
+    let mics = args_list(cs);
+    let want_ok = cs["expect_ok"].as_bool().unwrap();
+
+    let r = Registry::load().unwrap();
+    let refs: Vec<&str> = mics.iter().map(|s| s.as_str()).collect();
+    let (ok, missing) = r.validate(refs);
+    assert_eq!(ok, want_ok);
+    assert!(missing.is_empty());
+}
+
+#[test]
 fn contract_validate_all_present() {
     let c = contract();
     let cs = case(&c, "validate_all_present");

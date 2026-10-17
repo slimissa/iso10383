@@ -117,6 +117,66 @@ def test_contract_by_mic_type_segment():
             assert getattr(r, k) == v
 
 
+def test_contract_validate_lowercase_input():
+    c = CASES["validate_lowercase_input"]
+    ok, missing = REG.validate(c["args"][0])
+    assert ok is c["expect_ok"]
+    assert missing == []
+
+
+def test_validate_is_case_insensitive():
+    r = MICRegistry()
+    assert r.validate(["xnys"]) == (True, [])
+    assert r.validate(["XNYS"]) == (True, [])
+    # Misses are reported as the caller spelled them.
+    assert r.validate(["xnys", "zzzz"]) == (False, ["zzzz"])
+
+
+def test_pipe_annotations_require_future_import():
+    # requires-python is >=3.9. There, `X | None` in an annotation is
+    # evaluated when the function is defined and raises TypeError,
+    # unless annotations are deferred with the __future__ import.
+    import ast
+
+    src = Path(__file__).resolve().parents[1] / "src" / "iso10383"
+    for path in sorted(src.glob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        deferred = any(
+            isinstance(n, ast.ImportFrom)
+            and n.module == "__future__"
+            and any(a.name == "annotations" for a in n.names)
+            for n in tree.body
+        )
+        uses_pipe = False
+        for node in ast.walk(tree):
+            anns = []
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                args = node.args
+                anns = [node.returns] + [
+                    a.annotation
+                    for a in args.posonlyargs + args.args + args.kwonlyargs
+                ]
+            elif isinstance(node, ast.AnnAssign):
+                anns = [node.annotation]
+            for ann in anns:
+                if ann is not None and any(
+                    isinstance(n, ast.BinOp) and isinstance(n.op, ast.BitOr)
+                    for n in ast.walk(ann)
+                ):
+                    uses_pipe = True
+        assert deferred or not uses_pipe, (
+            f"{path.name} uses X | Y annotations without "
+            "from __future__ import annotations"
+        )
+
+
+def test_package_version_matches_version_file():
+    import iso10383
+
+    version_file = Path(__file__).resolve().parents[3] / "VERSION"
+    assert iso10383.__version__ == version_file.read_text(encoding="utf-8").strip()
+
+
 def test_contract_validate_all_present():
     c = CASES["validate_all_present"]
     ok, missing = REG.validate(c["args"][0])

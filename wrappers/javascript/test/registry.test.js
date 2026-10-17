@@ -141,6 +141,13 @@ test("contract: by mic_type SEGMENT", () => {
   }
 });
 
+test("contract: validate lowercase input", () => {
+  const c = CASES.validate_lowercase_input;
+  const { ok, missing } = REG.validate(c.args[0]);
+  assert.equal(ok, c.expect_ok);
+  assert.deepEqual(missing, []);
+});
+
 test("contract: validate all present", () => {
   const c = CASES.validate_all_present;
   const { ok, missing } = REG.validate(c.args[0]);

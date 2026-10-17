@@ -146,5 +146,5 @@ class MICRegistry:
                 or q in (m.get("acronym") or "").lower()]
 
     def validate(self, mics: Iterable[str]) -> tuple[bool, list[str]]:
-        missing = [m for m in mics if m not in self._by_mic]
+        missing = [m for m in mics if m.upper() not in self._by_mic]
         return (not missing, missing)
