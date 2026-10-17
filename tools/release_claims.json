@@ -212,6 +212,10 @@
       "contains": "tests-199"
     },
     {
+      "file": "tools/check_exchange_calendar_current.py",
+      "contains": "warning: version drift: snapshot source_version"
+    },
+    {
       "file": "tools/check_iso3166_current.py",
       "contains": "warning: version drift: snapshot source_version"
     },
