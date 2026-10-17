@@ -235,7 +235,15 @@ docs/
     0002-operating-segment-model.md  ADR: the type system.
     0003-monthly-refresh.md   ADR: cadence, freshness gate, removals.
     0004-market-category-codes.md    ADR: the 16-code enum.
-    v1.0.0-decisions.md       D1–D16, the locked decision register.
+    0005-tag-discipline.md    ADR: tag discipline.
+    0006-ci-toolchain-parity.md      ADR: CI toolchain parity.
+    0007-cross-registry-allowlist.md ADR: the cross-registry allowlist.
+    0008-mic-lei-companion-declined.md  ADR: MIC→LEI companion declined.
+    0009-mic-bic-companion-declined.md  ADR: MIC→BIC companion declined.
+    0010-platform-charter.md  ADR: the platform charter.
+    0011-reprocessing.md      ADR: reprocessing and the REMOVED > 0 guard.
+    0012-agent-read-surface.md       ADR: the agent's read surface.
+    v1.0.0-decisions.md       D1–D17, the locked decision register.
 
 iso10383.{sql,postgresql.sql,mysql.sql,sqlite.sql}    Layer 2 SQL
 iso10383.{csv,excel.csv,european.csv,tsv}             Layer 2 CSV/TSV

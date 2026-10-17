@@ -2,7 +2,8 @@
 
 **Source URL:** https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv
 **Downloaded:** 2026-09-23
-**Size:** 589,482 bytes
+**Size:** 589,482 bytes as of the 2026-09-23 download (historical;
+current SWIFT file size will differ).
 **Data rows:** 2883
 
 ## File format

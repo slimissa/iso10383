@@ -3,7 +3,11 @@
 # Deterministic release pipeline.
 #
 #   scripts/release.sh <version>            cut a release
-#   scripts/release.sh <version> --dry-run  print every step, do nothing
+#   scripts/release.sh <version> --dry-run  print every step without
+#                                            changing files or pushing.
+#                                            Read-only checks (git fetch,
+#                                            git ls-remote, gh availability,
+#                                            branch and tree checks) still run.
 #
 # Refuses on:
 #   dirty tree / wrong branch / CHANGELOG section missing
