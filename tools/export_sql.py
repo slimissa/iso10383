@@ -16,7 +16,8 @@ Idempotent. Each INSERT is dialect-specific:
   PostgreSQL  ON CONFLICT (mic) DO NOTHING
   MySQL       INSERT IGNORE
   SQLite      INSERT OR IGNORE
-  ANSI        documented via comment; portable form uses NOT EXISTS
+  generic     ON CONFLICT (mic) DO NOTHING (PostgreSQL and SQLite
+              syntax; not SQL-92)
 
 Self-referencing FK: every operating MIC self-references, and segments
 point to parents that may appear earlier or later in the file. The FK
@@ -102,15 +103,12 @@ def render_mics_table(dialect: str) -> str:
         lines.append(
             "  CONSTRAINT fk_mics_operating "
             "FOREIGN KEY (operating_mic) REFERENCES mics(mic) "
-            "DEFERRABLE INITIALLY DEFERRED,"
-        )
-        lines.append(
-            "  CONSTRAINT fk_mics_country "
-            "FOREIGN KEY (country_code) REFERENCES countries(alpha_2)"
+            "DEFERRABLE INITIALLY DEFERRED"
         )
     elif dialect == "sqlite":
         lines.append(
-            "  FOREIGN KEY (operating_mic) REFERENCES mics(mic)"
+            "  FOREIGN KEY (operating_mic) REFERENCES mics(mic) "
+            "DEFERRABLE INITIALLY DEFERRED"
         )
     else:
         lines[-1] = lines[-1].rstrip(",")
@@ -124,7 +122,7 @@ def render_mics_table(dialect: str) -> str:
 
 def render_category_inserts(dialect: str) -> str:
     kw = "INSERT OR IGNORE" if dialect == "sqlite" else "INSERT"
-    extra = "" if dialect == "sqlite" else " ON CONFLICT DO NOTHING" if dialect == "postgresql" else " IGNORE" if dialect == "mysql" else ""
+    extra = "" if dialect == "sqlite" else " ON CONFLICT DO NOTHING"
     lines = ["-- market_categories rows"]
     if dialect == "mysql":
         lines.append("INSERT IGNORE INTO market_categories (code, label) VALUES")
@@ -158,10 +156,7 @@ def render_mic_inserts(data: dict, dialect: str) -> str:
         lines.append(",\n".join(values(m) for m in data["mics"]) + ";")
     else:
         kw = "INSERT OR IGNORE" if dialect == "sqlite" else "INSERT"
-        extra = "" if dialect == "sqlite" else (
-            " ON CONFLICT (mic) DO NOTHING" if dialect == "postgresql"
-            else " ON CONFLICT (mic) DO NOTHING"  # ANSI documented form
-        )
+        extra = "" if dialect == "sqlite" else " ON CONFLICT (mic) DO NOTHING"
         for m in data["mics"]:
             lines.append(
                 f"{kw} INTO mics ({cols}) VALUES {values(m)}{extra};"
@@ -191,7 +186,7 @@ def render(data: dict, dialect: str) -> str:
 
 
 DIALECTS = {
-    "iso10383.sql": "ansi",
+    "iso10383.sql": "generic",
     "iso10383.postgresql.sql": "postgresql",
     "iso10383.mysql.sql": "mysql",
     "iso10383.sqlite.sql": "sqlite",

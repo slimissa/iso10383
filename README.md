@@ -11,7 +11,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-171-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-176-success.svg)](./tests/)
 
 ---
 
@@ -136,7 +136,7 @@ Four self-contained dialects. Idempotent — safe to run twice.
 
 | File | Target |
 |------|--------|
-| [`iso10383.sql`](./iso10383.sql) | ANSI SQL-92 — portable default |
+| [`iso10383.sql`](./iso10383.sql) | Generic dialect: `ON CONFLICT DO NOTHING` (PostgreSQL 9.5+, SQLite 3.24+). Not SQL-92: it will not run on SQL Server, Oracle or Db2 |
 | [`iso10383.postgresql.sql`](./iso10383.postgresql.sql) | PostgreSQL 12+ |
 | [`iso10383.mysql.sql`](./iso10383.mysql.sql) | MySQL 8+ / MariaDB 10.4+ |
 | [`iso10383.sqlite.sql`](./iso10383.sqlite.sql) | SQLite 3.37+ |
@@ -145,7 +145,7 @@ Four self-contained dialects. Idempotent — safe to run twice.
 psql -f iso10383.postgresql.sql              # PostgreSQL
 mysql < iso10383.mysql.sql                   # MySQL / MariaDB
 sqlite3 registry.db < iso10383.sqlite.sql    # SQLite
-psql -f iso10383.sql                         # any SQL-92 engine
+psql -f iso10383.sql                         # generic dialect (PostgreSQL or SQLite)
 ```
 
 Two tables: `mics` and `market_categories`. `mic` is the primary key. `operating_mic` is a self-referencing foreign key with a **non-null constraint** — every MIC has a parent MIC. Operating MICs point to themselves.
@@ -531,12 +531,12 @@ Only Layer 0 cannot be regenerated from the repository. **Back up `raw/`.**
 
 | Suite | Tests |
 |-------|-------|
-| Python (root) | 80 |
+| Python (root) | 85 |
 | Python (wrapper) | 24 |
 | JavaScript | 23 |
 | Rust | 21 |
 | Go | 23 |
-| **Total** | **171** |
+| **Total** | **176** |
 
 ```bash
 python3 -m pytest tests/ -q                    # root
@@ -647,7 +647,7 @@ iso10383/
 │       ├── 0011-reprocessing.md
 │       └── 0012-agent-read-surface.md
 │
-├── iso10383.sql                  # ANSI SQL-92
+├── iso10383.sql                  # Generic SQL (ON CONFLICT)
 ├── iso10383.postgresql.sql       # PostgreSQL 12+
 ├── iso10383.mysql.sql            # MySQL 8+ / MariaDB 10.4+
 ├── iso10383.sqlite.sql           # SQLite 3.37+

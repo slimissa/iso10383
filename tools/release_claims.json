@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-171"
+      "contains": "tests-176"
     },
     {
       "file": "README.md",
@@ -302,6 +302,22 @@
     {
       "file": "scripts/release.sh",
       "contains": "check_cross_language.sh --strict"
+    },
+    {
+      "file": "iso10383.postgresql.sql",
+      "absent": "REFERENCES countries"
+    },
+    {
+      "file": "README.md",
+      "absent": "ANSI SQL-92"
+    },
+    {
+      "file": "README.md",
+      "contains": "Not SQL-92"
+    },
+    {
+      "file": "tools/export_sql.py",
+      "absent": "portable form uses NOT EXISTS"
     }
   ]
 }

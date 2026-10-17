@@ -210,7 +210,7 @@ without running any code.
 **Paths:** nine files at repo root.
 
 ```
-iso10383.sql                 ANSI SQL-92
+iso10383.sql                 Generic SQL (ON CONFLICT; not SQL-92)
 iso10383.postgresql.sql      PostgreSQL 12+
 iso10383.mysql.sql           MySQL 8+ / MariaDB 10.4+
 iso10383.sqlite.sql          SQLite 3.37+
@@ -266,7 +266,7 @@ mechanism:
 | PostgreSQL | `INSERT ... ON CONFLICT (mic) DO NOTHING` |
 | MySQL | `INSERT IGNORE` |
 | SQLite | `INSERT OR IGNORE` |
-| ANSI | `INSERT ... ON CONFLICT DO NOTHING` (documented; the consumer's engine determines support) |
+| Generic | `INSERT ... ON CONFLICT DO NOTHING` (PostgreSQL and SQLite syntax) |
 
 The two tables in the SQL exports:
 

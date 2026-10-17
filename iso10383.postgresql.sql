@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS mics (
   last_update_date     DATE,
   last_validation_date DATE,
   expiration_date      DATE,
-  CONSTRAINT fk_mics_operating FOREIGN KEY (operating_mic) REFERENCES mics(mic) DEFERRABLE INITIALLY DEFERRED,
-  CONSTRAINT fk_mics_country FOREIGN KEY (country_code) REFERENCES countries(alpha_2)
+  CONSTRAINT fk_mics_operating FOREIGN KEY (operating_mic) REFERENCES mics(mic) DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE INDEX IF NOT EXISTS idx_mics_operating ON mics(operating_mic);

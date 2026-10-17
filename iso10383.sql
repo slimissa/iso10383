@@ -1,5 +1,5 @@
 -- ISO 10383 MIC registry export
--- dialect: ansi
+-- dialect: generic
 -- version: 1.0.4
 -- updated: 2026-09-23
 -- source_snapshot: 2026-09-23
@@ -35,22 +35,22 @@ CREATE INDEX IF NOT EXISTS idx_mics_country   ON mics(country_code);
 CREATE INDEX IF NOT EXISTS idx_mics_status    ON mics(status);
 
 -- market_categories rows
-INSERT INTO market_categories (code, label) VALUES ('ATSS', 'Alternative Trading System');
-INSERT INTO market_categories (code, label) VALUES ('APPA', 'Approved Publication Arrangement');
-INSERT INTO market_categories (code, label) VALUES ('ARMS', 'Arrangement for Reporting');
-INSERT INTO market_categories (code, label) VALUES ('CTPS', 'Consolidated Tape Provider');
-INSERT INTO market_categories (code, label) VALUES ('CASP', 'Consolidated Access Service Provider');
-INSERT INTO market_categories (code, label) VALUES ('DCMS', 'Data Communication and Messaging Service');
-INSERT INTO market_categories (code, label) VALUES ('IDQS', 'Identifier Quotation Service');
-INSERT INTO market_categories (code, label) VALUES ('MLTF', 'Multilateral Trading Facility');
-INSERT INTO market_categories (code, label) VALUES ('NSPD', 'Not-Systematic Price Disseminator');
-INSERT INTO market_categories (code, label) VALUES ('OTFS', 'Organised Trading Facility');
-INSERT INTO market_categories (code, label) VALUES ('OTHR', 'Other');
-INSERT INTO market_categories (code, label) VALUES ('RMOS', 'Regulated Market Off-Session');
-INSERT INTO market_categories (code, label) VALUES ('RMKT', 'Regulated Market');
-INSERT INTO market_categories (code, label) VALUES ('SEFS', 'Systematic Externaliser');
-INSERT INTO market_categories (code, label) VALUES ('SINT', 'Systematic Internaliser');
-INSERT INTO market_categories (code, label) VALUES ('TRFS', 'Trade Reporting Facility');
+INSERT INTO market_categories (code, label) VALUES ('ATSS', 'Alternative Trading System') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('APPA', 'Approved Publication Arrangement') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('ARMS', 'Arrangement for Reporting') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('CTPS', 'Consolidated Tape Provider') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('CASP', 'Consolidated Access Service Provider') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('DCMS', 'Data Communication and Messaging Service') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('IDQS', 'Identifier Quotation Service') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('MLTF', 'Multilateral Trading Facility') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('NSPD', 'Not-Systematic Price Disseminator') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('OTFS', 'Organised Trading Facility') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('OTHR', 'Other') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('RMOS', 'Regulated Market Off-Session') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('RMKT', 'Regulated Market') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('SEFS', 'Systematic Externaliser') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('SINT', 'Systematic Internaliser') ON CONFLICT DO NOTHING;
+INSERT INTO market_categories (code, label) VALUES ('TRFS', 'Trade Reporting Facility') ON CONFLICT DO NOTHING;
 
 BEGIN;
 -- mics rows

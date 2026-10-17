@@ -20,12 +20,37 @@ def _load(path):
     return conn
 
 
-@pytest.mark.parametrize("name", [
+# Every dialect that SQLite can parse is loaded with foreign keys enforced,
+# so a constraint that points at a table the file never creates fails here.
+SQLITE_LOADABLE = [
+    "iso10383.sql",
+    "iso10383.postgresql.sql",
     "iso10383.sqlite.sql",
-])
-def test_sqlite_loads(name):
-    conn = _load(ROOT / name)
+]
+
+
+def _load_enforcing_fks(path, times=1):
+    conn = sqlite3.connect(":memory:")
+    conn.execute("PRAGMA foreign_keys = ON")
+    sql = path.read_text(encoding="utf-8")
+    for _ in range(times):
+        conn.executescript(sql)
+    return conn
+
+
+@pytest.mark.parametrize("name", SQLITE_LOADABLE)
+def test_sql_loads_with_foreign_keys_enforced(name):
+    conn = _load_enforcing_fks(ROOT / name)
     assert conn.execute("SELECT COUNT(*) FROM mics").fetchone()[0] == N
+
+
+@pytest.mark.parametrize("name", SQLITE_LOADABLE)
+def test_sql_is_safe_to_run_twice(name):
+    conn = _load_enforcing_fks(ROOT / name, times=2)
+    assert conn.execute("SELECT COUNT(*) FROM mics").fetchone()[0] == N
+    categories = conn.execute(
+        "SELECT COUNT(*) FROM market_categories").fetchone()[0]
+    assert categories == 16
 
 
 def test_sqlite_idempotent():
