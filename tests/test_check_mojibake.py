@@ -72,7 +72,9 @@ def test_docstring_names_u201a_and_does_not_call_it_an_em_dash():
 
 
 def test_docstring_states_that_provenance():
-    doc = cm.__doc__
+    # Normalize whitespace: the docstring wraps naturally, and a line break
+    # is a formatting choice, not a semantic one. Assert on content.
+    doc = " ".join(cm.__doc__.split())
     assert "Mathematical Operators" in doc and "General Punctuation" in doc
     assert "which no pattern covers" in doc
 
@@ -80,7 +82,7 @@ def test_docstring_states_that_provenance():
 def test_new_patterns_catch_their_classes():
     """The two added patterns each match a real corruption class."""
     import re
-    # Pattern 4: "â€" prefix (A-circumflex + euro), catches em-dash as cp1252
+    # Pattern 4 catches A-circumflex + euro, the cp1252 read of an em-dash.
     assert re.search(cm.MOJIBAKE_PATTERNS[4], _corrupt("\u2014", "cp1252"))
     # Pattern 5: U+FFFD replacement character
     assert re.search(cm.MOJIBAKE_PATTERNS[5], "\ufffd".encode("utf-8"))

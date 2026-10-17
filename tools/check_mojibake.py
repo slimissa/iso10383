@@ -31,9 +31,9 @@ The literal signatures, and the real corruption each one catches:
         could not read wrote it in their place; the original characters
         are already gone.
 
-    Box-drawing characters corrupt to a different prefix, which no
-    pattern covers; a single character is caught only when its last
-    byte happens to match another signature.
+    Box-drawing characters corrupt to a different prefix, which no pattern
+    covers; a single character is caught only when its last byte happens
+    to match another signature.
 
   Range signature (four chars, one pattern):
     \\xc3[\\x83-\\x89]\\xc2[\\x80-\\xbf]
