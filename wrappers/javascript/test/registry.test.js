@@ -158,6 +158,33 @@ test("contract: expired tie order is stable", () => {
   }
 });
 
+test("contract: lookup lowercase", () => {
+  const c = CASES.lookup_lowercase;
+  const m = REG.byMic(c.args[0]);
+  assert.ok(m);
+  for (const [k, v] of Object.entries(c.expect)) {
+    assert.equal(m[k], v, `${k}: ${m[k]} != ${v}`);
+  }
+});
+
+test("contract: segments lowercase", () => {
+  const c = CASES.segments_lowercase;
+  const segs = REG.segments(c.args[0]);
+  const want = c.expect_contains;
+  assert.ok(segs.some(s => Object.entries(want).every(([k, v]) => s[k] === v)));
+});
+
+test("contract: by status lowercase", () => {
+  const c = CASES.by_status_lowercase;
+  const rows = REG.byStatus(c.args[0]);
+  assert.ok(rows.length >= c.expect_count_min);
+  for (const r of rows) {
+    for (const [k, v] of Object.entries(c.expect_all_field)) {
+      assert.equal(r[k], v);
+    }
+  }
+});
+
 test("contract: validate lowercase input", () => {
   const c = CASES.validate_lowercase_input;
   const { ok, missing } = REG.validate(c.args[0]);

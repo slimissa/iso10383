@@ -127,6 +127,33 @@ def test_contract_expired_tie_order_stable():
     assert keys == sorted(keys)
 
 
+def test_contract_lookup_lowercase():
+    c = CASES["lookup_lowercase"]
+    m = REG.by_mic(c["args"][0])
+    assert m is not None
+    for k, v in c["expect"].items():
+        assert getattr(m, k) == v
+
+
+def test_contract_segments_lowercase():
+    c = CASES["segments_lowercase"]
+    segs = REG.segments(c["args"][0])
+    want = c["expect_contains"]
+    assert any(
+        all(getattr(s, k) == v for k, v in want.items())
+        for s in segs
+    )
+
+
+def test_contract_by_status_lowercase():
+    c = CASES["by_status_lowercase"]
+    rows = REG.by_status(c["args"][0])
+    assert len(rows) >= c["expect_count_min"]
+    for r in rows:
+        for k, v in c["expect_all_field"].items():
+            assert getattr(r, k) == v
+
+
 def test_contract_validate_lowercase_input():
     c = CASES["validate_lowercase_input"]
     ok, missing = REG.validate(c["args"][0])

@@ -250,6 +250,48 @@ fn contract_expired_tie_order_stable() {
 }
 
 #[test]
+fn contract_lookup_lowercase() {
+    let c = contract();
+    let cs = case(&c, "lookup_lowercase");
+    let mic = args_one(cs);
+    let r = Registry::load().unwrap();
+    let m = r.by_mic(&mic).expect("lowercase lookup present");
+    let e = &cs["expect"];
+    assert_eq!(m.mic, e["mic"].as_str().unwrap());
+    assert_eq!(m.mic_type, e["mic_type"].as_str().unwrap());
+    assert_eq!(m.country_code.as_deref(), e["country_code"].as_str());
+    assert_eq!(m.operating_mic, e["operating_mic"].as_str().unwrap());
+}
+
+#[test]
+fn contract_segments_lowercase() {
+    let c = contract();
+    let cs = case(&c, "segments_lowercase");
+    let parent = args_one(cs);
+    let want_mic = cs["expect_contains"]["mic"].as_str().unwrap();
+    let r = Registry::load().unwrap();
+    let segs = r.segments(&parent);
+    assert!(segs.iter().any(|s| s.mic == want_mic),
+            "{} not in segments of {}", want_mic, parent);
+}
+
+#[test]
+fn contract_by_status_lowercase() {
+    let c = contract();
+    let cs = case(&c, "by_status_lowercase");
+    let status = args_one(cs);
+    let min = cs["expect_count_min"].as_u64().unwrap() as usize;
+    let want = cs["expect_all_field"]["status"].as_str().unwrap();
+
+    let r = Registry::load().unwrap();
+    let rows = r.by_status(&status);
+    assert!(rows.len() >= min);
+    for m in &rows {
+        assert_eq!(m.status, want);
+    }
+}
+
+#[test]
 fn contract_validate_lowercase_input() {
     let c = contract();
     let cs = case(&c, "validate_lowercase_input");

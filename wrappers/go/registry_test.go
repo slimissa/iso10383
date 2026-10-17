@@ -309,6 +309,58 @@ func TestContractExpiredTieOrderStable(t *testing.T) {
 	}
 }
 
+func TestContractLookupLowercase(t *testing.T) {
+	c := loadContract(t)["lookup_lowercase"]
+	mic := c["args"].([]any)[0].(string)
+	m := load(t).ByMIC(mic)
+	if m == nil {
+		t.Fatalf("%s missing", mic)
+	}
+	expect := c["expect"].(map[string]any)
+	if m.MIC != expect["mic"].(string) {
+		t.Fatalf("mic: %s", m.MIC)
+	}
+	if m.MICType != expect["mic_type"].(string) {
+		t.Fatalf("mic_type: %s", m.MICType)
+	}
+	if m.CountryCode == nil || *m.CountryCode != expect["country_code"].(string) {
+		t.Fatalf("country: %v", m.CountryCode)
+	}
+	if m.OperatingMIC != expect["operating_mic"].(string) {
+		t.Fatalf("operating_mic: %s", m.OperatingMIC)
+	}
+}
+
+func TestContractSegmentsLowercase(t *testing.T) {
+	c := loadContract(t)["segments_lowercase"]
+	parent := c["args"].([]any)[0].(string)
+	want := c["expect_contains"].(map[string]any)
+	wantMIC := want["mic"].(string)
+	for _, s := range load(t).Segments(parent) {
+		if s.MIC == wantMIC {
+			return
+		}
+	}
+	t.Fatalf("%s not in segments of %s", wantMIC, parent)
+}
+
+func TestContractByStatusLowercase(t *testing.T) {
+	c := loadContract(t)["by_status_lowercase"]
+	status := c["args"].([]any)[0].(string)
+	min := int(c["expect_count_min"].(float64))
+	want := c["expect_all_field"].(map[string]any)["status"].(string)
+
+	rows := load(t).ByStatus(status)
+	if len(rows) < min {
+		t.Fatalf("count %d < %d", len(rows), min)
+	}
+	for _, m := range rows {
+		if m.Status != want {
+			t.Fatalf("status: %s", m.Status)
+		}
+	}
+}
+
 func TestContractValidateLowercaseInput(t *testing.T) {
 	c := loadContract(t)["validate_lowercase_input"]
 	args := c["args"].([]any)[0].([]any)
