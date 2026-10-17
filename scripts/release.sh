@@ -359,6 +359,19 @@ if grep -qE '\[(TODO|TBD|PASTE|N|M|K|J)\]' "$TAG_MSG_FILE"; then
     exit 1
 fi
 run git tag -a "v$VERSION" -F "$TAG_MSG_FILE" --cleanup=verbatim
+
+# Verify that git recorded the message we intended. Should always
+# pass with --cleanup=verbatim; catches a future flag change.
+if [[ "$DRY_RUN" != "--dry-run" ]]; then
+    RECORDED="$(git for-each-ref --format='%(contents)' "refs/tags/v$VERSION")"
+    WANTED="$(cat "$TAG_MSG_FILE")"
+    if [[ "$RECORDED" != "$WANTED" ]]; then
+        git tag -d "v$VERSION" >/dev/null
+        rm -f "$TAG_MSG_FILE"
+        echo "FAIL: git recorded a different tag message than the file; local tag v$VERSION deleted, nothing pushed" >&2
+        exit 1
+    fi
+fi
 rm -f "$TAG_MSG_FILE"
 run git push origin "v$VERSION"
 
