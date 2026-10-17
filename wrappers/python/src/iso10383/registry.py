@@ -136,8 +136,9 @@ class MICRegistry:
         return [MIC.from_dict(m) for m in self._mics if m["mic_type"] == u]
 
     def by_category(self, category: str) -> list[MIC]:
+        u = category.upper()
         return [MIC.from_dict(m) for m in self._mics
-                if m.get("market_category") == category]
+                if m.get("market_category") == u]
 
     def search(self, query: str) -> list[MIC]:
         q = query.lower()

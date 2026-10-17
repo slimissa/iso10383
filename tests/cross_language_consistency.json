@@ -209,6 +209,17 @@
       "expect_count_min": 1,
       "id": "by_category_rmkt",
       "op": "by_category"
+    },
+    {
+      "args": [
+        "rmkt"
+      ],
+      "expect_all_field": {
+        "market_category": "RMKT"
+      },
+      "expect_count_min": 1,
+      "id": "by_category_lowercase",
+      "op": "by_category"
     }
   ],
   "description": "Shared test vectors for all ISO 10383 wrappers. Every wrapper must produce byte-identical output for every case."

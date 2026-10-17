@@ -11,7 +11,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-195-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-199-success.svg)](./tests/)
 
 ---
 
@@ -532,11 +532,11 @@ Only Layer 0 cannot be regenerated from the repository. **Back up `raw/`.**
 | Suite | Tests |
 |-------|-------|
 | Python (root) | 88 |
-| Python (wrapper) | 28 |
-| JavaScript | 27 |
-| Rust | 25 |
-| Go | 27 |
-| **Total** | **195** |
+| Python (wrapper) | 29 |
+| JavaScript | 28 |
+| Rust | 26 |
+| Go | 28 |
+| **Total** | **199** |
 
 ```bash
 python3 -m pytest tests/ -q                    # root

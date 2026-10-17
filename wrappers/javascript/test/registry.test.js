@@ -196,6 +196,17 @@ test("contract: by category RMKT", () => {
   }
 });
 
+test("contract: by category lowercase", () => {
+  const c = CASES.by_category_lowercase;
+  const rows = REG.byCategory(c.args[0]);
+  assert.ok(rows.length >= c.expect_count_min);
+  for (const r of rows) {
+    for (const [k, v] of Object.entries(c.expect_all_field)) {
+      assert.equal(r[k], v);
+    }
+  }
+});
+
 test("contract: validate lowercase input", () => {
   const c = CASES.validate_lowercase_input;
   const { ok, missing } = REG.validate(c.args[0]);

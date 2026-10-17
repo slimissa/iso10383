@@ -102,8 +102,9 @@ class MICRegistry {
   }
 
   byCategory(category) {
+    const u = String(category).toUpperCase();
     return this._mics
-      .filter(m => m.market_category === category)
+      .filter(m => m.market_category === u)
       .map(m => ({ ...m }));
   }
 

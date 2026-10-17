@@ -193,11 +193,13 @@ impl Registry {
         self.mics.iter().filter(|m| m.mic_type == u).collect()
     }
 
-    /// Entries whose `market_category` matches `category`.
+    /// Entries whose `market_category` matches `category`
+    /// (case-insensitive, like the other lookups).
     pub fn by_category(&self, category: &str) -> Vec<&MIC> {
+        let u = category.to_ascii_uppercase();
         self.mics
             .iter()
-            .filter(|m| m.market_category.as_deref() == Some(category))
+            .filter(|m| m.market_category.as_deref() == Some(u.as_str()))
             .collect()
     }
 

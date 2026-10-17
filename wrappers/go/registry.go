@@ -236,11 +236,13 @@ func (r *Registry) ByMICType(micType string) []MIC {
 	return out
 }
 
-// ByCategory returns entries whose market_category matches.
+// ByCategory returns entries whose market_category matches,
+// case-insensitively.
 func (r *Registry) ByCategory(category string) []MIC {
+	u := strings.ToUpper(category)
 	var out []MIC
 	for _, m := range r.mics {
-		if m.MarketCategory != nil && *m.MarketCategory == category {
+		if m.MarketCategory != nil && *m.MarketCategory == u {
 			out = append(out, m)
 		}
 	}

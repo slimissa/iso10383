@@ -382,6 +382,23 @@ func TestContractByCategoryRMKT(t *testing.T) {
 	}
 }
 
+func TestContractByCategoryLowercase(t *testing.T) {
+	c := loadContract(t)["by_category_lowercase"]
+	category := c["args"].([]any)[0].(string)
+	min := int(c["expect_count_min"].(float64))
+	want := c["expect_all_field"].(map[string]any)["market_category"].(string)
+
+	rows := load(t).ByCategory(category)
+	if len(rows) < min {
+		t.Fatalf("count %d < %d", len(rows), min)
+	}
+	for _, m := range rows {
+		if m.MarketCategory == nil || *m.MarketCategory != want {
+			t.Fatalf("market_category: %v", m.MarketCategory)
+		}
+	}
+}
+
 func TestContractValidateLowercaseInput(t *testing.T) {
 	c := loadContract(t)["validate_lowercase_input"]
 	args := c["args"].([]any)[0].([]any)
