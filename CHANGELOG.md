@@ -14,6 +14,20 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+### Fixed
+
+- `by_category` uppercases its input, matching the other seven
+  lookups across all four wrappers.
+- Rust and Go test drivers iterate over every key in
+  `expect_all_field`, matching Python and JavaScript. No
+  existing case has more than one key, so no behaviour changes
+  today; the loop is a latent fix.
+
+### Changed
+
+- `by_category_lowercase` fixture case added; all four wrappers
+  verified.
+
 ## [1.0.4] - 2026-09-28
 
 ### Added
