@@ -350,6 +350,22 @@
     {
       "file": ".github/workflows/validate.yml",
       "contains": "check_cross_language.sh --strict"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "contains": "--branch"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "contains": "read_pinned_version"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "contains": "/v{version}/"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "contains": "read_pinned_version"
     }
   ]
 }
