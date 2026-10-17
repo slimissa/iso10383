@@ -209,7 +209,11 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-188"
+      "contains": "tests-192"
+    },
+    {
+      "file": "tests/cross_language_consistency.json",
+      "contains": "\"id\": \"by_category_rmkt\""
     },
     {
       "file": "README.md",

@@ -154,6 +154,15 @@ def test_contract_by_status_lowercase():
             assert getattr(r, k) == v
 
 
+def test_contract_by_category_rmkt():
+    c = CASES["by_category_rmkt"]
+    rows = REG.by_category(c["args"][0])
+    assert len(rows) >= c["expect_count_min"]
+    for r in rows:
+        for k, v in c["expect_all_field"].items():
+            assert getattr(r, k) == v
+
+
 def test_contract_validate_lowercase_input():
     c = CASES["validate_lowercase_input"]
     ok, missing = REG.validate(c["args"][0])

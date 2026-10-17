@@ -292,6 +292,22 @@ fn contract_by_status_lowercase() {
 }
 
 #[test]
+fn contract_by_category_rmkt() {
+    let c = contract();
+    let cs = case(&c, "by_category_rmkt");
+    let category = args_one(cs);
+    let min = cs["expect_count_min"].as_u64().unwrap() as usize;
+    let want = cs["expect_all_field"]["market_category"].as_str().unwrap();
+
+    let r = Registry::load().unwrap();
+    let rows = r.by_category(&category);
+    assert!(rows.len() >= min);
+    for m in &rows {
+        assert_eq!(m.market_category.as_deref(), Some(want));
+    }
+}
+
+#[test]
 fn contract_validate_lowercase_input() {
     let c = contract();
     let cs = case(&c, "validate_lowercase_input");
