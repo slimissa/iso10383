@@ -438,6 +438,46 @@
     {
       "file": "CONTRIBUTING.md",
       "absent": "six jobs"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "absent": "date.today()"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "absent": "datetime.now()"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "absent": "time.time()"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "absent": "random."
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "absent": "uuid.uuid4()"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "absent": "date.today()"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "absent": "datetime.now()"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "absent": "time.time()"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "absent": "random."
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "absent": "uuid.uuid4()"
     }
   ]
 }
