@@ -212,6 +212,14 @@
       "contains": "tests-199"
     },
     {
+      "file": "wrappers/rust/tests/registry.rs",
+      "contains": "fn assert_all_fields"
+    },
+    {
+      "file": "wrappers/go/registry_test.go",
+      "contains": "func assertAllFields"
+    },
+    {
       "file": "tests/test_fixture.py",
       "contains": "test_case_ids_are_unique"
     },

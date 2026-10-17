@@ -48,6 +48,30 @@ func loadContract(t *testing.T) map[string]map[string]any {
 	return out
 }
 
+// assertAllFields checks every key of expect_all_field against m. MIC is
+// read through its JSON tags, so a field name that is not a MIC field
+// fails the test instead of being skipped.
+func assertAllFields(t *testing.T, m MIC, want map[string]any) {
+	t.Helper()
+	b, err := json.Marshal(m)
+	if err != nil {
+		t.Fatalf("marshal MIC: %v", err)
+	}
+	var got map[string]any
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal MIC: %v", err)
+	}
+	for field, w := range want {
+		g, ok := got[field]
+		if !ok {
+			t.Fatalf("unknown field %q in expect_all_field", field)
+		}
+		if g != w {
+			t.Fatalf("%s: %v != %v", field, g, w)
+		}
+	}
+}
+
 func load(t *testing.T) *Registry {
 	t.Helper()
 	r, err := LoadRegistry()
@@ -239,16 +263,16 @@ func TestContractByCountryUS(t *testing.T) {
 	c := loadContract(t)["list_by_country_us"]
 	code := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["country_code"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByCountry(code)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.CountryCode == nil || *m.CountryCode != want {
-			t.Fatalf("country: %v", m.CountryCode)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 
@@ -256,16 +280,16 @@ func TestContractByStatusActive(t *testing.T) {
 	c := loadContract(t)["list_by_status_active"]
 	status := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["status"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByStatus(status)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.Status != want {
-			t.Fatalf("status: %s", m.Status)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 
@@ -273,16 +297,16 @@ func TestContractByMICTypeSegment(t *testing.T) {
 	c := loadContract(t)["list_by_mic_type_segment"]
 	mt := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["mic_type"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByMICType(mt)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.MICType != want {
-			t.Fatalf("mic_type: %s", m.MICType)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 
@@ -352,16 +376,16 @@ func TestContractByStatusLowercase(t *testing.T) {
 	c := loadContract(t)["by_status_lowercase"]
 	status := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["status"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByStatus(status)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.Status != want {
-			t.Fatalf("status: %s", m.Status)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 
@@ -369,16 +393,16 @@ func TestContractByCategoryRMKT(t *testing.T) {
 	c := loadContract(t)["by_category_rmkt"]
 	category := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["market_category"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByCategory(category)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.MarketCategory == nil || *m.MarketCategory != want {
-			t.Fatalf("market_category: %v", m.MarketCategory)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 
@@ -386,16 +410,16 @@ func TestContractByCategoryLowercase(t *testing.T) {
 	c := loadContract(t)["by_category_lowercase"]
 	category := c["args"].([]any)[0].(string)
 	min := int(c["expect_count_min"].(float64))
-	want := c["expect_all_field"].(map[string]any)["market_category"].(string)
+	want := c["expect_all_field"].(map[string]any)
 
 	rows := load(t).ByCategory(category)
 	if len(rows) < min {
 		t.Fatalf("count %d < %d", len(rows), min)
 	}
+	// Loop over every key so a future case with two fields is checked on
+	// all of them, matching Python and JavaScript's drivers.
 	for _, m := range rows {
-		if m.MarketCategory == nil || *m.MarketCategory != want {
-			t.Fatalf("market_category: %v", m.MarketCategory)
-		}
+		assertAllFields(t, m, want)
 	}
 }
 

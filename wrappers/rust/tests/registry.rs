@@ -4,7 +4,7 @@
 //! contract file at tests/cross_language_consistency.json. Nothing
 //! in this file hardcodes a MIC, count, or country code.
 
-use iso10383_registry::Registry;
+use iso10383_registry::{Registry, MIC};
 use serde_json::Value;
 
 fn contract() -> Value {
@@ -41,6 +41,40 @@ fn args_list(c: &Value) -> Vec<String> {
     c["args"].as_array().expect("args").first()
         .and_then(|v| v.as_array()).expect("arg list")
         .iter().map(|v| v.as_str().unwrap().to_string()).collect()
+}
+
+// MIC derives Deserialize only, so fields are read by name here rather
+// than through serde_json::to_value. An unknown field name in a fixture
+// panics: a typo cannot silently weaken a case.
+fn mic_field<'a>(m: &'a MIC, name: &str) -> Option<&'a str> {
+    match name {
+        "mic" => Some(m.mic.as_str()),
+        "mic_type" => Some(m.mic_type.as_str()),
+        "status" => Some(m.status.as_str()),
+        "operating_mic" => Some(m.operating_mic.as_str()),
+        "market_name" => m.market_name.as_deref(),
+        "legal_entity_name" => m.legal_entity_name.as_deref(),
+        "lei" => m.lei.as_deref(),
+        "market_category" => m.market_category.as_deref(),
+        "acronym" => m.acronym.as_deref(),
+        "country_code" => m.country_code.as_deref(),
+        "city" => m.city.as_deref(),
+        "website" => m.website.as_deref(),
+        "creation_date" => m.creation_date.as_deref(),
+        "last_update_date" => m.last_update_date.as_deref(),
+        "last_validation_date" => m.last_validation_date.as_deref(),
+        "expiration_date" => m.expiration_date.as_deref(),
+        "note" => m.note.as_deref(),
+        other => panic!("unknown field {other:?} in expect_all_field"),
+    }
+}
+
+fn assert_all_fields(m: &MIC, want: &Value) {
+    let map = want.as_object().expect("expect_all_field must be an object");
+    for (field, expected) in map {
+        let expected = expected.as_str().expect("expect_all_field values are strings");
+        assert_eq!(mic_field(m, field), Some(expected), "field {field}");
+    }
 }
 
 // --- shape of the bundled snapshot ---
@@ -183,13 +217,15 @@ fn contract_by_country_us() {
     let cs = case(&c, "list_by_country_us");
     let code = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["country_code"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_country(&code);
     assert!(rows.len() >= min, "count {} < {}", rows.len(), min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.country_code.as_deref(), Some(want));
+        assert_all_fields(m, want);
     }
 }
 
@@ -199,13 +235,15 @@ fn contract_by_status_active() {
     let cs = case(&c, "list_by_status_active");
     let status = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["status"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_status(&status);
     assert!(rows.len() >= min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.status, want);
+        assert_all_fields(m, want);
     }
 }
 
@@ -215,13 +253,15 @@ fn contract_by_mic_type_segment() {
     let cs = case(&c, "list_by_mic_type_segment");
     let t = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["mic_type"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_mic_type(&t);
     assert!(rows.len() >= min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.mic_type, want);
+        assert_all_fields(m, want);
     }
 }
 
@@ -287,13 +327,15 @@ fn contract_by_status_lowercase() {
     let cs = case(&c, "by_status_lowercase");
     let status = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["status"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_status(&status);
     assert!(rows.len() >= min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.status, want);
+        assert_all_fields(m, want);
     }
 }
 
@@ -303,13 +345,15 @@ fn contract_by_category_rmkt() {
     let cs = case(&c, "by_category_rmkt");
     let category = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["market_category"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_category(&category);
     assert!(rows.len() >= min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.market_category.as_deref(), Some(want));
+        assert_all_fields(m, want);
     }
 }
 
@@ -319,13 +363,15 @@ fn contract_by_category_lowercase() {
     let cs = case(&c, "by_category_lowercase");
     let category = args_one(cs);
     let min = cs["expect_count_min"].as_u64().unwrap() as usize;
-    let want = cs["expect_all_field"]["market_category"].as_str().unwrap();
+    let want = &cs["expect_all_field"];
 
     let r = Registry::load().unwrap();
     let rows = r.by_category(&category);
     assert!(rows.len() >= min);
+    // Loop over every key so a future case with two fields is checked on
+    // all of them, matching Python and JavaScript's drivers.
     for m in &rows {
-        assert_eq!(m.market_category.as_deref(), Some(want));
+        assert_all_fields(m, want);
     }
 }
 
