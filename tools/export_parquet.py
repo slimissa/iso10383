@@ -66,12 +66,14 @@ def to_table(data: dict) -> pa.Table:
 def render(data: dict) -> bytes:
     table = to_table(data)
     meta = data["meta"]
-    table = table.replace_schema_metadata({
+    footer = {
         b"iso10383.version":         meta["version"].encode(),
         b"iso10383.updated":         meta["updated"].encode(),
         b"iso10383.source_snapshot": meta["source_snapshot"].encode(),
         b"iso10383.source_hash":     meta["source_hash"].encode(),
-    })
+    }
+    table = table.replace_schema_metadata(
+        dict(sorted(footer.items())))
     sink = pa.BufferOutputStream()
     pq.write_table(table, sink, compression="snappy")
     return sink.getvalue().to_pybytes()
