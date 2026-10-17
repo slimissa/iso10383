@@ -209,7 +209,15 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-192"
+      "contains": "tests-195"
+    },
+    {
+      "file": "tests/test_fixture.py",
+      "contains": "test_case_ids_are_unique"
+    },
+    {
+      "file": "tests/test_fixture.py",
+      "contains": "test_no_unknown_expectation_keys"
     },
     {
       "file": "tests/cross_language_consistency.json",

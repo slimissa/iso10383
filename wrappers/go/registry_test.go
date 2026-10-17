@@ -41,6 +41,10 @@ func loadContract(t *testing.T) map[string]map[string]any {
 		}
 		out[id] = item
 	}
+	if len(out) != len(c.Cases) {
+		t.Fatalf("duplicate case id in %s: %d cases, %d unique",
+			p, len(c.Cases), len(out))
+	}
 	return out
 }
 

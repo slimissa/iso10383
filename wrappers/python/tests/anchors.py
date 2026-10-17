@@ -25,6 +25,10 @@ with _FIXTURE.open(encoding="utf-8") as f:
     CONTRACT = json.load(f)
 
 CASES = {c["id"]: c for c in CONTRACT["cases"]}
+assert len(CASES) == len(CONTRACT["cases"]), (
+    f"duplicate case id in {_FIXTURE}: "
+    f"{len(CONTRACT['cases'])} cases, {len(CASES)} unique"
+)
 
 # --- Sanity assertions on the bundled snapshot itself ---
 

@@ -18,6 +18,9 @@ const contract = JSON.parse(fs.readFileSync(FIXTURE, "utf8"));
 
 const CASES = {};
 for (const c of contract.cases) {
+  if (CASES[c.id]) {
+    throw new Error(`duplicate case id: ${c.id}`);
+  }
   CASES[c.id] = c;
 }
 

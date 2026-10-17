@@ -14,7 +14,13 @@ fn contract() -> Value {
     );
     let s = std::fs::read_to_string(path)
         .unwrap_or_else(|e| panic!("read {}: {}", path, e));
-    serde_json::from_str(&s).expect("parse contract fixture")
+    let v: Value = serde_json::from_str(&s).expect("parse contract fixture");
+    let cases = v["cases"].as_array().expect("cases array");
+    let ids: std::collections::HashSet<&str> =
+        cases.iter().filter_map(|x| x["id"].as_str()).collect();
+    assert_eq!(ids.len(), cases.len(),
+               "duplicate or missing case id in {}", path);
+    v
 }
 
 fn case<'a>(c: &'a Value, id: &str) -> &'a Value {
