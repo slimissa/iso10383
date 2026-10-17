@@ -1,3 +1,8 @@
+# Local development. The output-affecting pins (pyarrow) live in
+# constraints.txt, applied here with -c so `pip install -r
+# requirements-dev.txt` picks them up automatically.
+-c constraints.txt
+
 jsonschema>=4.0
-pyarrow==25.0.1
+pyarrow
 pytest>=8.0

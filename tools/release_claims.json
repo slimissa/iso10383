@@ -368,10 +368,6 @@
       "contains": "read_pinned_version"
     },
     {
-      "file": "requirements-dev.txt",
-      "contains": "pyarrow=="
-    },
-    {
       "file": "tools/export_parquet.py",
       "contains": "dict(sorted(footer.items()))"
     },
@@ -406,6 +402,26 @@
     {
       "file": "scripts/release.sh",
       "contains": "gen_exchange_calendar_snapshot.py --check"
+    },
+    {
+      "file": "constraints.txt",
+      "contains": "pyarrow==25.0.1"
+    },
+    {
+      "file": "requirements-dev.txt",
+      "contains": "-c constraints.txt"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "pip install -c constraints.txt pyarrow"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "pip install -c constraints.txt jsonschema pyarrow pytest"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "absent": "pip install pyarrow\n"
     }
   ]
 }

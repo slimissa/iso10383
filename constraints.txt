@@ -1,0 +1,6 @@
+# Output-affecting pins only. Any library whose version changes the bytes
+# of a committed artifact belongs here. CI jobs that run --check against
+# a committed artifact install with -c constraints.txt; jobs that don't
+# touch output bytes don't need this file.
+
+pyarrow==25.0.1

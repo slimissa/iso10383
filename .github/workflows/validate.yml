@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install jsonschema pyarrow pytest
+      - run: pip install -c constraints.txt jsonschema pyarrow pytest
       - run: python3 tools/validate.py
       - run: python3 tools/check_version_consistency.py
       - run: python3 tools/check_registry_freshness.py
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pyarrow
+      - run: pip install -c constraints.txt pyarrow
       - run: python3 tools/export_csv.py --check
       - run: python3 tools/export_sql.py --check
       - run: python3 tools/export_parquet.py --check
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install jsonschema pyarrow pytest
+      - run: pip install -c constraints.txt jsonschema pyarrow pytest
       - run: python3 tools/iso10383_cli.py check
       - run: python3 -m pytest tests/test_cli.py -q
 
