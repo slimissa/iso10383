@@ -27,6 +27,11 @@ must match `VERSION`. CI enforces this with
 
 - `by_category_lowercase` fixture case added; all four wrappers
   verified.
+- Residual doc drift corrected: `CONTRIBUTING.md`'s repo tree now
+  lists ADRs 0001–0012 and D1–D17; `requirements-dev.txt` drops the
+  unused `requests` pin; `docs/source_format.md` marks its file size
+  as historical; `scripts/release.sh` describes what `--dry-run`
+  actually runs.
 
 ## [1.0.4] - 2026-09-28
 
