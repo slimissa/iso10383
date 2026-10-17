@@ -120,14 +120,18 @@ func (r *Registry) Len() int { return len(r.mics) }
 // IsEmpty reports whether the registry has no entries.
 func (r *Registry) IsEmpty() bool { return len(r.mics) == 0 }
 
-// All returns a defensive copy of every entry.
+// All returns a copy of the slice of entries. The slice is independent
+// of the registry, but each entry's pointer fields (*string) still
+// reference registry-owned strings: do not mutate through them.
 func (r *Registry) All() []MIC {
 	out := make([]MIC, len(r.mics))
 	copy(out, r.mics)
 	return out
 }
 
-// ByMIC returns a copy of the entry for mic, or nil.
+// ByMIC returns a copy of the entry for mic, or nil. The copy is
+// shallow: value fields are independent, but pointer fields (*string)
+// reference registry-owned strings, so do not mutate through them.
 // The lookup is case-insensitive.
 func (r *Registry) ByMIC(mic string) *MIC {
 	i, ok := r.byMIC[strings.ToUpper(mic)]
@@ -163,6 +167,8 @@ func (r *Registry) OperatingMIC(mic string) string {
 }
 
 // Expired returns expired entries, sorted by expiration_date ascending.
+// Entries with the same expiration_date keep registry order, as in the
+// other three wrappers (the sort is stable).
 // Pass "" for since to return every expired entry.
 func (r *Registry) Expired(since string) []MIC {
 	var out []MIC
@@ -181,7 +187,7 @@ func (r *Registry) Expired(since string) []MIC {
 		}
 		out = append(out, m)
 	}
-	sort.Slice(out, func(i, j int) bool {
+	sort.SliceStable(out, func(i, j int) bool {
 		di, dj := "", ""
 		if out[i].ExpirationDate != nil {
 			di = *out[i].ExpirationDate

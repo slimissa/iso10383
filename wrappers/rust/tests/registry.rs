@@ -220,6 +220,36 @@ fn contract_by_mic_type_segment() {
 }
 
 #[test]
+fn contract_expired_tie_order_stable() {
+    let c = contract();
+    let cs = case(&c, "expired_tie_order_stable");
+    let since = cs["args"][0].as_str().unwrap();
+    assert_eq!(cs["expect_order_by"].as_str().unwrap(), "expiration_date");
+
+    let r = Registry::load().unwrap();
+    let position: std::collections::HashMap<&str, usize> = r
+        .all()
+        .iter()
+        .enumerate()
+        .map(|(i, m)| (m.mic.as_str(), i))
+        .collect();
+    let keys: Vec<(String, usize)> = r
+        .expired(Some(since))
+        .iter()
+        .map(|m| {
+            (
+                m.expiration_date.clone().unwrap_or_default(),
+                position[m.mic.as_str()],
+            )
+        })
+        .collect();
+    let mut sorted = keys.clone();
+    sorted.sort();
+    // Ascending by the field; equal values keep registry order.
+    assert_eq!(keys, sorted);
+}
+
+#[test]
 fn contract_validate_lowercase_input() {
     let c = contract();
     let cs = case(&c, "validate_lowercase_input");

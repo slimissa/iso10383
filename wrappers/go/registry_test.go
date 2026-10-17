@@ -282,6 +282,33 @@ func TestContractByMICTypeSegment(t *testing.T) {
 	}
 }
 
+func TestContractExpiredTieOrderStable(t *testing.T) {
+	c := loadContract(t)["expired_tie_order_stable"]
+	since := c["args"].([]any)[0].(string)
+	if c["expect_order_by"].(string) != "expiration_date" {
+		t.Fatalf("unsupported expect_order_by: %v", c["expect_order_by"])
+	}
+	r := load(t)
+	position := map[string]int{}
+	for i, m := range r.All() {
+		position[m.MIC] = i
+	}
+	date := func(p *string) string {
+		if p == nil {
+			return ""
+		}
+		return *p
+	}
+	rows := r.Expired(since)
+	for i := 1; i < len(rows); i++ {
+		a, b := rows[i-1], rows[i]
+		da, db := date(a.ExpirationDate), date(b.ExpirationDate)
+		if da > db || (da == db && position[a.MIC] > position[b.MIC]) {
+			t.Fatalf("%s must precede %s (dates %s, %s)", b.MIC, a.MIC, db, da)
+		}
+	}
+}
+
 func TestContractValidateLowercaseInput(t *testing.T) {
 	c := loadContract(t)["validate_lowercase_input"]
 	args := c["args"].([]any)[0].([]any)
@@ -352,11 +379,33 @@ func TestByMICReturnsCopy(t *testing.T) {
 	if a == b {
 		t.Fatal("expected distinct pointers")
 	}
-	// Mutating a must not affect the registry.
+	// Mutating a value field of a must not affect the registry.
 	a.MIC = "ZZZZ"
 	c := r.ByMIC("XNYS")
 	if c == nil || c.MIC != "XNYS" {
 		t.Fatal("registry mutated by caller")
+	}
+}
+
+// ByMIC returns a shallow copy: value fields are independent and
+// pointer fields alias registry-owned strings. This test pins that
+// documented behavior; a change to deep copies must update it.
+func TestByMICReturnsIndependentStruct(t *testing.T) {
+	r := load(t)
+	a := r.ByMIC("XNYS")
+	b := r.ByMIC("XNYS")
+	if a == nil || b == nil {
+		t.Fatal("XNYS missing")
+	}
+	if a == b {
+		t.Fatal("expected distinct pointers")
+	}
+	a.MIC = "ZZZZ"
+	if b.MIC != "XNYS" {
+		t.Fatal("value field was shared between returned structs")
+	}
+	if a.MarketName == nil || a.MarketName != b.MarketName {
+		t.Fatal("documented aliasing changed: update the ByMIC docs and this test")
 	}
 }
 

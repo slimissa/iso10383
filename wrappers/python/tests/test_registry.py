@@ -117,6 +117,16 @@ def test_contract_by_mic_type_segment():
             assert getattr(r, k) == v
 
 
+def test_contract_expired_tie_order_stable():
+    c = CASES["expired_tie_order_stable"]
+    field = c["expect_order_by"]
+    position = {m.mic: i for i, m in enumerate(REG.all())}
+    rows = REG.expired(since=c["args"][0])
+    keys = [(getattr(m, field) or "", position[m.mic]) for m in rows]
+    # Ascending by the field; equal values keep registry order.
+    assert keys == sorted(keys)
+
+
 def test_contract_validate_lowercase_input():
     c = CASES["validate_lowercase_input"]
     ok, missing = REG.validate(c["args"][0])

@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-163"
+      "contains": "tests-168"
     },
     {
       "file": "README.md",
@@ -278,6 +278,14 @@
     {
       "file": "wrappers/python/src/iso10383/__main__.py",
       "contains": "from __future__ import annotations"
+    },
+    {
+      "file": "wrappers/go/registry.go",
+      "contains": "sort.SliceStable("
+    },
+    {
+      "file": "wrappers/go/registry.go",
+      "absent": "sort.Slice("
     }
   ]
 }

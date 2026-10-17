@@ -141,6 +141,23 @@ test("contract: by mic_type SEGMENT", () => {
   }
 });
 
+test("contract: expired tie order is stable", () => {
+  const c = CASES.expired_tie_order_stable;
+  const field = c.expect_order_by;
+  const position = new Map(REG.all().map((m, i) => [m.mic, i]));
+  const rows = REG.expired(c.args[0]);
+  for (let i = 1; i < rows.length; i++) {
+    const fa = rows[i - 1][field] || "";
+    const fb = rows[i][field] || "";
+    const ia = position.get(rows[i - 1].mic);
+    const ib = position.get(rows[i].mic);
+    assert.ok(
+      fa < fb || (fa === fb && ia < ib),
+      `${rows[i - 1].mic} must precede ${rows[i].mic}`,
+    );
+  }
+});
+
 test("contract: validate lowercase input", () => {
   const c = CASES.validate_lowercase_input;
   const { ok, missing } = REG.validate(c.args[0]);
