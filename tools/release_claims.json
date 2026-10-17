@@ -51,7 +51,7 @@
     },
     {
       "file": "README.md",
-      "contains": "CI runs six jobs"
+      "contains": "CI runs seven jobs"
     },
     {
       "file": "README.md",
@@ -82,7 +82,7 @@
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "CI runs six jobs"
+      "contains": "CI runs seven jobs"
     },
     {
       "file": "CONTRIBUTING.md",
@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-199"
+      "contains": "tests-205"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
@@ -430,6 +430,14 @@
     {
       "file": ".github/workflows/refresh.yml",
       "absent": "pip install jsonschema pyarrow pytest\n"
+    },
+    {
+      "file": "README.md",
+      "absent": "six jobs"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "six jobs"
     }
   ]
 }
