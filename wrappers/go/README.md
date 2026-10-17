@@ -23,6 +23,7 @@ func main() {
 
     fmt.Println(reg.OperatingMIC("XTKS"))          // XJPX
     fmt.Println(len(reg.Expired("2024-01-01")))
+    fmt.Println(len(reg.ByCategory("RMKT")))
 }
 ```
 

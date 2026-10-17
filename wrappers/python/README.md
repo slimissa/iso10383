@@ -14,6 +14,7 @@ for seg in reg.segments("XJPX"):
 
 print(reg.operating_mic("XTKS"))           # XJPX
 print(len(reg.expired(since="2024-01-01")))
+print(len(reg.by_category("RMKT")))          # number of regulated markets
 ```
 
 No network. The bundled snapshot ships with the package.

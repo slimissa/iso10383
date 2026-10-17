@@ -18,6 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("{:?}", reg.operating_mic("XTKS"));  // Some("XJPX")
     println!("{}", reg.expired(Some("2024-01-01")).len());
+    println!("{}", reg.by_category("RMKT").len());
 
     Ok(())
 }
