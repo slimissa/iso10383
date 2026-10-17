@@ -92,27 +92,16 @@ def main() -> int:
         if not args.out.is_file():
             print(f"missing: {args.out}", file=sys.stderr)
             return 1
-        # Parquet embeds a creation timestamp; byte comparison is not
-        # stable. Check the schema metadata instead.
-        committed = pq.read_table(args.out).schema.metadata or {}
-        expected = {
-            b"iso10383.version":         data["meta"]["version"].encode(),
-            b"iso10383.updated":         data["meta"]["updated"].encode(),
-            b"iso10383.source_snapshot": data["meta"]["source_snapshot"].encode(),
-            b"iso10383.source_hash":     data["meta"]["source_hash"].encode(),
-        }
-        for k, v in expected.items():
-            if committed.get(k) != v:
-                print(f"stale: {args.out} metadata {k!r} mismatch",
-                      file=sys.stderr)
-                return 1
-        # Also check the row count matches.
-        committed_rows = pq.read_table(args.out).num_rows
-        if committed_rows != len(data["mics"]):
-            print(f"stale: {args.out} has {committed_rows} rows, "
-                  f"expected {len(data['mics'])}", file=sys.stderr)
+        # pyarrow is pinned (requirements-dev.txt) and the footer dict is
+        # sorted before write, so two runs are byte-identical. Compare
+        # bytes: catches footer key order, compression defaults, and the
+        # pyarrow writer stamp.
+        expected = render(data)
+        actual = args.out.read_bytes()
+        if actual != expected:
+            print(f"stale: {args.out}", file=sys.stderr)
             return 1
-        print(f"OK: {args.out} in sync ({committed_rows} rows)")
+        print(f"OK: {args.out} in sync ({len(data['mics'])} rows, bytes)")
         return 0
 
     args.out.write_bytes(render(data))

@@ -58,3 +58,24 @@ def test_parquet_in_sync():
         capture_output=True, text=True, cwd=ROOT,
     )
     assert r.returncode == 0, r.stderr
+
+
+def test_two_runs_byte_identical(tmp_path):
+    """The pinned pyarrow version and the sorted footer make the file stable."""
+    import subprocess
+    a = tmp_path / "a.parquet"
+    b = tmp_path / "b.parquet"
+    for out in (a, b):
+        r = subprocess.run(
+            [sys.executable, str(ROOT / "tools/export_parquet.py"),
+             "-o", str(out)],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+        assert r.returncode == 0, r.stderr
+    assert a.read_bytes() == b.read_bytes()
+
+
+def test_metadata_keys_are_sorted(pf):
+    md = pf.schema_arrow.metadata or {}
+    keys = [k for k in md if k.startswith(b"iso10383.")]
+    assert keys == sorted(keys), keys

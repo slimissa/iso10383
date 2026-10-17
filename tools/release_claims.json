@@ -366,6 +366,14 @@
     {
       "file": "tools/gen_iso3166_snapshot.py",
       "contains": "read_pinned_version"
+    },
+    {
+      "file": "requirements-dev.txt",
+      "contains": "pyarrow=="
+    },
+    {
+      "file": "tools/export_parquet.py",
+      "contains": "dict(sorted(footer.items()))"
     }
   ]
 }
