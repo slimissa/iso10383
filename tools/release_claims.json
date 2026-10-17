@@ -482,6 +482,38 @@
     {
       "file": "scripts/release.sh",
       "absent": "&& info "
+    },
+    {
+      "file": "tools/check_mojibake.py",
+      "contains": "rb\"\\xc3\\xa2\\xe2\\x82\\xac\""
+    },
+    {
+      "file": "tools/check_mojibake.py",
+      "contains": "rb\"\\xef\\xbf\\xbd\""
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "git for-each-ref --format='%(contents)'"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "git recorded a different tag message"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "grep -vE '^[0-9]+:\\s*#'"
+    },
+    {
+      "file": "tools/check_snapshot_freshness.py",
+      "contains": "Two mechanisms keep a vendored snapshot honest"
+    },
+    {
+      "file": "tools/check_registry_freshness.py",
+      "contains": "Registry freshness (this tool) answers"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "python3 -m pytest tests/ -q"
     }
   ]
 }
