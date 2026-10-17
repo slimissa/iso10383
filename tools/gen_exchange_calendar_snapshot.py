@@ -1,16 +1,15 @@
 """Generate tools/exchange_calendar_snapshot.json from Exchange Calendar.
 
 Reads every MIC referenced by the exchanges/ directory of the sibling
-repo, at the tag named in tools/exchange_calendar_snapshot.meta.json
-(source_version). Run this manually and commit; CI verifies freshness.
+repo at the tag named in tools/exchange_calendar_snapshot.meta.json
+(source_version). Run this manually and commit; CI verifies freshness
+with --check.
 
-The meta is the source of the pin. Set source_version first, then run
-this script; it clones that tag, verifies that the cloned calendar.json
-declares the same version, and writes the snapshot. A tag that is not
-what the meta claims is refused, so the meta and the content cannot
-silently diverge.
+--check clones the same tag and compares the rendered output against
+the committed file byte-for-byte.
 """
 
+import argparse
 import json
 import subprocess
 import sys
@@ -31,15 +30,12 @@ def read_pinned_version() -> str:
     return version
 
 
-def main() -> None:
-    version = read_pinned_version()
+def fetch_mics(version: str) -> list[str]:
     tag = f"v{version}"
-    print(f"cloning {REPO} at {tag}")
     with tempfile.TemporaryDirectory() as td:
         subprocess.run(
             ["git", "clone", "--depth", "1", "--branch", tag, REPO, td],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        )
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         cal = Path(td) / "calendar.json"
         if cal.exists():
             seen = json.loads(cal.read_text(encoding="utf-8")).get(
@@ -47,8 +43,7 @@ def main() -> None:
             if seen != version:
                 sys.exit(
                     f"{tag}: calendar.json declares meta.version={seen!r}, "
-                    f"but the meta pins {version!r}; reconcile before writing"
-                )
+                    f"but the meta pins {version!r}; reconcile before writing")
         mics: set[str] = set()
         for f in (Path(td) / "exchanges").glob("*.json"):
             d = json.loads(f.read_text(encoding="utf-8"))
@@ -56,16 +51,59 @@ def main() -> None:
                 mics.add(d["mic"])
             if d.get("code"):
                 mics.add(d["code"])
+    return sorted(mics)
 
-    out = {
+
+def build_snapshot(version: str, mics: list[str]) -> dict:
+    return {
         "source_url": REPO,
+        "source_version": version,
         "count": len(mics),
-        "mics": sorted(mics),
+        "mics": mics,
     }
-    OUT.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n",
-                   encoding="utf-8")
-    print(f"Wrote {OUT}: {len(mics)} MICs (from {tag})")
+
+
+def render(snapshot: dict) -> str:
+    return json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
+
+
+def main() -> int:
+    p = argparse.ArgumentParser()
+    p.add_argument("--check", action="store_true",
+                   help="Compare the committed snapshot to a fresh build")
+    args = p.parse_args()
+
+    version = read_pinned_version()
+    mics = fetch_mics(version)
+    expected = build_snapshot(version, mics)
+    text = render(expected)
+
+    if args.check:
+        if not OUT.is_file():
+            print(f"missing: {OUT}", file=sys.stderr)
+            return 1
+        committed = OUT.read_text(encoding="utf-8")
+        if committed == text:
+            print(f"OK: {OUT.name} is current ({len(mics)} MICs, v{version})")
+            return 0
+        print(f"stale: {OUT.name}", file=sys.stderr)
+        try:
+            cur = json.loads(committed)
+            added = sorted(set(mics) - set(cur.get("mics", [])))
+            removed = sorted(set(cur.get("mics", [])) - set(mics))
+            if added:
+                print(f"  added: {added[:10]}", file=sys.stderr)
+            if removed:
+                print(f"  removed: {removed[:10]}", file=sys.stderr)
+        except json.JSONDecodeError:
+            print("  committed file is not valid JSON", file=sys.stderr)
+        return 1
+
+    print(f"cloning {REPO} at v{version}")
+    OUT.write_text(text, encoding="utf-8")
+    print(f"Wrote {OUT}: {len(mics)} MICs (from v{version})")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
