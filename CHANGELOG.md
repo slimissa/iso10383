@@ -14,25 +14,60 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-### Fixed
+### Added
 
-- `by_category` uppercases its input, matching the other seven
-  lookups across all four wrappers.
-- Rust and Go test drivers iterate over every key in
-  `expect_all_field`, matching Python and JavaScript. No
-  existing case has more than one key, so no behaviour changes
-  today; the loop is a latent fix.
+- `constraints.txt` pins output-affecting dependencies (`pyarrow`); every
+  CI job that installs `pyarrow` uses `-c constraints.txt`.
+- `export_parquet.py --check` compares bytes; footer metadata is sorted
+  before write; two runs on the same pyarrow version are byte-identical.
+- `gen_iso3166_snapshot.py --check` and `gen_exchange_calendar_snapshot.py
+  --check` verify the committed snapshot against the pinned tag.
+- New CI job `check-snapshots` runs both generator `--check`s; both also
+  run in `release.sh`'s gate.
+- `exchange_calendar_snapshot.json` now declares `source_version`.
 
 ### Changed
 
-- `by_category_lowercase` fixture case added; all four wrappers
-  verified.
-- Residual doc drift corrected: `CONTRIBUTING.md`'s repo tree now
-  lists ADRs 0001–0012 and D1–D17; `requirements-dev.txt` drops the
-  unused `requests` pin; `docs/source_format.md` marks its file size
-  as historical; `scripts/release.sh` describes what `--dry-run`
-  actually runs.
+- `check_iso3166_current.py` and `check_exchange_calendar_current.py`
+  compare the local `source_version` against upstream and warn on version
+  drift; content drift (code or MIC set difference) still fails `--strict`.
+- `check_cross_language.sh` accepts `--strict`; a skipped suite fails
+  the release gate.
+- `release.sh`'s verification-doc template runs each gate and records its
+  exit code via `GATE_LOG`, replacing the hard-coded `pass` strings.
+- `release.sh` invokes `check_cross_language.sh --strict`.
 
+### Fixed
+
+- Python `validate()` uppercases its input, matching `by_mic` and the
+  other three wrappers.
+- Python `__main__.py` uses `from __future__ import annotations`,
+  restoring Python 3.9 compatibility.
+- Go `Expired()` uses `sort.SliceStable`, matching the other three
+  wrappers' tie order.
+- The SQLite SQL file's self-referencing FK is deferrable; with `PRAGMA
+  foreign_keys = ON`, the file loads cleanly.
+- The generic SQL file is safe to run twice (category inserts now carry
+  `ON CONFLICT DO NOTHING`).
+- The PostgreSQL SQL file no longer references a `countries` table it
+  never creates.
+- `git tag -a -F` uses `--cleanup=verbatim`, preserving `### Heading`
+  lines in tag messages.
+
+### Tests
+
+- Fixture cases for lowercase `by_mic`, `segments`, `by_status`,
+  `by_category`, and expired tie order.
+- `test_checks.py` and `test_fixture.py` validate the checking tools and
+  the shared fixture itself.
+- Manifest grew from ~60 to 100+ claims covering every previously-fixed
+  drift class.
+
+### Removed
+
+- The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
+  the tool is retained in the tree with a docstring note).
+  
 ## [1.0.4] - 2026-09-28
 
 ### Added

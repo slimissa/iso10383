@@ -11,7 +11,7 @@ One JSON file. Six-layer validation. Nine distribution artifacts. Four language 
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-199-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-205-success.svg)](./tests/)
 
 ---
 
@@ -491,7 +491,7 @@ python3 tools/check_version_consistency.py
 python3 -m pytest tests/ -q
 ```
 
-**A refresh with `REMOVED > 0` opens the PR as a draft** with the removal count in the body. Draft status requires explicit conversion by a human before merge, so the removal is confirmed on purpose. See [`docs/decisions/0003-monthly-refresh.md`](./docs/decisions/0003-monthly-refresh.md) § REMOVED > 0 guard. A removed MIC is the change class most likely to break downstream consumers.
+**A refresh with `REMOVED > 0` opens the PR as a draft.** The removed MICs are in the workflow log; a reviewer checks the diff before marking the draft ready. Draft status requires explicit conversion by a human before merge, so the removal is confirmed on purpose. See [`docs/decisions/0003-monthly-refresh.md`](./docs/decisions/0003-monthly-refresh.md) § REMOVED > 0 guard. A removed MIC is the change class most likely to break downstream consumers.
 
 ### Audit
 
@@ -531,12 +531,12 @@ Only Layer 0 cannot be regenerated from the repository. **Back up `raw/`.**
 
 | Suite | Tests |
 |-------|-------|
-| Python (root) | 88 |
+| Python (root) | 94 |
 | Python (wrapper) | 29 |
 | JavaScript | 28 |
 | Rust | 26 |
 | Go | 28 |
-| **Total** | **199** |
+| **Total** | **205** |
 
 ```bash
 python3 -m pytest tests/ -q                    # root
@@ -618,6 +618,7 @@ iso10383/
 ├── README.md                     # This file
 ├── CONTRIBUTING.md
 ├── requirements-dev.txt
+├── constraints.txt              # Output-affecting pins
 ├── .gitattributes
 ├── .gitignore
 │
@@ -684,6 +685,9 @@ iso10383/
 │   ├── exchange_calendar_snapshot.json
 │   └── exchange_calendar_snapshot.meta.json
 │
+├── bin/
+│   └── iso10383                  # Shell wrapper
+│
 ├── scripts/
 │   └── release.sh                # Deterministic release pipeline
 │
@@ -705,10 +709,12 @@ iso10383/
 │   ├── test_export_parquet.py
 │   ├── test_cli.py
 │   ├── test_wrappers.py
-│   └── test_scripts.py
+│   ├── test_scripts.py
+│   ├── test_checks.py                # Self-tests for the checking tools
+│   └── test_fixture.py               # Self-tests for the shared fixture
 │
 └── .github/workflows/
-    ├── validate.yml              # Six jobs on every push
+    ├── validate.yml              # Seven jobs on every push
     └── refresh.yml               # Monthly refresh, opens PR
 ```
 
@@ -738,7 +744,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). The short version:
 3. Run `python3 tools/validate.py` — must exit 0.
 4. Run `python3 -m pytest tests/ -q` — must pass.
 5. Run `bash tools/check_cross_language.sh` — must pass.
-6. Submit a PR. CI runs six jobs.
+6. Submit a PR. CI runs seven jobs.
 
 **Source discipline.** SWIFT's published MIC file is the only accepted source. No third-party lists, no mirrors, no Wikipedia, no aggregators. If a value cannot be traced to the published file, the field stays `null`.
 

@@ -675,7 +675,7 @@ REMOVED:  0 (0 operating, 0 segment)
 5. **Open the PR.** The description should name the issue, explain
    the change, and include the output of the gate commands.
 
-6. **CI runs six jobs.** See `.github/workflows/validate.yml`:
+6. **CI runs seven jobs.** See `.github/workflows/validate.yml`:
 
    | Job | Purpose |
    |-----|---------|

@@ -80,7 +80,7 @@ CI runs the check on every push. A stale snapshot fails the
 
 A refresh that removes a MIC from the registry requires human
 confirmation before merging. The refresh workflow opens the pull
-request as a draft with the removal count in the body (see the
+request as a draft; the removed MICs are in the workflow log (see the
 Amendment of 2026-10-10 at the end of this ADR).
 
 Enforced by `tools/refresh_diff.py`, which compares the old registry

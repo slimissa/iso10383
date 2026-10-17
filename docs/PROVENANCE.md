@@ -240,7 +240,7 @@ late.
 
 The workflow log carries the diff (step "Diff"); the PR body says
 whether removals were found. A refresh with `REMOVED > 0` opens the
-PR as a draft with the removal count in the body. Draft status
+PR as a draft. The removed MICs are in the workflow log. Draft status
 requires explicit conversion by a human before merge. This is D10.
 
 ### The monthly process, manual
