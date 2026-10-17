@@ -212,6 +212,10 @@
       "contains": "tests-199"
     },
     {
+      "file": "tools/check_iso3166_current.py",
+      "contains": "warning: version drift: snapshot source_version"
+    },
+    {
       "file": "wrappers/rust/tests/registry.rs",
       "contains": "fn assert_all_fields"
     },
@@ -281,7 +285,7 @@
     },
     {
       "file": "tools/iso3166_snapshot.json",
-      "contains": "\"source_version\": \"1.6.7\""
+      "contains": "\"source_version\": \""
     },
     {
       "file": "scripts/release.sh",
