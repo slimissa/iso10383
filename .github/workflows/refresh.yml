@@ -20,7 +20,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install
-        run: pip install jsonschema pyarrow pytest
+        run: pip install -c constraints.txt jsonschema pyarrow pytest
 
       - name: Compute refresh identifiers
         id: refresh

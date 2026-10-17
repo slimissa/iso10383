@@ -133,7 +133,12 @@ def _toolchain_free_path(tmp_path):
     """A PATH with python3, node and the bare minimum: no cargo, no go."""
     bindir = tmp_path / "bin"
     bindir.mkdir()
-    (bindir / "python3").symlink_to(sys.executable)
+    # A symlink loses venv detection (the temp dir's python3 cannot
+    # import the venv's packages). A shell shim that execs the real
+    # interpreter preserves sys.prefix and site-packages.
+    interp = bindir / "python3"
+    interp.write_text(f'#!/bin/sh\nexec "{sys.executable}" "$@"\n')
+    interp.chmod(0o755)
     for tool in ("bash", "dirname", "node", "env"):
         found = shutil.which(tool)
         if found:

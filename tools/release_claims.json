@@ -422,6 +422,14 @@
     {
       "file": ".github/workflows/validate.yml",
       "absent": "pip install pyarrow\n"
+    },
+    {
+      "file": ".github/workflows/refresh.yml",
+      "contains": "pip install -c constraints.txt jsonschema pyarrow pytest"
+    },
+    {
+      "file": ".github/workflows/refresh.yml",
+      "absent": "pip install jsonschema pyarrow pytest\n"
     }
   ]
 }
