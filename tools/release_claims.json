@@ -478,6 +478,10 @@
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
       "absent": "uuid.uuid4()"
+    },
+    {
+      "file": "scripts/release.sh",
+      "absent": "&& info "
     }
   ]
 }

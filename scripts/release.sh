@@ -38,6 +38,14 @@
 #   - poll scope: one per-push workflow (validate.yml). When a second
 #     is added, port ISO 4217's check_workflows_covered.
 #   - tag-move procedure: ADR 0005 § Scope. Recovery-only.
+#
+# Operator hygiene: a generator command must be on its own line.
+# Operator hygiene: a generator command must be on its own line.
+# A command joined to a message with a shell `&&` swallows the
+# command's failure under set -e: the whole list exits non-zero
+# from the left side, but set -e only fires on the final command
+# of a list. Every generator is either run standalone or wrapped
+# in gate(), which captures the code and re-exits.
 
 set -euo pipefail
 
