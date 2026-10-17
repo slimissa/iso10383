@@ -100,6 +100,17 @@ jobs:
       - run: pip install -e wrappers/python pytest
       - run: bash tools/check_cross_language.sh --strict
     
+  check-snapshots:
+    needs: check-wrappers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 tools/gen_iso3166_snapshot.py --check
+      - run: python3 tools/gen_exchange_calendar_snapshot.py --check
+
   check-mojibake:
     runs-on: ubuntu-latest
     steps:
