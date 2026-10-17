@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """Check whether vendored snapshots are past their review_by date.
 
+Two mechanisms keep a vendored snapshot honest, and this tool is only
+one of them. This one is scheduled re-verification: it fails when
+review_by has passed, whether or not anything upstream changed. The
+other is the cross-reference check in tools/check_iso3166_current.py
+and tools/check_exchange_calendar_current.py, against the same
+snapshots: it fails when a value the consumer holds no longer resolves
+in the snapshot, whether or not review_by is due. One catches drift by
+the calendar, the other by content. Neither replaces the other.
+
 For each tools/*_snapshot.json, look for a sibling
 tools/<stem>.meta.json. Read meta.review_by from the sibling when
 present, from the snapshot's own embedded meta block when not.

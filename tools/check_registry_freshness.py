@@ -1,4 +1,11 @@
-"""Fail if meta.source_snapshot is more than 60 days old."""
+"""Fail if meta.source_snapshot is more than 60 days old.
+
+Registry freshness (this tool) answers "is the source publication
+current?" Snapshot freshness (check_snapshot_freshness.py) answers
+"have the vendored snapshots been reviewed?" Two mechanisms, two
+questions. See docs/RELEASE_PATTERN.md section "Registry freshness
+vs. snapshot freshness".
+"""
 
 import argparse
 import json
