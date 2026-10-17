@@ -318,6 +318,10 @@
     {
       "file": "tools/export_sql.py",
       "absent": "portable form uses NOT EXISTS"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "check_cross_language.sh --strict"
     }
   ]
 }

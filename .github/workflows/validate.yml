@@ -98,7 +98,7 @@ jobs:
           go-version: "1.22"
       - uses: dtolnay/rust-toolchain@stable
       - run: pip install -e wrappers/python pytest
-      - run: bash tools/check_cross_language.sh
+      - run: bash tools/check_cross_language.sh --strict
     
   check-mojibake:
     runs-on: ubuntu-latest
