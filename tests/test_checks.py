@@ -190,3 +190,46 @@ def test_release_tag_keeps_hash_lines(tmp_path):
     body = subprocess.run(["git", "cat-file", "-p", "v9.9.9"], cwd=repo,
                           capture_output=True, text=True, check=True).stdout
     assert "### Fixed" in body
+
+
+# --- generator --check tests (offline, no network) ----------------------
+
+import importlib.util  # noqa: E402
+
+
+def _load_tool(name):
+    spec = importlib.util.spec_from_file_location(
+        name, ROOT / "tools" / f"{name}.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_iso_build_snapshot_is_pure_and_sorted():
+    mod = _load_tool("gen_iso3166_snapshot")
+    snap = mod.build_snapshot("1.6.9", ["US", "GB", "FR"])
+    assert snap["source_version"] == "1.6.9"
+    assert snap["count"] == 3
+    assert snap["alpha_2_set"] == ["US", "GB", "FR"]
+
+
+def test_iso_render_is_deterministic():
+    mod = _load_tool("gen_iso3166_snapshot")
+    a = mod.build_snapshot("1.6.9", ["US", "GB"])
+    b = mod.build_snapshot("1.6.9", ["US", "GB"])
+    assert mod.render(a) == mod.render(b)
+    assert mod.render(a).endswith("\n")
+
+
+def test_ec_build_snapshot_is_pure_and_sorted():
+    mod = _load_tool("gen_exchange_calendar_snapshot")
+    snap = mod.build_snapshot("2.15.4", ["XNYS", "XLON", "XTKS"])
+    assert snap["count"] == 3
+    assert snap["mics"] == ["XNYS", "XLON", "XTKS"]
+
+
+def test_ec_render_is_deterministic():
+    mod = _load_tool("gen_exchange_calendar_snapshot")
+    a = mod.build_snapshot("2.15.4", ["XNYS", "XLON"])
+    b = mod.build_snapshot("2.15.4", ["XNYS", "XLON"])
+    assert mod.render(a) == mod.render(b)

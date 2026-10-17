@@ -374,6 +374,38 @@
     {
       "file": "tools/export_parquet.py",
       "contains": "dict(sorted(footer.items()))"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "contains": "def build_snapshot"
+    },
+    {
+      "file": "tools/gen_iso3166_snapshot.py",
+      "contains": "--check"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "contains": "def build_snapshot"
+    },
+    {
+      "file": "tools/gen_exchange_calendar_snapshot.py",
+      "contains": "--check"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "gen_iso3166_snapshot.py --check"
+    },
+    {
+      "file": ".github/workflows/validate.yml",
+      "contains": "gen_exchange_calendar_snapshot.py --check"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "gen_iso3166_snapshot.py --check"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "gen_exchange_calendar_snapshot.py --check"
     }
   ]
 }
