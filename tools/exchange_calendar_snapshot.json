@@ -76,5 +76,6 @@
     "XWBO",
     "XZAG"
   ],
-  "source_url": "https://github.com/slimissa/exchange-calendar.git"
+  "source_url": "https://github.com/slimissa/exchange-calendar.git",
+  "source_version": "2.15.4"
 }
