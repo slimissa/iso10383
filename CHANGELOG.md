@@ -60,6 +60,8 @@ must match `VERSION`. CI enforces this with
   `tools/check_registry_freshness.py` name the two mechanisms
   (scheduled re-verification vs cross-reference check) and the tools
   that implement each.
+- `README.md` release step 5 gate list now names both
+  `gen_*_snapshot.py --check` gates that `release.sh` runs.
 
 ### Fixed
 
@@ -77,6 +79,13 @@ must match `VERSION`. CI enforces this with
   never creates.
 - `git tag -a -F` uses `--cleanup=verbatim`, preserving `### Heading`
   lines in tag messages.
+- `check_no_orphan_variables` in `scripts/release.sh`: the comment
+  filter was `^\s*#`, which never matched because `grep -n` prefixes
+  every line with `LINENUM:`. Now `^[0-9]+:\s*#`. Variables mentioned
+  in comments were being reported as orphans.
+- `tools/check_release_claims.py`: an absent-only claim on a missing
+  file used to pass vacuously; missing is now a failure for any claim
+  shape. No current claim relied on the old behavior.
 
 ### Tests
 
@@ -86,24 +95,14 @@ must match `VERSION`. CI enforces this with
   the shared fixture itself.
 - Manifest grew from ~60 to 100+ claims covering every previously-fixed
   drift class.
+- `tests/test_check_mojibake.py`'s docstring assertion normalizes
+  whitespace (`" ".join(doc.split())`) before substring checks; a line
+  break is a formatting choice, not a semantic change.
 
 ### Removed
 
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
   the tool is retained in the tree with a docstring note).
-  
-- `check_no_orphan_variables` in `scripts/release.sh`: the comment
-  filter was `^\s*#`, which never matched because `grep -n` prefixes
-  every line with `LINENUM:`. Now `^[0-9]+:\s*#`. Variables mentioned
-  in comments were being reported as orphans.
-- `tests/test_check_mojibake.py`'s docstring assertion normalizes
-  whitespace (`" ".join(doc.split())`) before substring checks; a line
-  break is a formatting choice, not a semantic change.
-- `tools/check_release_claims.py`: an absent-only claim on a missing
-  file used to pass vacuously; missing is now a failure for any claim
-  shape. No current claim relied on the old behavior.
-- `README.md` release step 5 gate list now names both
-  `gen_*_snapshot.py --check` gates that `release.sh` runs.
 
 ## [1.0.4] - 2026-09-28
 
