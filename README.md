@@ -1068,6 +1068,7 @@ iso10383/
 │   ├── mic_lei_source_format.md         # MIC to LEI reconnaissance (ADR 0008)
 │   ├── mic_bic_source_format.md         # MIC to BIC reconnaissance (ADR 0009)
 │   ├── exchange_calendar_mics.txt       # The 74 MICs Exchange Calendar references
+│   ├── README-AUDIT-NOTES.md            # Receipt: how each README number was measured
 │   ├── v1.0.0-verification.md          # Gate record for v1.0.0
 │   ├── v1.0.1-verification.md          # Gate record for v1.0.1
 │   ├── v1.0.2-verification.md          # Gate record for v1.0.2
