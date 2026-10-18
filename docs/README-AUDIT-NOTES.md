@@ -32,7 +32,10 @@ The old README badge said `tests-205`, and `tools/release_claims.json` pins that
 - **Gate count.** `scripts/release.sh` has **17** `gate` calls (the brief's list omitted version consistency). The README lists all 17 in order.
 - **Brief's `tests-242`** appears nowhere in the tree; 222 was measured.
 
-## D. Documents and tools that disagree with the tree (not fixed; outside the README)
+## D. Documents and tools that disagree with the tree
+
+**Fixed** in the commit after the README rewrite (all four). The findings are
+kept here as the record of what the audit found, not as open items.
 
 1. `tools/iso10383_cli.py` module docstring says "Eight subcommands" and lists eight; there are nine (`check` is missing from the list).
 2. `tools/validate.py` module docstring (lines 1 to 31) says cross-registry checks are advisory and warn by default; the code blocks by default since v1.0.1 and `--advisory` downgrades.

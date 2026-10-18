@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """iso10383 — command-line interface to the ISO 10383 MIC registry.
 
-Eight subcommands:
+Nine subcommands:
 
   lookup MIC            all fields for one MIC
   list                  filter across the registry
@@ -11,6 +11,7 @@ Eight subcommands:
   validate MIC...       exit 0 if all exist
   search QUERY          substring on market_name and acronym
   info                  registry metadata
+  check                 built-in smoke test
 
 Five output modes (mutually exclusive):
 

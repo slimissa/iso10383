@@ -16,8 +16,9 @@ Severity model:
   * Internal checks (1, 2, 3, 5, 6, and the chain-resolution part of
     layer 4) always produce errors.
   * Cross-registry checks (the ISO 3166 and Exchange Calendar parts
-    of layer 4) are advisory in v1.0.0 (D6). They warn by default and
-    promote to errors under --strict.
+    of layer 4) have been blocking by default since v1.0.1 (D6, D17).
+    An unexpected gap is an error. Pass --advisory to downgrade it to
+    a warning; --strict promotes warnings to errors.
 
 Exit codes:
   0  pass (may include warnings)

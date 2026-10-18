@@ -186,12 +186,15 @@ bash tools/check_cross_language.sh
 Expected on a clean checkout:
 
 ```
-OK (with warnings): 2883 MICs validated
-...
-66 passed
-...
-OK: 5 suite(s) passed, all wrappers agree
+OK: 2883 MICs validated            # python3 tools/validate.py
+111 passed                          # python3 -m pytest tests/ -q
+OK: 5 suite(s) passed, 0 skipped    # bash tools/check_cross_language.sh
 ```
+
+The root suite is 111 tests; the wrapper suites are 29 (Python), 28
+(JavaScript), 26 (Rust) and 28 (Go), for 222 across all five. A clean
+`check_cross_language.sh` run reports `0 skipped`; a skipped suite means
+a toolchain (`node`, `cargo`, `go`) is missing.
 
 The validator prints no cross-registry warnings. Before 2026-10-10 it
 printed one, for three MICs since renamed upstream. See
@@ -205,7 +208,7 @@ Toolchain:
 | Node | ≥ 18 | JavaScript wrapper |
 | Cargo | ≥ 1.70 | Rust wrapper |
 | Go | ≥ 1.21 | Go wrapper |
-| `pyarrow` | ≥ 14 | Parquet export |
+| `pyarrow` | ==25.0.1 (pinned in `constraints.txt`) | Parquet export |
 | `jsonschema` | ≥ 4 | Schema validation |
 
 Only Python is required for data changes. Node, Rust, and Go are

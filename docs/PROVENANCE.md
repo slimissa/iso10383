@@ -422,13 +422,15 @@ release. They are tracked for future versions.
 
 ### Distribution
 
-- **Wrappers are not published to PyPI, npm, or crates.io.** They
-  install from the repository:
+- **Wrappers are not published to PyPI, npm, crates.io or a Go proxy.**
+  They install from a checkout of this repository:
   `pip install -e wrappers/python`,
   `npm install ./wrappers/javascript`,
-  `cargo add --path wrappers/rust`. The Go module resolves from git
-  via its own tag. Publication waits for a consumer that needs it
-  (README, What's next).
+  `cargo add --path wrappers/rust`. For Go, point a `replace` directive
+  at `wrappers/go` from your `go.mod` (the README's Go quick start shows
+  the exact block). None of the four is reachable through a package
+  registry; publication waits for a consumer that needs it (README,
+  What's next).
 - **No HTML or XML distribution.** The source file is available as
   XLSX and XML from SWIFT; this registry publishes JSON, SQL, CSV,
   TSV, and Parquet only. If XLSX or XML is needed, use SWIFT's
