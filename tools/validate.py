@@ -6,8 +6,9 @@ Layers, run in order:
   2. integrity      patterns, date format, non-empty strings
   3. business       uniqueness, status/mic_type consistency,
                     operating MIC self-reference, segment not self-ref
-  4. cross-ref      chain resolution (errors); ISO 3166 and Exchange
-                    Calendar checks (warnings in v1.0.0, see D6)
+  4. cross-ref      chain resolution; ISO 3166 and Exchange Calendar
+                    checks (blocking since v1.0.1; see the severity
+                    model below, D6 and D17)
   5. ground truth   spot checks for XNYS, XLON, XTKS, XPAR
   6. coverage       operating >= 1500, segment >= 1000, total >= 2500
 
