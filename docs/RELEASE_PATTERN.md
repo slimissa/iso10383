@@ -513,7 +513,7 @@ command's failure under `set -e`.
 
 ## Operator hygiene
 
-Five rules that emerged from specific failure modes across the
+Eight rules that emerged from specific failure modes across the
 three implementations.
 
 ### 1. No heredocs for multi-line scripts
@@ -576,6 +576,212 @@ tail -3 /tmp/out
 The failure mode: a validator ran with a broken import, exited 1,
 and the piped `tail -3` printed `0`. The release proceeded with
 the validator broken.
+
+Most checks that run in the gate also run in CI, so the gate is a
+faster, local copy of the same signal. Some checks are gate-only by
+design: their inputs are version-scoped in a way CI cannot
+reproduce. `check_release_claims.py` is the reference case: the
+manifest has claims about a version that does not exist until the
+release commit lands. Gate-only checks are permitted; the tool's
+docstring names the reason.
+
+### 6. Every artifact that quotes an implementation detail is coupled to that implementation
+
+When a script's expression changes, every test that asserts on it
+and every doc line or claim that quotes it change in the same
+commit. The failure mode is silent: the script works, the doc lies.
+
+The ISO 10383 case: `\(.conclusion)` became
+`\(.conclusion // \"pending\")` in a jq expression. The
+release-claims manifest still asserted the old shape, and a test
+still checked for it. Neither failed until the claim was verified
+against the tree.
+
+Applies to:
+
+- CHANGELOG entries that quote command output
+- Verification docs that paste captured results
+- README sections that show example invocations
+- Release-claims manifests that assert on script internals
+
+The rule: if an artifact reproduces text from a running program,
+that artifact is a copy, not a reference. Copies drift.
+
+### 6b. The commit is not the working tree
+
+`git diff --cached --stat` before every commit. The message is a
+claim about what the commit contains, not about what's on disk. If
+the diff doesn't match the message, the message is wrong.
+
+Three instances:
+
+- ISO 4217 `82668a0`: the commit's title was "Run stores-200 demo
+  test in CI"; the diff carried only a trailing-whitespace change.
+- ISO 4217 `3687bc2`: the commit's message described the orphan
+  check landing; the diff only carried the call site. The function
+  body followed two commits later.
+- ISO 3166 v1.6.4: the CHANGELOG section named the ISO 10383
+  reviewer entry and the orphan-preflight convention. Neither
+  landed; a one-character anchor mismatch dropped both edits.
+
+Both patches reported success. Neither diff matched its message.
+The verification is `git diff --cached --stat` before every commit,
+read against the intended change.
+
+A `--stat` confirms which files changed, not what changed. When the
+change is a specific line in a file — a step added, a claim updated,
+a version bumped — read `git diff --cached` in full, not just the
+stat. The stat catches a missing edit; the full diff catches the
+wrong edit. The ISO 4217 v1.7.11 attempt is the reference case: the
+patch that installed `duckdb` substituted a line inside a step
+rather than replacing the step, producing an orphan `name:` in the
+YAML. The stat named the workflow file; the diff would have named
+the orphan.
+
+### 6c. Manifest claims describe state, not intent
+
+A claim in `release_claims.json` that asserts `file contains X` must
+be verified against the file before the manifest is committed. If X
+isn't there, the fix hasn't landed, not the claim.
+
+Two failure classes:
+
+- A claim describing a change that was intended but did not land.
+- A claim whose string was edited to match the file, when the file
+  was wrong.
+
+Both turn the manifest into a check that always passes. The manifest
+is a contract; a claim that describes intent instead of state is a
+contract with nothing to enforce.
+
+The `--audit` mode in `check_release_claims.py` runs every claim
+against the current tree. Verify new claims before committing them.
+
+### 6d. A check is only meaningful against the artifact it was designed for
+
+The ISO 4217 v1.7.11 release had three checks return a clean result
+against the wrong file, and the release was cut three times before
+the placeholder in its verification doc was caught.
+
+Three concrete instances, all in one session:
+
+- `grep -c TODO` on the verification doc returned 0, because the
+  doc contained a placeholder (`<the real line>`) that is not the
+  string `TODO`.
+- `grep -c "986 passed|test_stores_200"` on the same doc returned
+  2, because the doc's own placeholder text contains both strings.
+- `grep -c pytest` on a captured CI log returned 0, because the log
+  was from the `Version and Hygiene` workflow, which does not run
+  pytest. The `Validate Registry` workflow does.
+
+A zero from a check pointed at the wrong file looks identical to a
+zero from a check that correctly found nothing. The failure mode is
+silent and it is the operator's responsibility to notice.
+
+**The rule:**
+
+- Record which artifact each check reads, in the check's own output.
+  When a check produces a summary line, print the path or the run
+  ID it was run against. `OK: 1 verification doc(s) clean` is
+  weaker than `OK: 1 verification doc(s) clean under /repo/docs`.
+  The second cannot be true if the check was pointed at the wrong
+  place.
+- When a check returns zero unexpectedly, first confirm the
+  artifact is the one intended. Re-read the path or the command
+  that produced it. A correct check against a wrong artifact is
+  indistinguishable from a wrong check against the right artifact
+  until you look.
+- Never write a check whose passing state is supplied by the
+  artifact's own template. A check on a doc that asks "does this
+  contain X?" is a check that cannot fail if the doc's placeholder
+  text contains X. Substituting a specific known-bad string for a
+  general pattern is not a fix; it moves the failure to the next
+  string.
+- **A diagnostic check must parse with the same parser the consumer
+  uses.** `grep` on structured data is not a check: it is a search
+  over bytes that may not mean what the consumer reads. A value
+  containing escaped characters — a JSON string whose value is a
+  Python literal with a backslash, a Python literal with a newline
+  escape — is stored in the file with one extra layer of escaping
+  compared to the value the consumer reads. Grep for the file's
+  bytes and you match the escaped form; grep for the consumer's
+  value and you match nothing. Use `json.loads` + string
+  comparison, or the equivalent parser, when the artifact is
+  structured data.
+
+This rule was added after ISO 4217 v1.7.11, and extended after
+ISO 10383's v1.0.4 port when a `grep -F` on `release_claims.json`
+returned two false negatives for two claims that were present in
+the file. The check that closes the first class is
+`tools/check_verification_doc.py`; the second class is closed by
+using `json.loads` in place of `grep` for any diagnostic on a JSON
+file. Sourced from ISO 4217 v1.7.11 and ISO 10383 v1.0.4.
+
+### 7. A check that cannot run must fail, not pass
+
+A built-in check that cannot execute — a missing toolchain, an
+absent dependency, a network failure, a skipped test — is not a
+pass. It is an unverified state, and the check must say so and exit
+non-zero.
+
+Four consequences:
+
+- A missing prerequisite is a failure, reported by name. The
+  prerequisite is checked before anything is changed, and also
+  under `--dry-run`.
+- An exception must be explicit and visible: a flag on the command
+  line that appears in the output. Not a silent default, not an
+  environment variable, not a `skipped` line that still exits 0.
+- "Nothing ran" is never success, even when every part of the check
+  was excused.
+- A check that wraps other checks reports how many ran, not only
+  how many passed.
+
+Sourced from ISO 4217 v1.7.12 (`poll_ci` returned success when it
+could not poll), v1.7.13 (`check_cross_language.sh` reported a
+skipped suite as OK), v1.7.14 (skipped tests counted as passes in
+the gate), and v1.7.15 (`check_amendments.py` exited 0 when it
+could not read the SIX page, so the weekly monitor reported success
+while detecting nothing). ISO 10383 closed its instance at `54d7f25`
+(`check_cross_language.sh --strict` in the release gate) and
+`62b2364` (`--strict` in `validate.yml`).
+
+### 8. Every tool proves its own reachability
+
+A tool with no `--check` or smoke invocation in CI may have
+unreachable code paths. A generator did: its preservation block
+crashed on every invocation and only appeared to work because the
+snapshot's `review_by` was set manually.
+
+Every tool that produces a committed artifact runs in CI, even on
+unchanged inputs: a `--check` or smoke invocation in the fast
+workflow and, under invariant 5, the same command in the release
+gate. The check does not have to verify output; it has to make the
+tool's code path execute. A `--check` that rebuilds with the same
+function the write path calls, and compares, satisfies both: it
+runs every branch and fails on an unreachable one.
+
+Reference case: ISO 3166 `tools/gen_iso4217_snapshot.py` at
+`07e103f`, the commit before `b9c0807`. Given a valid `--source` it
+raised `NameError` (`output_path` was undefined), in write mode and
+`--check` mode alike, and exited 1, the code `--check` uses for
+"snapshot stale". The defects arrived in `da186b2`; `b9c0807` fixed
+three: the undefined variable, a value assigned to a dict that was
+discarded before the return value was built, and a stray import.
+
+ISO 4217 had the same gap in v1.8.1: `tools/enrich_field.py
+--check` ran in neither CI nor the gate, and the vendored ISO 3166
+snapshot had no tool at all, so it was edited by hand and drifted
+from every tag. v1.8.2 adds the four `enrich_field.py --check`
+steps and `tools/vendor_iso3166.py --check`.
+
+ISO 10383's two generator `--check`s (`gen_iso3166_snapshot.py`,
+`gen_exchange_calendar_snapshot.py`) run in the `check-snapshots` CI
+job and in the release gate, as of `8cf3357`.
+
+Applies to: every tool with an output path in the repo, every
+generator, every exporter. Sourced from ISO 3166 v1.6.9
+(`94350d6`, `b9c0807`).
 
 ---
 
