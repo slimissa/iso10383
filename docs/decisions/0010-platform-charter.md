@@ -285,3 +285,15 @@ headers and the four bundled copies. `git log -S'"updated": "2026-09-28"'
 example in the README (replaced in `9c3d821`) and is the release date of
 v1.0.2 to v1.0.4, not a value in the data. There is no divergence to
 explain, and this question is closed.
+
+## Amendment (2026-10-18) — the iso4217 comparison is not in CI
+
+The Non-determinism table lists `check_iso4217_current.py` among the sibling
+comparisons "run in the `validate-json` job on every push". That has been
+false since `e38d4bf`, which removed the step from `validate.yml`. The tool
+remains in the tree as an inactive no-op (there is no ISO 4217 snapshot; it
+exits 0 with a note) and `scripts/release.sh` does not run it. The two
+sibling comparisons that run on every push, under `--strict`, are
+`check_iso3166_current.py` and `check_exchange_calendar_current.py`. The
+section's conclusion is unchanged: both read the outside world and neither
+interprets it.
