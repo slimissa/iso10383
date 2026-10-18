@@ -39,10 +39,13 @@ def test_absent_fails_when_text_present(tmp_path, monkeypatch):
         {"file": "doc.md", "absent": "never written"})
     assert ok
 
-    # A missing file satisfies `absent`; pair it with an existence claim.
-    ok, _ = check_release_claims.check_claim(
+    # A missing file fails any claim, including absent-only ones.
+    # Absent-only claims on missing files used to pass vacuously;
+    # that is the class the fix at audit time closed.
+    ok, detail = check_release_claims.check_claim(
         {"file": "gone.md", "absent": "x"})
-    assert ok
+    assert not ok
+    assert "missing" in detail
     ok, _ = check_release_claims.check_claim({"file": "gone.md"})
     assert not ok
 

@@ -587,7 +587,7 @@ Releases are cut by [`scripts/release.sh`](./scripts/release.sh) `<version>`. Th
 2. Bumps the nine version sites
 3. Regenerates all nine artifacts and four bundle copies
 4. Runs the version-consistency check
-5. Runs the full gate: validate, registry freshness, snapshot freshness, mojibake, release-claims, ISO 3166 and Exchange Calendar drift (`--strict`), CLI check, three export `--check`s, sync, root tests, cross-language
+5. Runs the full gate: validate, registry freshness, snapshot freshness, mojibake, release-claims, ISO 3166 and Exchange Calendar drift (`--strict`), CLI check, two generator `--check`s, three export `--check`s, sync, root tests, cross-language
 6. Commits, pushes, polls every per-push workflow
 7. Tags with a message derived from `CHANGELOG.md`
 8. Writes `docs/v<version>-verification.md` with both the commit SHA and the tag object SHA

@@ -86,9 +86,10 @@ def check_claim(claim: dict) -> tuple[bool, str]:
                        f"allowed: contains, absent")
     path = PROJECT_ROOT / claim["file"]
     if not path.exists():
-        if "absent" in claim and "contains" not in claim:
-            return True, (f"{claim['file']} is missing, so it does not "
-                          f"contain {claim['absent']!r}")
+        # A claim cannot be verified against a missing file. An
+        # absent-only claim on a missing file used to pass, which
+        # meant renaming the file would silence every absence claim
+        # on it. Missing is a failure for any claim shape.
         return False, f"missing file: {claim['file']}"
     text = path.read_text(encoding="utf-8")
     notes = []

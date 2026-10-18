@@ -578,6 +578,10 @@
     {
       "file": "docs/RELEASE_PATTERN.md",
       "contains": "normalize whitespace before"
+    },
+    {
+      "file": "tools/check_mojibake.py",
+      "contains": "unclosed code fence"
     }
   ]
 }
