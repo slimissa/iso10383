@@ -53,6 +53,10 @@ must match `VERSION`. CI enforces this with
 - `check_iso3166_current.py` and `check_exchange_calendar_current.py`
   compare the local `source_version` against upstream and warn on version
   drift; content drift (code or MIC set difference) still fails `--strict`.
+- `check_iso3166_current.py` and `check_exchange_calendar_current.py` exit 1
+  when the sibling cannot be reached, because nothing was compared; the new
+  `--advisory` flag restores exit 0 for that case. Before, an unreachable
+  sibling exited 0 even under `--strict`.
 - `check_cross_language.sh` accepts `--strict`; a skipped suite fails
   the release gate.
 - `release.sh`'s verification-doc template runs each gate and records its
@@ -118,7 +122,8 @@ must match `VERSION`. CI enforces this with
 - Fixture cases for lowercase `by_mic`, `segments`, `by_status`,
   `by_category`, and expired tie order.
 - `test_checks.py` and `test_fixture.py` validate the checking tools and
-  the shared fixture itself.
+  the shared fixture itself. Four tests pin the unreachable-sibling
+  behavior of the two `check_*_current.py` scripts.
 - Manifest grew from ~60 to 100+ claims covering every previously-fixed
   drift class.
 - `tests/test_check_mojibake.py`'s docstring assertion normalizes
