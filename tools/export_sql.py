@@ -1,7 +1,7 @@
 """Export iso10383.json to four SQL dialects.
 
 Four files at repo root:
-  iso10383.sql           ANSI SQL-92, portable
+  iso10383.sql           generic dialect (ON CONFLICT; not SQL-92)
   iso10383.postgresql.sql PostgreSQL 12+
   iso10383.mysql.sql      MySQL 8+ / MariaDB 10.4+
   iso10383.sqlite.sql     SQLite 3.37+
