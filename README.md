@@ -762,7 +762,7 @@ Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not fou
 | **Ground truth** | `validate.py` | Spot checks: `XNYS` (OPERATING, US), `XLON` (OPERATING, GB), `XTKS` (SEGMENT, JP), `XPAR` (FR) |
 | **Coverage** | `validate.py` | Operating >= 1,500, segment >= 1,000, total >= 2,500 |
 | **Raw-to-curated parse** | `fetch_swift_mic.py` | Unknown type or status values, bad self-reference, malformed dates, missing columns, broken chains with `--strict` |
-| **Refresh diff** | `refresh_diff.py` | ADDED / CHANGED / REMOVED between two registry files; a REMOVED count above 0 opens the refresh PR as a draft |
+| **Refresh diff** | `refresh_diff.py` | NEW / EXPIRED / CHANGED / REMOVED counts between two registry files (CHANGED watches six fields); a REMOVED count above 0 exits 1 and opens the refresh PR as a draft |
 | **Version consistency** | `check_version_consistency.py` | Any of the nine sites disagreeing; the schema version disagreeing with the schema badge |
 | **Registry freshness** | `check_registry_freshness.py` | `meta.source_snapshot` more than 60 days old |
 | **Snapshot freshness** | `check_snapshot_freshness.py` | A vendored snapshot past its `review_by` date; takes `--today YYYY-MM-DD` |
@@ -969,7 +969,7 @@ iso10383/
 │
 ├── tools/
 │   ├── fetch_swift_mic.py               # Layer 0 to 1: download and parse SWIFT's CSV
-│   ├── refresh_diff.py                  # ADDED / CHANGED / REMOVED between two registry files
+│   ├── refresh_diff.py                  # NEW / EXPIRED / CHANGED / REMOVED between two registry files
 │   ├── validate.py                      # Six-layer validator
 │   ├── export_columns.py                # Canonical column order for every exporter
 │   ├── export_sql.py                    # SQL generator, 4 dialects (--check)
