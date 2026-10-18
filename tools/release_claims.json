@@ -514,6 +514,70 @@
     {
       "file": "scripts/release.sh",
       "contains": "python3 -m pytest tests/ -q"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "absent": "Five rules that emerged"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "Eight rules that emerged"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "## The `[Unreleased]` rule"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "Presence, not position"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "The gate must include every check"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "Gate block shape"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "workflow-coverage check"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "## Version-pinned byte outputs"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "pin the render, not only the settings"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "constraints.txt` pins"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "### 6. Every artifact that quotes"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "### 6d. A check is only meaningful"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "grep` on structured data is not a check"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "### 7. A check that cannot run must fail"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "### 8. Every tool proves its own reachability"
+    },
+    {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "normalize whitespace before"
     }
   ]
 }
