@@ -241,3 +241,45 @@ def test_ec_render_is_deterministic():
     a = mod.build_snapshot("2.15.4", ["XNYS", "XLON"])
     b = mod.build_snapshot("2.15.4", ["XNYS", "XLON"])
     assert mod.render(a) == mod.render(b)
+
+
+# --- a sibling comparison that cannot run must fail, not pass -------------
+
+import check_exchange_calendar_current  # noqa: E402
+import check_iso3166_current  # noqa: E402
+
+
+def _network_down(*args, **kwargs):
+    raise OSError("network down")
+
+
+def test_iso3166_current_fails_when_sibling_unreachable(monkeypatch, capsys):
+    monkeypatch.setattr(check_iso3166_current.urllib.request, "urlopen",
+                        _network_down)
+    assert check_iso3166_current.main(["--strict"]) == 1
+    err = capsys.readouterr().err
+    assert "sibling unreachable" in err and "--advisory" in err
+
+
+def test_iso3166_current_advisory_tolerates_unreachable(monkeypatch, capsys):
+    monkeypatch.setattr(check_iso3166_current.urllib.request, "urlopen",
+                        _network_down)
+    assert check_iso3166_current.main(["--strict", "--advisory"]) == 0
+    assert "sibling unreachable" in capsys.readouterr().err
+
+
+def test_exchange_calendar_current_fails_when_sibling_unreachable(
+        monkeypatch, capsys):
+    monkeypatch.setattr(check_exchange_calendar_current.subprocess, "run",
+                        _network_down)
+    assert check_exchange_calendar_current.main(["--strict"]) == 1
+    err = capsys.readouterr().err
+    assert "sibling unreachable" in err and "--advisory" in err
+
+
+def test_exchange_calendar_current_advisory_tolerates_unreachable(
+        monkeypatch, capsys):
+    monkeypatch.setattr(check_exchange_calendar_current.subprocess, "run",
+                        _network_down)
+    assert check_exchange_calendar_current.main(["--strict", "--advisory"]) == 0
+    assert "sibling unreachable" in capsys.readouterr().err

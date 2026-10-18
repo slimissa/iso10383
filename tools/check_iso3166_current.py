@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Compare tools/iso3166_snapshot.json against the live ISO 3166 registry.
 
-Exit 0 if in sync (or if the sibling is unreachable and --advisory).
-Exit 1 if drifted and --strict.
+Exit 0 if in sync. Exit 1 if drifted and --strict.
+
+Exit 1 if the sibling is unreachable: a comparison that could not run is
+not a pass (docs/RELEASE_PATTERN.md, operator-hygiene rule 7). Pass
+--advisory to exit 0 in that case instead; the note still prints.
 
 Advisory in v1.0.0 per D6. Blocking in v1.0.1.
 
@@ -23,10 +26,13 @@ LOCAL_META = Path(__file__).parent / "iso3166_snapshot.meta.json"
 LIVE_URL = "https://raw.githubusercontent.com/slimissa/iso3166/main/iso3166.json"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--strict", action="store_true")
-    args = p.parse_args()
+    p.add_argument("--advisory", action="store_true",
+                   help="Exit 0 when the sibling is unreachable, instead "
+                        "of failing")
+    args = p.parse_args(argv)
 
     snap = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     snap_codes = set(snap["alpha_2_set"])
@@ -48,7 +54,11 @@ def main() -> int:
             live_data = json.loads(r.read())
     except Exception as e:
         print(f"note: sibling unreachable ({e})", file=sys.stderr)
-        return 0
+        if args.advisory:
+            return 0
+        print("FAIL: the sibling could not be reached, so nothing was "
+              "compared (pass --advisory to tolerate this)", file=sys.stderr)
+        return 1
 
     live_codes = {c["alpha_2"] for c in live_data.get("countries", {}).get("active", [])}
 

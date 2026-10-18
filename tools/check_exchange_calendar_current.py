@@ -2,8 +2,11 @@
 """Compare tools/exchange_calendar_snapshot.json against the live
 Exchange Calendar registry.
 
-Exit 0 if in sync (or if the sibling is unreachable and --advisory).
-Exit 1 if drifted and --strict.
+Exit 0 if in sync. Exit 1 if drifted and --strict.
+
+Exit 1 if the sibling is unreachable: a comparison that could not run is
+not a pass (docs/RELEASE_PATTERN.md, operator-hygiene rule 7). Pass
+--advisory to exit 0 in that case instead; the note still prints.
 
 Compares two things: the MIC set, and the version label (sidecar
 source_version vs upstream meta.version). A MIC-set difference
@@ -23,10 +26,13 @@ LOCAL_META = Path(__file__).parent / "exchange_calendar_snapshot.meta.json"
 REPO = "https://github.com/slimissa/exchange-calendar.git"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--strict", action="store_true")
-    args = p.parse_args()
+    p.add_argument("--advisory", action="store_true",
+                   help="Exit 0 when the sibling is unreachable, instead "
+                        "of failing")
+    args = p.parse_args(argv)
 
     snap = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     snap_mics = set(snap["mics"])
@@ -63,7 +69,11 @@ def main() -> int:
                     encoding="utf-8").strip() or None
     except Exception as e:
         print(f"note: sibling unreachable ({e})", file=sys.stderr)
-        return 0
+        if args.advisory:
+            return 0
+        print("FAIL: the sibling could not be reached, so nothing was "
+              "compared (pass --advisory to tolerate this)", file=sys.stderr)
+        return 1
 
     added = sorted(live_mics - snap_mics)
     removed = sorted(snap_mics - live_mics)
