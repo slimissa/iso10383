@@ -166,6 +166,21 @@ Why: a tag that lands on a green commit whose second workflow is
 still running is a tag that hides a failure. v1.3.0 in ISO 3166 is
 the historical example.
 
+**Reference implementation.** ISO 10383 `scripts/release.sh`
+polls `gh run list --json databaseId,headSha,status,conclusion,
+workflowName` for the release SHA, and asserts every run is both
+`completed` and `success` before tagging. The failure message names
+which workflow failed and its run ID.
+
+The workflow-coverage check (`check_workflows_covered`) enumerates
+`.github/workflows/*.yml`, filters schedule-driven workflows by name
+prefix, and fails if any remaining workflow is not in the declared
+poll list. It catches a new per-push workflow added without being
+added to the declared list. ISO 10383 has one per-push workflow
+today (`validate.yml`), so the check is trivially satisfied and not
+yet implemented. The trigger is a second per-push workflow. The same
+trigger applies on ISO 3166's side.
+
 ### 7. Tag only on green
 
 The tag is created only after all polled workflows report
