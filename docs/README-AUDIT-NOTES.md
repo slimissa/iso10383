@@ -1,4 +1,6 @@
-# README audit notes
+# README audit notes — the 2026-10-18 rewrite
+
+Historical record of the measurement behind the current `README.md`. The tree audited was `23012da`; the README rewrite landed as `9c3d821`. Kept as a receipt, not as current documentation.
 
 Tree audited: the zip `iso10383-main_1.zip`, archive comment `23012da63851eb7ef47368e3002237fb0b50ff66`, version 1.0.4. It has no `.git/`, so `git describe`, `git log`, `git ls-files` and `git status` could not run. `git ls-files` was replaced by the zip's own file list (125 files, the `git archive` of that commit).
 

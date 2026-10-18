@@ -1112,6 +1112,7 @@ iso10383/
 | [`docs/decisions/`](./docs/decisions) | Why was each later choice made? One ADR per decision, twelve in all (0001 to 0012). |
 | [`docs/decisions/0012-agent-read-surface.md`](./docs/decisions/0012-agent-read-surface.md) | What may a future agent read, and at what freshness? |
 | `docs/v<version>-verification.md` | What did the release gate print when this version shipped? |
+| [`docs/README-AUDIT-NOTES.md`](./docs/README-AUDIT-NOTES.md) | How was each number in this README measured, and at what commit? |
 | [`CHANGELOG.md`](./CHANGELOG.md) | What changed in each release, and what is queued under `[Unreleased]`? |
 | [`CONTRIBUTING.md`](./CONTRIBUTING.md) | What are the four rules, and how do I fix data, add a field, add an export or cut a release? |
 | `wrappers/*/README.md` | What is the full API of each wrapper? |
