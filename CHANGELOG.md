@@ -40,6 +40,7 @@ must match `VERSION`. CI enforces this with
   operator-hygiene rules 6, 6b, 6c, 6d, 7, 8. The self-trigger rule
   gains a whitespace-normalization note; rule 6d gains a wrong-parser
   extension (grep on JSON is blind to escaped characters).
+- `README.md` rewritten to the ISO 4217 verifiable-claim bar; every number traces to a command recorded in `docs/README-AUDIT-NOTES.md`.
 
 ### Changed
 
