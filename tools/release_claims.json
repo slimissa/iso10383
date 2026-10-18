@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-205"
+      "contains": "tests-222"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
