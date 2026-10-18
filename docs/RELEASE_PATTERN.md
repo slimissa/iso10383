@@ -78,6 +78,60 @@ Why: a release that fails CI is a release that needs a revert
 commit. A release that fails the gate locally is a release that
 was never created.
 
+**The gate must include every check that runs in CI's fast
+workflow.** A check that runs in CI but not in the gate is a check
+that a release can bypass: the release commit lands on `main` with a
+red CI before the tag is created. The v1.7.5 incident in ISO 4217 is
+the reference case. Pytest was not in the gate; a stale test passed
+locally and failed in CI. Fixed by adding `pytest tests/` to the
+gate.
+
+**The same rule covers the commands that produce what the release
+commits.** A command that fails and isn't checked leaves stale
+output. The ISO 3166 v1.6.9 snapshot generator ran without its
+required `--source` argument; the shell continued; the release
+carried the stale snapshot. Applies to artifact generators,
+exporters, sync scripts, and any command whose output the release
+commit includes.
+
+**Gate block shape.** The gate block must be a per-check capture
+(each check's exit read individually) or a subshell with `set -e`.
+Never a bare brace group on the left of `||`.
+
+A brace group's exit status is the last command's status. With `||`
+on the right, `set -e` is disabled inside the group: every check
+runs, and only the last gates. ISO 3166 v1.6.6 shipped a release
+where the claims check failed but the gate reported pass, because
+`pytest` ran last and succeeded.
+
+Two valid shapes:
+
+    # Per-check capture
+    GATE_FAILED=0
+    run_check() {
+        if output=$("$@" 2>&1); then
+            echo "ok: $1"
+        else
+            echo "FAIL: $1"; GATE_FAILED=1
+        fi
+    }
+    run_check validate.py python3 tools/validate.py
+    ...
+    [ "$GATE_FAILED" -eq 0 ] || fail "gate failed"
+
+    # Subshell with set -e
+    (
+        set -e
+        python3 tools/check_version_consistency.py
+        python3 tools/check_release_claims.py "$VERSION"
+        ...
+    ) > "$GATE_LOG" 2>&1 \
+        || { tail -20 "$GATE_LOG"; fail "gate failed"; }
+
+ISO 10383 uses the first shape: a `gate()` function that captures
+each command's exit code, appends `"<rc>|<command>"` to `GATE_LOG`,
+and exits on failure. Both shapes work. The brace group does not.
+
 ### 6. Poll every workflow
 
 After the release commit is pushed, poll every workflow that runs
