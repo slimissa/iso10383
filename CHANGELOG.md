@@ -25,6 +25,21 @@ must match `VERSION`. CI enforces this with
 - New CI job `check-snapshots` runs both generator `--check`s; both also
   run in `release.sh`'s gate.
 - `exchange_calendar_snapshot.json` now declares `source_version`.
+- Two new mojibake byte patterns in `tools/check_mojibake.py`
+  (`\xc3\xa2\xe2\x82\xac` for the cp1252 read of an em-dash or curly
+  quote, `\xef\xbf\xbd` for the U+FFFD replacement character), with
+  `tests/test_check_mojibake.py` exercising each class at runtime.
+- `scripts/release.sh` verifies the tag message `git` recorded
+  (`for-each-ref --format='%(contents)'`) against the intended file
+  after tagging; on mismatch the local tag is deleted and nothing is
+  pushed. Backstop for `--cleanup=verbatim`.
+- `docs/RELEASE_PATTERN.md` synced with ISO 4217's copy: `[Unreleased]`
+  rule, invariant 5 extensions (Rule A, gate-block shape), invariant 6
+  extensions (`poll_ci` reference, `check_workflows_covered` trigger),
+  version-pinned byte outputs + settings/render corollaries, and
+  operator-hygiene rules 6, 6b, 6c, 6d, 7, 8. The self-trigger rule
+  gains a whitespace-normalization note; rule 6d gains a wrong-parser
+  extension (grep on JSON is blind to escaped characters).
 
 ### Changed
 
@@ -36,6 +51,14 @@ must match `VERSION`. CI enforces this with
 - `release.sh`'s verification-doc template runs each gate and records its
   exit code via `GATE_LOG`, replacing the hard-coded `pass` strings.
 - `release.sh` invokes `check_cross_language.sh --strict`.
+- `tools/check_mojibake.py`'s docstring: the provenance notes for the
+  four existing patterns credited "check mark" and "box drawing" to
+  patterns that actually match the Mathematical Operators and General
+  Punctuation Unicode blocks. Corrected.
+- `tools/check_snapshot_freshness.py` and
+  `tools/check_registry_freshness.py` name the two mechanisms
+  (scheduled re-verification vs cross-reference check) and the tools
+  that implement each.
 
 ### Fixed
 
@@ -68,6 +91,19 @@ must match `VERSION`. CI enforces this with
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
   the tool is retained in the tree with a docstring note).
   
+- `check_no_orphan_variables` in `scripts/release.sh`: the comment
+  filter was `^\s*#`, which never matched because `grep -n` prefixes
+  every line with `LINENUM:`. Now `^[0-9]+:\s*#`. Variables mentioned
+  in comments were being reported as orphans.
+- `tests/test_check_mojibake.py`'s docstring assertion normalizes
+  whitespace (`" ".join(doc.split())`) before substring checks; a line
+  break is a formatting choice, not a semantic change.
+- `tools/check_release_claims.py`: an absent-only claim on a missing
+  file used to pass vacuously; missing is now a failure for any claim
+  shape. No current claim relied on the old behavior.
+- `README.md` release step 5 gate list now names both
+  `gen_*_snapshot.py --check` gates that `release.sh` runs.
+
 ## [1.0.4] - 2026-09-28
 
 ### Added
