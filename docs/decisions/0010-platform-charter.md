@@ -271,3 +271,17 @@ which always sets `updated` equal to `source_snapshot` (both are
 committed file has `updated` 2026-09-28 and `source_snapshot`
 2026-09-23, which the fetcher cannot produce. How they diverged is
 unknown.
+
+## Amendment (2026-10-18)
+
+The "Open question, not resolved here" paragraph of the previous amendment
+rests on a false premise.
+
+No committed `iso10383.json` has ever carried different values for
+`meta.updated` and `meta.source_snapshot`. At `v1.0.0` through `v1.0.4`
+and at HEAD both are `2026-09-23`, and so are the Parquet footer, the SQL
+headers and the four bundled copies. `git log -S'"updated": "2026-09-28"'
+-- iso10383.json` returns nothing. The date 2026-09-28 came from a JSON
+example in the README (replaced in `9c3d821`) and is the release date of
+v1.0.2 to v1.0.4, not a value in the data. There is no divergence to
+explain, and this question is closed.
