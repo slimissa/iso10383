@@ -142,6 +142,34 @@ corrected and the tag is left alone.
 
 ---
 
+## The `[Unreleased]` rule
+
+`CHANGELOG.md` may carry an `[Unreleased]` section at the top at
+release time. Nothing in the release path reads the first line of the
+file, and nothing requires the target version's heading to be the
+first heading. Presence, not position. Three consumers, each in
+ISO 10383:
+
+- `release.sh` refuses unless a line beginning `## [<version>]` exists
+  anywhere in the file.
+- The tag message is the body of the `## [<version>]` section, from
+  that heading to the next `## [` heading, wherever it sits.
+- `tools/check_version_consistency.py` skips the `[Unreleased]`
+  heading when finding the top released version.
+
+One position still counts: among dated version headings, the first
+must equal `VERSION` before the release script bumps it. An
+`[Unreleased]` section above it changes nothing.
+
+ISO 10383 diverges from ISO 4217's copy in one respect: it does not
+use staged headings. ISO 4217 names a fourth consumer that finds a
+staged heading `## [<version>] — Unreleased` anywhere in the file and
+rewrites it to the release date. ISO 10383 does not stage, so it does
+not rewrite. The rule permits an `[Unreleased]` section; it does not
+require one, and it does not require the rewrite.
+
+---
+
 ## Two shapes of step 4
 
 ### Single generator
