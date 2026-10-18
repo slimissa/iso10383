@@ -187,12 +187,12 @@ Expected on a clean checkout:
 
 ```
 OK: 2883 MICs validated            # python3 tools/validate.py
-111 passed                          # python3 -m pytest tests/ -q
+115 passed                          # python3 -m pytest tests/ -q
 OK: 5 suite(s) passed, 0 skipped    # bash tools/check_cross_language.sh
 ```
 
-The root suite is 111 tests; the wrapper suites are 29 (Python), 28
-(JavaScript), 26 (Rust) and 28 (Go), for 222 across all five. A clean
+The root suite is 115 tests; the wrapper suites are 29 (Python), 28
+(JavaScript), 26 (Rust) and 28 (Go), for 226 across all five. A clean
 `check_cross_language.sh` run reports `0 skipped`; a skipped suite means
 a toolchain (`node`, `cargo`, `go`) is missing.
 

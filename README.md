@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-222-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-226-success.svg)](./tests/)
 
 ---
 
@@ -60,7 +60,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON |
 | **CLI** | `tools/iso10383_cli.py`, nine subcommands, five output modes; needs a checkout, no wrapper installs it |
 | **Vendored snapshots** | 2: ISO 3166 (252 codes, v1.6.9) and Exchange Calendar (74 MICs, v2.15.4) |
-| **Validation** | Six validator layers, 17 release-gate checks, 147 manifest claims, 222 tests |
+| **Validation** | Six validator layers, 17 release-gate checks, 147 manifest claims, 226 tests |
 | **CI** | Two workflows: `validate.yml` (seven jobs) and `refresh.yml` (monthly) |
 | **Version** | 1.0.4, one version number at nine sites |
 | **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`. |
@@ -537,7 +537,7 @@ Each is produced by a generator that fetches the pinned tag named in its meta, n
 Two further mechanisms keep a snapshot honest, and they answer different questions:
 
 - **Scheduled re-verification**: `tools/check_snapshot_freshness.py` fails when `review_by` has passed, whether or not anything upstream changed.
-- **Cross-reference check**: `tools/check_iso3166_current.py` and `tools/check_exchange_calendar_current.py` compare the snapshot with the live sibling. A code or MIC set difference fails under `--strict`. A version-label drift prints `warning: version drift: ...` and does not change the exit code.
+- **Cross-reference check**: `tools/check_iso3166_current.py` and `tools/check_exchange_calendar_current.py` compare the snapshot with the live sibling. A code or MIC set difference fails under `--strict`. A version-label drift prints `warning: version drift: ...` and does not change the exit code. A sibling that cannot be reached exits 1 (nothing was compared) unless `--advisory` is passed, which exits 0 and still prints the note.
 
 The Exchange Calendar snapshot's 74 MICs are 68 operating-active, 3 segment-active and 3 expired operating MICs (`XJKT`, `XBSP`, `XTAD`); all 74 are in this registry. [`docs/exchange_calendar_mics.txt`](./docs/exchange_calendar_mics.txt) is a 74-line reference list of them.
 
@@ -768,8 +768,8 @@ Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not fou
 | **Snapshot freshness** | `check_snapshot_freshness.py` | A vendored snapshot past its `review_by` date; takes `--today YYYY-MM-DD` |
 | **Release claims** | `check_release_claims.py` | A documentation or version claim that no longer matches the tree |
 | **Mojibake** | `check_mojibake.py` | UTF-8 / Latin-1 round-trip corruption, replacement characters, unclosed code fences; `--path` scans one file |
-| **ISO 3166 drift** | `check_iso3166_current.py` | Snapshot code set differs from the live sibling (`--strict` fails; a version-label drift only warns) |
-| **Exchange Calendar drift** | `check_exchange_calendar_current.py` | Snapshot MIC set differs from the live sibling (same severity rules) |
+| **ISO 3166 drift** | `check_iso3166_current.py` | Snapshot code set differs from the live sibling (`--strict` fails; a version-label drift only warns; an unreachable sibling fails unless `--advisory`) |
+| **Exchange Calendar drift** | `check_exchange_calendar_current.py` | Snapshot MIC set differs from the live sibling (same severity rules, including the unreachable case) |
 | **Snapshot reproduction** | `gen_iso3166_snapshot.py --check`, `gen_exchange_calendar_snapshot.py --check` | A committed snapshot that differs byte-for-byte from the pinned tag |
 | **Export drift** | `export_csv.py`, `export_sql.py`, `export_parquet.py` with `--check` | A derived file that is stale against `iso10383.json` |
 | **Wrapper sync** | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json` |
@@ -790,14 +790,14 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 111 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 115 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 29 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 28 |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 26 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 28 |
-| **Total** | | **222** |
+| **Total** | | **226** |
 
-The Tests badge above reads 222, the sum of this table. The root suite is spread over twelve files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (16), `test_checks.py` (13), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (9), `test_export_csv.py` (7), `test_wrappers.py` (6), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3).
+The Tests badge above reads 226, the sum of this table. The root suite is spread over twelve files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (16), `test_checks.py` (17), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (9), `test_export_csv.py` (7), `test_wrappers.py` (6), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3).
 
 ---
 
