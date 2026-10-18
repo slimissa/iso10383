@@ -41,6 +41,12 @@ must match `VERSION`. CI enforces this with
   gains a whitespace-normalization note; rule 6d gains a wrong-parser
   extension (grep on JSON is blind to escaped characters).
 - `README.md` rewritten to the ISO 4217 verifiable-claim bar; every number traces to a command recorded in `docs/README-AUDIT-NOTES.md`.
+- ADRs 0008 to 0012 (MIC to LEI and MIC to BIC companions declined, the
+  platform charter, reprocessing, the agent read surface), with the
+  reconnaissance documents `docs/mic_lei_source_format.md` and
+  `docs/mic_bic_source_format.md`. `docs/decisions/v1.0.0-decisions.md`
+  gains amendments to D11 (two) and D17 (one); ADRs 0003, 0007, 0010 and
+  0011 gain dated amendments.
 
 ### Changed
 
@@ -62,6 +68,20 @@ must match `VERSION`. CI enforces this with
   that implement each.
 - `README.md` release step 5 gate list now names both
   `gen_*_snapshot.py --check` gates that `release.sh` runs.
+- `refresh.yml` passes `--version "$(cat VERSION)"` to the fetcher, computes
+  the branch name and PR title in a prior step, installs `pyarrow` with
+  `-c constraints.txt`, and runs the version-consistency check.
+- CI runs `check_iso3166_current.py` and
+  `check_exchange_calendar_current.py` with `--strict`.
+- The Exchange Calendar snapshot was regenerated after that registry
+  renamed `XBEK`, `XNBO` and `XQSE` to `XBEY`, `XNAI` and `DSMD`;
+  `KNOWN_EXCHANGE_CALENDAR_GAPS` in `tools/validate.py` is now empty
+  (ADR 0007 amendment).
+- `scripts/release.sh` preconditions: a fresh `git fetch origin main` with
+  `HEAD` compared to `origin/main`, a check for the tag on `origin`, the
+  `gh` CLI required for the CI poll, and the tag message written to a file.
+  The gate gained the snapshot-freshness and mojibake checks. The CI poll
+  waits up to 600 seconds.
 
 ### Fixed
 
@@ -86,6 +106,12 @@ must match `VERSION`. CI enforces this with
 - `tools/check_release_claims.py`: an absent-only claim on a missing
   file used to pass vacuously; missing is now a failure for any claim
   shape. No current claim relied on the old behavior.
+- The `REMOVED > 0` guard in `refresh.yml` never fired: the step read
+  `tee`'s exit code, not the tool's. The refresh PR now opens as a draft
+  when `refresh_diff.py` exits 1 (ADR 0003 and ADR 0011 amendments).
+- `refresh.yml` computed its branch name and PR title with `$(date ...)`
+  inside action inputs, which are not expanded. Now computed in a prior
+  step.
 
 ### Tests
 
