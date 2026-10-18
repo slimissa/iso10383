@@ -864,6 +864,20 @@ mismatch without printing it.
 The general rule: state what the pattern matches, not the pattern
 itself.
 
+**Assertions on docstring content must normalize whitespace before
+substring checks.** A line break is a formatting choice, not a
+semantic one; a test that fails on a wrapped line will fail on the
+next maintainer's reformat. The docstring assertions in
+`tests/test_check_mojibake.py` normalize with `" ".join(doc.split())`
+before the substring check, precisely because the docstring's line
+wrapping is not part of its meaning.
+
+**A diagnostic check must parse with the same parser the consumer
+uses.** See operator-hygiene rule 6d for the full treatment; the
+short form here is that grep on structured data is a search over
+bytes that may not mean what the consumer reads. Use `json.loads` +
+string comparison for any diagnostic on a JSON file.
+
 ### Implementation note
 
 `tools/check_mojibake.py` scans the first 200 bytes of every file
