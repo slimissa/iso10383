@@ -448,6 +448,69 @@ command. It does not apply to post-shipment discoveries (rule
 
 ---
 
+## Version-pinned byte outputs
+
+Any build tool that produces a byte-comparable artifact must be
+pinned to an exact version, not a range. A different version can
+write different bytes for the same logical content.
+
+Three registries hit this in sequence. ISO 3166 v1.6.8:
+`pyarrow>=15.0` let CI install a different pyarrow from the one that
+wrote the committed `iso3166.parquet`; CI's regeneration differed
+byte for byte. Fixed with `pyarrow==25.0.1`. ISO 4217 v1.8.1: the
+committed Parquet footers named pyarrow 25.0.1 while
+`requirements-ci.txt` allowed `>=26,<27`; regenerating under 26.0.0
+rewrote two bytes in each of the five files, the writer version in
+the footer. ISO 4217's exporters' `--check` modes compared content,
+not bytes, so they passed throughout; the verdict there was a sha256
+comparison of regenerated against committed files. A `--check` that
+compares bytes would have failed.
+
+ISO 10383 closed the class at `268cbd8`. `constraints.txt` pins
+`pyarrow==25.0.1`; `requirements-dev.txt` applies it with
+`-c constraints.txt`; every CI job that installs pyarrow uses
+`-c constraints.txt`; and `tools/export_parquet.py --check` compares
+bytes, not schema metadata. A manifest claim prevents a bare
+`pip install pyarrow` from reappearing in any workflow.
+
+CSV and JSON are usually stable across versions. Anything binary or
+with a structured footer (Parquet, Arrow, Avro, HDF5) is not. Pin
+those.
+
+**Corollary: pin the settings, not only the version.** Any tool that
+produces a byte-comparable artifact must have all settings that
+affect those bytes pinned in the tool itself. Serialization order,
+encoding, and locale are settings, not incidental choices. If a
+setting can differ between two runs of the same tool version,
+`--check` will fail on a machine that made the other choice.
+
+ISO 10383's instance: `tools/export_parquet.py` sorts the footer
+metadata dict before writing (`dict(sorted(footer.items()))`), so
+order is a property of the code, not Python's dict literal order.
+The sort is asserted by a test that reads the file's footer keys
+(`tests/test_export_parquet.py::test_metadata_keys_are_sorted`).
+
+**Corollary: pin the render, not only the settings.** Any generator
+whose output is a committed artifact must not read the clock, the
+OS, or an unpinned dependency. A value from `date.today()`,
+`os.getpid()`, or an unpinned library version can pass `--check`
+only on the day (or machine) that generated the committed file. Pin
+the render, or omit the varying field.
+
+ISO 10383's instance: `tools/gen_iso3166_snapshot.py` and
+`tools/gen_exchange_calendar_snapshot.py` read `source_version` from
+their `.meta.json` sibling, clone or fetch the pinned tag, verify
+that the source declares the same version, and write the snapshot.
+Neither carries a `generated` field. Ten absence claims in
+`tools/release_claims.json` (as of `268cbd8`) assert that
+`date.today()`, `datetime.now()`, `time.time()`, `random.`, and
+`uuid.uuid4()` are absent from both generators. One more
+(`14fd705`) asserts that `scripts/release.sh` does not contain the
+`&& info ` string, which is the shell short-circuit that swallows a
+command's failure under `set -e`.
+
+---
+
 ## Operator hygiene
 
 Five rules that emerged from specific failure modes across the
