@@ -17,45 +17,23 @@ snapshots:
   one exception: `ZZ`, ISO 10383's placeholder for "no fixed country",
   which is not an ISO 3166 code.
 - `tools/exchange_calendar_snapshot.json` — 74 MICs referenced by the
-  Exchange Calendar registry. Every MIC in this set must exist in
-  `iso10383.json`.
+  Exchange Calendar registry (v2.15.4). Every MIC in this set must
+  exist in `iso10383.json`.
 
 D6 said cross-registry validation is **advisory in v1.0.0, blocking in
-v1.0.1**. The v1.0.0 validator prints cross-registry mismatches to
-stderr and exits 0. That is the advisory behavior.
+v1.0.1**. Blocking means a MIC that Exchange Calendar references and
+`iso10383.json` lacks fails the validator. A check that fails on every
+gap cannot tolerate a gap that is known, investigated and documented,
+so v1.0.1 shipped with a mechanism for one: an allowlist.
 
-The v1.0.1 promotion to blocking was expected to be a one-line change.
-It is not, because three MICs referenced by Exchange Calendar do not
-appear in the SWIFT-published file:
-
-| MIC | Venue | Status |
-|-----|-------|--------|
-| `XBEK` | Beirut Stock Exchange | Referenced by Exchange Calendar |
-| `XNBO` | Nairobi Securities Exchange | Referenced by Exchange Calendar |
-| `XQSE` | Qatar Exchange | Referenced by Exchange Calendar |
-
-The investigation:
-
-- The three are not in the 2026-09-23 SWIFT file. Verified by grep on
-  the raw CSV.
-- They are not in the ISO 10383 registry at any prior version this
-  project has access to.
-- They *are* in Exchange Calendar's `exchanges/` directory. That
-  directory was written before ISO 10383 was published, using MICs
-  that the SWIFT file either never assigned or has since removed.
-
-Resolving the gap requires one of:
-
-1. Editing `slimissa/exchange-calendar` to remove the three MICs (or
-   replace them with the correct MICs, if the venues have since
-   received different assignments).
-2. SWIFT assigning the three MICs in a future publication and the
-   next monthly refresh picking them up.
-3. An exception in the validator.
-
-Option 1 is out of scope for ISO 10383 v1.0.1: this repository does
-not touch sibling repositories. Option 2 has no schedule. Option 3 is
-the only one available to v1.0.1.
+**Current state: the allowlist is empty.** It was introduced for three
+MICs (`XBEK`, `XNBO`, `XQSE`) that Exchange Calendar referenced and the
+2026-09-23 SWIFT file did not contain. They were not a real gap:
+Exchange Calendar had used wrong codes and renamed them at v2.4.2. The
+Amendment (2026-10-10) at the end of this ADR records what was
+investigated, what the investigation missed, and how the gap closed.
+The mechanism stays so that a future gap is classified rather than
+hidden; it is not in use.
 
 ---
 
@@ -63,47 +41,41 @@ the only one available to v1.0.1.
 
 ### 1. The validator distinguishes expected gaps from unexpected ones
 
-Cross-registry validation is promoted to blocking in v1.0.1, but with
-an explicit allowlist. Any MIC referenced by Exchange Calendar that is
-absent from `iso10383.json` is classified:
+Cross-registry validation is blocking. Any MIC referenced by Exchange
+Calendar that is absent from `iso10383.json` is classified:
 
 - **Expected gap** — in the allowlist. Reported as a warning. Does not
   fail the validator.
 - **Unexpected gap** — not in the allowlist. Reported as an error.
   Fails the validator.
 
-The distinction is the whole point. A cross-registry check that treats
-every gap as fatal cannot be promoted to blocking until every gap is
-resolved. A check that treats every gap as advisory is not blocking.
-The allowlist is the mechanism that lets a blocking check tolerate a
-known, documented gap without hiding the gap.
+The allowlist is what lets a blocking check tolerate a known,
+documented gap without hiding it. With the allowlist empty, every gap
+is unexpected and fails.
 
 ### 2. The allowlist is a `frozenset` in `tools/validate.py`
 
 ```python
-# MICs referenced by a sibling registry that are known to be absent
-# from SWIFT's published file. Adding to this set requires an ADR
-# amendment. See docs/decisions/0007-cross-registry-allowlist.md.
-KNOWN_EXCHANGE_CALENDAR_GAPS = frozenset({
-    "XBEK",  # Beirut Stock Exchange
-    "XNBO",  # Nairobi Securities Exchange
-    "XQSE",  # Qatar Exchange
-})
+KNOWN_EXCHANGE_CALENDAR_GAPS: frozenset[str] = frozenset()
 ```
 
-A `frozenset` because it is iterated, never mutated at runtime, and the
-type makes that clear. A `dict` would invite storing reasons inline,
-which invites the list to grow without the accompanying ADR.
+It is empty. A `frozenset` because it is iterated, never mutated at
+runtime, and the type makes that clear. A `dict` would invite storing
+reasons inline, which invites the list to grow without the
+accompanying ADR.
 
 ### 3. Adding a MIC to the allowlist requires an ADR amendment
 
 The rule is not "the allowlist can grow whenever a gap appears." It is
 "every entry in the allowlist is named in this ADR, with its venue and
-its reason." Adding a fourth MIC requires:
+its reason." Adding an entry requires:
 
-1. An investigation that names the venue and the discrepancy.
-2. A commit that adds the MIC to the allowlist **and** adds a row to
-   the table in this ADR.
+1. An investigation that names the venue and the discrepancy, and that
+   has searched this registry by venue name and country, not only by
+   code, to rule out a rename (the check the original investigation
+   skipped; see the Amendment).
+2. A commit that adds the MIC to the allowlist **and** records it in an
+   amendment to this ADR, with its venue and its reason.
 3. A note in `docs/PROVENANCE.md` § Known cross-registry gap.
 
 A commit that adds to the allowlist without touching this ADR is
@@ -112,15 +84,10 @@ the decision lives.
 
 ### 4. Removing a MIC from the allowlist is the preferred direction
 
-The allowlist should shrink, not grow. A MIC leaves the allowlist when:
-
-- Exchange Calendar removes it (option 1 above), or
-- SWIFT assigns it (option 2 above).
-
-Either is a good outcome. The first is a one-line change in a sibling
-repository; the second is a monthly refresh that resolves it
-automatically. Neither requires an amendment to *this* ADR, but both
-require a commit that removes the MIC and updates the table.
+The allowlist should shrink, not grow. A MIC leaves it when Exchange
+Calendar removes or renames it, or when SWIFT assigns it. Either is a
+good outcome, and either needs a commit that removes the entry and
+records the removal in an amendment.
 
 ### 5. The `ZZ` country code is not in the allowlist
 
@@ -182,10 +149,10 @@ produces only allowlisted gaps passes with a warning.
 
 ### For `docs/PROVENANCE.md`
 
-The `### Known cross-registry gap` section names the three MICs, points
-at this ADR, and states that the allowlist is the mechanism. It does
-not enumerate the allowlist separately; the ADR is the source of
-truth.
+The `### Known cross-registry gap` section records that the allowlist
+is empty, points at this ADR, and states that the allowlist is the
+mechanism. It does not enumerate the allowlist separately; the ADR is
+the source of truth.
 
 ### For `CONTRIBUTING.md`
 
@@ -194,12 +161,10 @@ points at this ADR. The paragraph is short: the ADR carries the detail.
 
 ### For a consumer reading `iso10383.json`
 
-Nothing changes. The three MICs are not in the registry. The allowlist
-does not add them; it records that their absence is known and
-tolerated. A consumer that checks every MIC it uses against the
-registry will still fail for `XBEK`, `XNBO`, or `XQSE`.
-
-That is the correct behavior. The registry is honest about the gap.
+Nothing changes. The allowlist never adds a MIC to the registry; it
+only records that a gap between two registries is known and tolerated.
+With the allowlist empty, every MIC Exchange Calendar references is
+present in `iso10383.json`.
 
 ---
 
@@ -302,15 +267,18 @@ each OPERATING and ACTIVE.
 **What the original investigation missed.** It grepped the raw CSV for
 the three codes. It never searched by venue name or country. A name
 search in this repository's own data finds all three current codes. The
-Context's claim that the codes were ones "SWIFT either never assigned or
+original Context's claim (since rewritten to the current state; see git
+history) that the codes were ones "SWIFT either never assigned or
 has since removed" was never tested against the possibility that
 Exchange Calendar's codes were wrong. They were. Resolution option 1 in
-the Context ("replace them with the correct MICs") is what happened.
+the original Context ("replace them with the correct MICs") is what happened.
 
 **What changed.**
 
 - `tools/exchange_calendar_snapshot.json` regenerated from Exchange
-  Calendar v2.13.0: 74 MICs, `XBEY`, `XNAI`, `DSMD` added, `XBEK`,
+  Calendar v2.13.0 (the version vendored on that date; the pinned
+  snapshot has since moved to v2.15.4, still 74 MICs): 74 MICs, `XBEY`,
+  `XNAI`, `DSMD` added, `XBEK`,
   `XNBO`, `XQSE` removed.
 - `KNOWN_EXCHANGE_CALENDAR_GAPS` in `tools/validate.py` is
   `frozenset()`. The code path that separates known from unexpected
