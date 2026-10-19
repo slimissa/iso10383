@@ -60,7 +60,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON |
 | **CLI** | `tools/iso10383_cli.py`, nine subcommands, five output modes; needs a checkout, no wrapper installs it |
 | **Vendored snapshots** | 2: ISO 3166 (252 codes, v1.6.9) and Exchange Calendar (74 MICs, v2.15.4) |
-| **Validation** | Six validator layers, 18 release-gate checks, 145 manifest claims, 233 tests |
+| **Validation** | Six validator layers, 18 release-gate checks, 144 manifest claims, 233 tests |
 | **CI** | Two workflows: `validate.yml` (seven jobs) and `refresh.yml` (monthly) |
 | **Version** | 1.0.4, one version number at nine sites |
 | **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. |
@@ -784,7 +784,7 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 ### Release claims
 
-[`tools/release_claims.json`](./tools/release_claims.json) holds 145 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 134 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (139 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
+[`tools/release_claims.json`](./tools/release_claims.json) holds 144 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 133 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (138 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
 
 ### Tests
 
@@ -987,7 +987,7 @@ iso10383/
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
 │   ├── check_release_claims.py          # Verifies the claims manifest
-│   ├── release_claims.json              # 145 {file, contains|absent} claims
+│   ├── release_claims.json              # 144 {file, contains|absent} claims
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)

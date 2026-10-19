@@ -472,10 +472,6 @@
       "absent": "uuid.uuid4()"
     },
     {
-      "file": "scripts/release.sh",
-      "absent": "&& info "
-    },
-    {
       "file": "tools/check_mojibake.py",
       "contains": "rb\"\\xc3\\xa2\\xe2\\x82\\xac\""
     },
