@@ -6,3 +6,4 @@
 jsonschema>=4.0
 pyarrow
 pytest>=8.0
+pyyaml>=6.0

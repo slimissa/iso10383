@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-226"
+      "contains": "tests-233"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
@@ -420,16 +420,8 @@
       "contains": "pip install -c constraints.txt jsonschema pyarrow pytest"
     },
     {
-      "file": ".github/workflows/validate.yml",
-      "absent": "pip install pyarrow\n"
-    },
-    {
       "file": ".github/workflows/refresh.yml",
       "contains": "pip install -c constraints.txt jsonschema pyarrow pytest"
-    },
-    {
-      "file": ".github/workflows/refresh.yml",
-      "absent": "pip install jsonschema pyarrow pytest\n"
     },
     {
       "file": "README.md",

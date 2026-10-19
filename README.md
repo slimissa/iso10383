@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.0.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-226-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-233-success.svg)](./tests/)
 
 ---
 
@@ -60,10 +60,10 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON |
 | **CLI** | `tools/iso10383_cli.py`, nine subcommands, five output modes; needs a checkout, no wrapper installs it |
 | **Vendored snapshots** | 2: ISO 3166 (252 codes, v1.6.9) and Exchange Calendar (74 MICs, v2.15.4) |
-| **Validation** | Six validator layers, 17 release-gate checks, 147 manifest claims, 226 tests |
+| **Validation** | Six validator layers, 18 release-gate checks, 145 manifest claims, 233 tests |
 | **CI** | Two workflows: `validate.yml` (seven jobs) and `refresh.yml` (monthly) |
 | **Version** | 1.0.4, one version number at nine sites |
-| **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`. |
+| **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. |
 | **License** | Apache 2.0 |
 
 ---
@@ -500,7 +500,7 @@ print(t.schema.metadata[b"iso10383.version"])   # b'1.0.4'
 
 ### Comparison semantics and the build pin
 
-`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2883 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. A manifest claim keeps a bare `pip install pyarrow` out of `validate.yml`. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
+`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2883 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. [`tests/test_pip_pins.py`](./tests/test_pip_pins.py) parses `validate.yml` and `refresh.yml` and fails, naming the file, job and line, if any `pip install` line that mentions `pyarrow` lacks `-c constraints.txt`; it runs in the root suite and as its own release gate. It is a structural test because a substring claim cannot see a second, unpinned install line added next to a pinned one. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
 
 ---
 
@@ -784,20 +784,20 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 ### Release claims
 
-[`tools/release_claims.json`](./tools/release_claims.json) holds 147 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 136 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (141 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, a bare `pip install pyarrow`, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
+[`tools/release_claims.json`](./tools/release_claims.json) holds 145 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 134 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (139 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
 
 ### Tests
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 115 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 122 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 29 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 28 |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 26 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 28 |
-| **Total** | | **226** |
+| **Total** | | **233** |
 
-The Tests badge above reads 226, the sum of this table. The root suite is spread over twelve files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (16), `test_checks.py` (17), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (9), `test_export_csv.py` (7), `test_wrappers.py` (6), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3).
+The Tests badge above reads 233, the sum of this table. The root suite is spread over thirteen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (16), `test_checks.py` (17), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (9), `test_export_csv.py` (7), `test_wrappers.py` (6), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7).
 
 ---
 
@@ -950,7 +950,7 @@ iso10383/
 ├── CONTRIBUTING.md                      # The four rules, source discipline, change workflows
 ├── LICENSE                              # Apache 2.0
 ├── constraints.txt                      # Output-affecting pins (pyarrow==25.0.1)
-├── requirements-dev.txt                 # jsonschema, pyarrow, pytest; applies constraints.txt
+├── requirements-dev.txt                 # jsonschema, pyarrow, pytest, pyyaml; applies constraints.txt
 ├── .gitattributes                       # LF endings for text exports; parquet is binary
 ├── .gitignore                           # raw/, caches, .venv, rust target and lockfile
 │
@@ -987,7 +987,7 @@ iso10383/
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
 │   ├── check_release_claims.py          # Verifies the claims manifest
-│   ├── release_claims.json              # 147 {file, contains|absent} claims
+│   ├── release_claims.json              # 145 {file, contains|absent} claims
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
@@ -1008,6 +1008,7 @@ iso10383/
 │   ├── test_export_sql.py               # SQL exporter
 │   ├── test_fixture.py                  # The shared fixture itself
 │   ├── test_iso10383_codes.py           # Known-code ground truth
+│   ├── test_pip_pins.py                 # Every pyarrow pip install line carries -c constraints.txt
 │   ├── test_scripts.py                  # release.sh and verification-doc properties
 │   ├── test_self_reference.py           # Operating self-reference, chain termination
 │   ├── test_validate_schema.py          # Validator layers against bad fixtures

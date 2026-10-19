@@ -717,6 +717,14 @@ the file. The check that closes the first class is
 using `json.loads` in place of `grep` for any diagnostic on a JSON
 file. Sourced from ISO 4217 v1.7.11 and ISO 10383 v1.0.4.
 
+A structural property needs a structural test, not a string claim.
+Finding: ISO 10383 v1.0.4, the `pip install pyarrow` guard. A manifest
+claim (`absent: "pip install pyarrow\n"`) passed while an unpinned
+`pip install jsonschema pyarrow pytest` line sat beside the pinned
+one, because substring matching cannot see line structure. The closure
+audit at `a399f52` demonstrated the bypass; `tests/test_pip_pins.py`
+now parses the workflows and checks every install line.
+
 ### 7. A check that cannot run must fail, not pass
 
 A built-in check that cannot execute — a missing toolchain, an

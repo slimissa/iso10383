@@ -255,6 +255,7 @@ gate python3 -m pytest tests/ -q
 gate bash tools/check_cross_language.sh --strict
 gate python3 tools/gen_iso3166_snapshot.py --check
 gate python3 tools/gen_exchange_calendar_snapshot.py --check
+gate python3 -m pytest tests/test_pip_pins.py -q
 
 # --- Commit, push ---------------------------------------------------------
 

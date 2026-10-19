@@ -210,6 +210,7 @@ Toolchain:
 | Go | ≥ 1.21 | Go wrapper |
 | `pyarrow` | ==25.0.1 (pinned in `constraints.txt`) | Parquet export |
 | `jsonschema` | ≥ 4 | Schema validation |
+| `pyyaml` | ≥ 6 | `tests/test_pip_pins.py` parses the CI workflows |
 
 Only Python is required for data changes. Node, Rust, and Go are
 required only when touching the corresponding wrapper.
