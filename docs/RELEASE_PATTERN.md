@@ -191,6 +191,38 @@ Why: this is the rule that the release process exists to enforce.
 `CONTRIBUTING.md` says "don't tag on red"; the script says "you
 cannot tag on red."
 
+### 7b. Tag-message comparison shape
+
+The tag-message check compares what git recorded to what was intended.
+Wrap both sides in `$(...)` and compare with `[[ ]]`. Not `diff -q`.
+
+`$(...)` strips trailing newlines on both sides, so `[[ ]]` is robust
+against the trailing-newline pitfall. `diff -q` on files is not: it
+requires byte-identical files, which `for-each-ref` never provides
+because it strips trailing newlines on read.
+
+`diff` has three exit codes (0 identical, 1 different, 2 could not run).
+A pipeline that treats "non-zero from `diff -q`" as "different" reports
+a mismatch when the file is missing — the failure ISO 3166 v1.7.0
+introduced at the Exchange Calendar builder's suggestion.
+
+> Demonstrated at ISO 10383 (`738818c`): `diff -q fileA fileB` exits 1
+> on a trailing-newline-only difference where `[[ $(cat A) == $(cat B) ]]`
+> reports MATCH. `diff -q fileA missing` exits 2, not 1. The
+> `$(...)` + `[[ ]]` shape has one failure mode; `diff -q` on files has
+> three.
+
+Reference implementation: ISO 10383 `scripts/release.sh`, the
+`for-each-ref` / `[[ ]]` check added at `bb4ca68`. ISO 4217 uses the
+same shape. ISO 3166's `diff -q` form is the trap.
+
+**Empty `-F` filename opens the editor.** `git tag -a -F ""` (empty
+string, e.g. an unset variable) opens the editor and creates a tag with
+template text. `git tag -a -F nonexistent` fails loudly. The
+`[[ -s "$TAG_MSG_FILE" ]]` check before tagging is what prevents the
+empty case — it fails on a missing or zero-length file, not just an
+unset variable. Sourced from the A12 mis-cwd incident at ISO 10383.
+
 ### 8. Immutable tags
 
 **This is policy, not mechanism.** The script refuses to re-run on

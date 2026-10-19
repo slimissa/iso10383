@@ -433,15 +433,15 @@
     },
     {
       "file": "tools/gen_iso3166_snapshot.py",
-      "absent": "date.today()"
+      "absent": "date.today("
     },
     {
       "file": "tools/gen_iso3166_snapshot.py",
-      "absent": "datetime.now()"
+      "absent": "datetime.now("
     },
     {
       "file": "tools/gen_iso3166_snapshot.py",
-      "absent": "time.time()"
+      "absent": "time.time("
     },
     {
       "file": "tools/gen_iso3166_snapshot.py",
@@ -449,19 +449,19 @@
     },
     {
       "file": "tools/gen_iso3166_snapshot.py",
-      "absent": "uuid.uuid4()"
+      "absent": "uuid.uuid4("
     },
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
-      "absent": "date.today()"
+      "absent": "date.today("
     },
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
-      "absent": "datetime.now()"
+      "absent": "datetime.now("
     },
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
-      "absent": "time.time()"
+      "absent": "time.time("
     },
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
@@ -469,7 +469,7 @@
     },
     {
       "file": "tools/gen_exchange_calendar_snapshot.py",
-      "absent": "uuid.uuid4()"
+      "absent": "uuid.uuid4("
     },
     {
       "file": "tools/check_mojibake.py",
