@@ -24,7 +24,7 @@ The registry is at https://github.com/slimissa/iso10383.
 
 | Registry | Field | Granularity | Notes |
 |----------|-------|-------------|-------|
-| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files at v2.15.0: 68 active operating, 3 active segment, 3 expired here. |
+| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files at v2.15.4: 68 active operating, 3 active segment, 3 expired here. |
 | Asset Identifiers | each entry's `exchange` | Either | Primary listing venue. Declared in its `schema.json`. |
 | Asset Identifiers | `listings[].exchange` | Either | Per-listing venue. |
 | Corporate Actions (planned) | each action's `exchange` | Either | Per action. Not yet implemented. |
@@ -55,8 +55,8 @@ The distinction matters for three consumer patterns:
 
 **1. "The venue that closed for a holiday."** Exchange Calendar's
 model is per-exchange, and it carries segment MICs as well as
-operating MICs. Of its 74 MICs (v2.15.0, checked against this
-registry's 2026-09-23 data on 2026-10-11), 68 are active operating
+operating MICs. Of its 74 MICs (v2.15.4, checked against this
+registry's 2026-09-23 data on 2026-10-19), 68 are active operating
 MICs, 3 are active segment MICs (`XATH` under `ASEX`, `XTKS` under
 `XJPX`, `XMAD` under `BMEX`), and 3 are operating MICs that are
 **expired** in this registry (`XJKT`, expired 2008-04-28; `XBSP`,
