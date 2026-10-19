@@ -225,6 +225,12 @@ unset variable. Sourced from the A12 mis-cwd incident at ISO 10383.
 
 ### 8. Immutable tags
 
+The current tool inventory — which producers have `--check`, which
+validators run where, whether each is in CI and in the release gate —
+is in [`docs/AUDIT.md`](./AUDIT.md). The rule lives here; the state
+lives there. Update both when a tool is added or removed.
+
+
 **This is policy, not mechanism.** The script refuses to re-run on
 an already-tagged version (invariant 7). Nothing in the code
 prevents a manual `git tag -f`. The rule holds because operators
@@ -542,6 +548,22 @@ Neither carries a `generated` field. Ten absence claims in
 command's failure under `set -e`.
 
 ---
+
+## CURATED and AGGREGATED artifact checks
+
+CURATED artifacts compare byte-for-byte; AGGREGATED artifacts compare
+content. CURATED outputs are the source of truth for their content, so
+any byte change is a change of state. AGGREGATED outputs are queries
+over CURATED; their invariant is that the same query produces the same
+answer. Byte-comparison on AGGREGATED files couples them to a library
+version for no benefit; content-comparison on CURATED files lets silent
+drift through.
+
+Reference: ISO 3166 `3bc1516` (`assert_frame_equal` for the aggregated
+case) with the CURATED counterpart being the `pyarrow==25.0.1` pin. A
+registry with no aggregated layer (ISO 10383 today) applies the
+CURATED rule only; the principle is documented here for adopters that
+add aggregates later.
 
 ## Operator hygiene
 
