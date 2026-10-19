@@ -5,4 +5,7 @@ __pycache__/
 .DS_Store
 *.egg-info/
 wrappers/rust/target/
+# Library crate: Cargo.lock is not committed, by Cargo convention for
+# libraries. CI resolves serde and serde_json at build time; the data and
+# tests do not depend on a particular patch release.
 wrappers/rust/Cargo.lock
