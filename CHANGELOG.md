@@ -300,4 +300,5 @@ must match `VERSION`. CI enforces this with
 [1.0.2]: https://github.com/slimissa/iso10383/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/slimissa/iso10383/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/slimissa/iso10383/commits/v1.0.0
-[0.1.0]: https://github.com/slimissa/iso10383/commits/v1.0.0
+<!-- 0.1.0 was never tagged. The link is the Phase 1 commit that added the parser. -->
+[0.1.0]: https://github.com/slimissa/iso10383/commit/5fd0bfd0a9d1b8a2856e781f7c724f2dda681276
