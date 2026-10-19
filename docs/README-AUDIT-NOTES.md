@@ -42,6 +42,13 @@ kept here as the record of what the audit found, not as open items.
 3. `CONTRIBUTING.md` § Getting started "Expected on a clean checkout" shows `OK (with warnings)`, `66 passed` and `all wrappers agree`; actual: `OK: 2883 MICs validated`, `111 passed`, `OK: 5 suite(s) passed, 0 skipped`. It also lists `pyarrow >= 14`, while `constraints.txt` pins `==25.0.1`.
 4. `docs/PROVENANCE.md` § Distribution describes `cargo add --path wrappers/rust` and a Go module resolved "via its own tag"; neither is verifiable from the tree.
 
+## D′. Closure audit decisions (tree `a399f52`)
+
+Findings from the closure audit of `a399f52` that were decided rather than
+fixed in code. Numbers are the audit's finding numbers.
+
+5. **`review_by` windows differ (ISO 3166: 12 months, Exchange Calendar: 3 months). Recorded, numbers unchanged.** `docs/RELEASE_PATTERN.md` § The vendored-snapshot `review_by` shape recommends a separate `.meta.json` carrying `review_by` and `refresh_cadence`; it defines no window length. No rationale for either number was recorded in the tree. Maintainer rationale, recorded now: ISO 3166 is a standards-track registry that changes rarely, so a 12-month backstop is enough; Exchange Calendar is released far more often (v2.4.2 on 2026-09-30, v2.13.0 on 2026-10-05, v2.15.4 on 2026-10-12), so it gets 3 months. This is the maintainer's reasoning; the tree does not verify either characterisation. Both metas still say `refresh_cadence: monthly`; that field is descriptive and nothing reads it. `review_by` is only the backstop. Content drift is caught on every push by `check_*_current.py --strict` in CI, which fails on a code or MIC set difference.
+
 ## E. Could not be verified from this tree
 
 - Everything git: commit identity beyond the archive comment, commit count, tag objects, history. The new README states no git-derived fact.
