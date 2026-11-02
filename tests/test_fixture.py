@@ -20,7 +20,7 @@ KNOWN_KEYS = frozenset({
     "args", "id", "op",
     "expect", "expect_contains", "expect_count_min", "expect_count_max",
     "expect_all_field", "expect_all_status", "expect_all_expiration_ge",
-    "expect_missing", "expect_ok", "expect_order_by",
+    "expect_missing", "expect_ok", "expect_order_by", "expect_mic_order",
 })
 
 

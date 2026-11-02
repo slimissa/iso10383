@@ -314,14 +314,11 @@ func TestContractByMICTypeSegment(t *testing.T) {
 func TestContractExpiredTieOrderStable(t *testing.T) {
 	c := loadContract(t)["expired_tie_order_stable"]
 	since := c["args"].([]any)[0].(string)
-	if c["expect_order_by"].(string) != "expiration_date" {
+	by := c["expect_order_by"].([]any)
+	if len(by) != 2 || by[0] != "expiration_date" || by[1] != "mic" {
 		t.Fatalf("unsupported expect_order_by: %v", c["expect_order_by"])
 	}
 	r := load(t)
-	position := map[string]int{}
-	for i, m := range r.All() {
-		position[m.MIC] = i
-	}
 	date := func(p *string) string {
 		if p == nil {
 			return ""
@@ -332,9 +329,33 @@ func TestContractExpiredTieOrderStable(t *testing.T) {
 	for i := 1; i < len(rows); i++ {
 		a, b := rows[i-1], rows[i]
 		da, db := date(a.ExpirationDate), date(b.ExpirationDate)
-		if da > db || (da == db && position[a.MIC] > position[b.MIC]) {
+		if da > db || (da == db && a.MIC >= b.MIC) {
 			t.Fatalf("%s must precede %s (dates %s, %s)", b.MIC, a.MIC, db, da)
 		}
+	}
+}
+
+func TestContractExpiredTieBreakIsMIC(t *testing.T) {
+	c := loadContract(t)["expired_tie_break_mic_synthetic"]
+	since := c["args"].([]any)[0].(string)
+	b, err := json.Marshal(c["registry"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	r, err := LoadRegistryFromBytes(b)
+	if err != nil {
+		t.Fatalf("LoadRegistryFromBytes: %v", err)
+	}
+	var got []string
+	for _, m := range r.Expired(since) {
+		got = append(got, m.MIC)
+	}
+	var want []string
+	for _, v := range c["expect_mic_order"].([]any) {
+		want = append(want, v.(string))
+	}
+	if strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Fatalf("expired order %v, want %v", got, want)
 	}
 }
 

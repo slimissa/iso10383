@@ -195,9 +195,9 @@ func (r *Registry) OperatingMIC(mic string) string {
 	return ""
 }
 
-// Expired returns expired entries, sorted by expiration_date ascending.
-// Entries with the same expiration_date keep registry order, as in the
-// other three wrappers (the sort is stable).
+// Expired returns expired entries, sorted by (expiration_date, mic)
+// ascending, as in the other three wrappers. An entry with no
+// expiration_date sorts first.
 // Pass "" for since to return every expired entry.
 func (r *Registry) Expired(since string) []MIC {
 	var out []MIC
@@ -224,7 +224,10 @@ func (r *Registry) Expired(since string) []MIC {
 		if out[j].ExpirationDate != nil {
 			dj = *out[j].ExpirationDate
 		}
-		return di < dj
+		if di != dj {
+			return di < dj
+		}
+		return out[i].MIC < out[j].MIC
 	})
 	return out
 }

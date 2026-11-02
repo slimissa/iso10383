@@ -119,12 +119,17 @@ def test_contract_by_mic_type_segment():
 
 def test_contract_expired_tie_order_stable():
     c = CASES["expired_tie_order_stable"]
-    field = c["expect_order_by"]
-    position = {m.mic: i for i, m in enumerate(REG.all())}
+    fields = c["expect_order_by"]
     rows = REG.expired(since=c["args"][0])
-    keys = [(getattr(m, field) or "", position[m.mic]) for m in rows]
-    # Ascending by the field; equal values keep registry order.
+    keys = [tuple(getattr(m, f) or "" for f in fields) for m in rows]
+    # Ascending by the listed fields, in order.
     assert keys == sorted(keys)
+
+
+def test_contract_expired_tie_break_is_mic():
+    c = CASES["expired_tie_break_mic_synthetic"]
+    rows = MICRegistry(c["registry"]).expired(since=c["args"][0])
+    assert [m.mic for m in rows] == c["expect_mic_order"]
 
 
 def test_contract_lookup_lowercase():

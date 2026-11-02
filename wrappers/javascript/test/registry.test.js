@@ -143,19 +143,27 @@ test("contract: by mic_type SEGMENT", () => {
 
 test("contract: expired tie order is stable", () => {
   const c = CASES.expired_tie_order_stable;
-  const field = c.expect_order_by;
-  const position = new Map(REG.all().map((m, i) => [m.mic, i]));
+  const fields = c.expect_order_by;
+  const key = m => fields.map(f => m[f] || "");
+  const before = (ka, kb) => {
+    for (let j = 0; j < ka.length; j++) {
+      if (ka[j] !== kb[j]) return ka[j] < kb[j];
+    }
+    return false;
+  };
   const rows = REG.expired(c.args[0]);
   for (let i = 1; i < rows.length; i++) {
-    const fa = rows[i - 1][field] || "";
-    const fb = rows[i][field] || "";
-    const ia = position.get(rows[i - 1].mic);
-    const ib = position.get(rows[i].mic);
     assert.ok(
-      fa < fb || (fa === fb && ia < ib),
+      before(key(rows[i - 1]), key(rows[i])),
       `${rows[i - 1].mic} must precede ${rows[i].mic}`,
     );
   }
+});
+
+test("contract: expired ties break by mic", () => {
+  const c = CASES.expired_tie_break_mic_synthetic;
+  const rows = new MICRegistry(c.registry).expired(c.args[0]);
+  assert.deepEqual(rows.map(m => m.mic), c.expect_mic_order);
 });
 
 test("contract: lookup lowercase", () => {

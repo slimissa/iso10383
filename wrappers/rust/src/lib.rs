@@ -150,7 +150,7 @@ impl Registry {
         self.by_mic(mic).map(|m| m.operating_mic.as_str())
     }
 
-    /// Expired entries, sorted by `expiration_date` ascending.
+    /// Expired entries, sorted by (`expiration_date`, `mic`) ascending.
     ///
     /// Pass `None` for every expired entry.
     pub fn expired(&self, since: Option<&str>) -> Vec<&MIC> {
@@ -168,6 +168,7 @@ impl Registry {
                 .as_deref()
                 .unwrap_or("")
                 .cmp(b.expiration_date.as_deref().unwrap_or(""))
+                .then_with(|| a.mic.cmp(&b.mic))
         });
         rows
     }

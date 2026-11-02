@@ -115,11 +115,16 @@ class MICRegistry:
         return m["operating_mic"] if m else None
 
     def expired(self, since: str | None = None) -> list[MIC]:
+        """Expired entries, sorted by (expiration_date, mic) ascending.
+
+        An entry with no expiration_date sorts first. Pass no `since`
+        for every expired entry.
+        """
         rows = [m for m in self._mics if m["status"] == "EXPIRED"]
         if since:
             rows = [m for m in rows
                     if (m.get("expiration_date") or "") >= since]
-        rows.sort(key=lambda m: m.get("expiration_date") or "")
+        rows.sort(key=lambda m: (m.get("expiration_date") or "", m["mic"]))
         return [MIC.from_dict(m) for m in rows]
 
     def by_country(self, code: str) -> list[MIC]:

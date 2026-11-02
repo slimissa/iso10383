@@ -161,9 +161,81 @@
       "args": [
         "2024-01-01"
       ],
-      "expect_order_by": "expiration_date",
+      "expect_order_by": [
+        "expiration_date",
+        "mic"
+      ],
       "id": "expired_tie_order_stable",
       "op": "expired"
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expect_mic_order": [
+        "XEEE",
+        "XDDD",
+        "XAAA",
+        "XBBB",
+        "XCCC"
+      ],
+      "id": "expired_tie_break_mic_synthetic",
+      "op": "expired",
+      "registry": {
+        "meta": {
+          "broken_chains": [],
+          "counts": {
+            "active": 0,
+            "expired": 5,
+            "operating": 5,
+            "segment": 0,
+            "total": 5,
+            "updated": 0
+          },
+          "source_hash": "",
+          "source_snapshot": "2000-01-01",
+          "source_url": "",
+          "updated": "2000-01-01",
+          "version": "0.0.0-fixture"
+        },
+        "mics": [
+          {
+            "expiration_date": "2020-01-01",
+            "mic": "XCCC",
+            "mic_type": "OPERATING",
+            "operating_mic": "XCCC",
+            "status": "EXPIRED"
+          },
+          {
+            "expiration_date": "2020-01-01",
+            "mic": "XBBB",
+            "mic_type": "OPERATING",
+            "operating_mic": "XBBB",
+            "status": "EXPIRED"
+          },
+          {
+            "expiration_date": "2020-01-01",
+            "mic": "XAAA",
+            "mic_type": "OPERATING",
+            "operating_mic": "XAAA",
+            "status": "EXPIRED"
+          },
+          {
+            "expiration_date": "2019-01-01",
+            "mic": "XDDD",
+            "mic_type": "OPERATING",
+            "operating_mic": "XDDD",
+            "status": "EXPIRED"
+          },
+          {
+            "expiration_date": null,
+            "mic": "XEEE",
+            "mic_type": "OPERATING",
+            "operating_mic": "XEEE",
+            "status": "EXPIRED"
+          }
+        ]
+      }
     },
     {
       "args": [

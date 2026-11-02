@@ -270,29 +270,49 @@ fn contract_expired_tie_order_stable() {
     let c = contract();
     let cs = case(&c, "expired_tie_order_stable");
     let since = cs["args"][0].as_str().unwrap();
-    assert_eq!(cs["expect_order_by"].as_str().unwrap(), "expiration_date");
+    let by: Vec<&str> = cs["expect_order_by"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap())
+        .collect();
+    assert_eq!(by, ["expiration_date", "mic"]);
 
     let r = Registry::load().unwrap();
-    let position: std::collections::HashMap<&str, usize> = r
-        .all()
-        .iter()
-        .enumerate()
-        .map(|(i, m)| (m.mic.as_str(), i))
-        .collect();
-    let keys: Vec<(String, usize)> = r
+    let keys: Vec<(String, String)> = r
         .expired(Some(since))
         .iter()
         .map(|m| {
             (
                 m.expiration_date.clone().unwrap_or_default(),
-                position[m.mic.as_str()],
+                m.mic.clone(),
             )
         })
         .collect();
     let mut sorted = keys.clone();
     sorted.sort();
-    // Ascending by the field; equal values keep registry order.
+    // Ascending by (expiration_date, mic).
     assert_eq!(keys, sorted);
+}
+
+#[test]
+fn contract_expired_tie_break_is_mic() {
+    let c = contract();
+    let cs = case(&c, "expired_tie_break_mic_synthetic");
+    let since = cs["args"][0].as_str().unwrap();
+    let r = Registry::from_str(&cs["registry"].to_string()).unwrap();
+    let got: Vec<&str> = r
+        .expired(Some(since))
+        .iter()
+        .map(|m| m.mic.as_str())
+        .collect();
+    let want: Vec<&str> = cs["expect_mic_order"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap())
+        .collect();
+    assert_eq!(got, want);
 }
 
 #[test]

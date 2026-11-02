@@ -81,8 +81,11 @@ class MICRegistry {
     if (since) {
       rows = rows.filter(m => (m.expiration_date || "") >= since);
     }
+    // Sort by (expiration_date, mic). mic compares by code unit, not
+    // locale, so the order matches the other three wrappers.
     rows.sort((a, b) =>
-      (a.expiration_date || "").localeCompare(b.expiration_date || ""));
+      (a.expiration_date || "").localeCompare(b.expiration_date || "") ||
+      (a.mic < b.mic ? -1 : a.mic > b.mic ? 1 : 0));
     return rows.map(m => ({ ...m }));
   }
 
