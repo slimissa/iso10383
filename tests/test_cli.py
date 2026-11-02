@@ -38,11 +38,13 @@ def test_lookup_unknown_is_2():
     assert run("lookup", "zzzz").returncode == 2
 
 
-def test_lookup_missing_is_1():
-    # AAAAA is valid pattern but not present.
-    assert run("lookup", "QQQQ").returncode in (0, 1)
-    r = run("validate", "XNYS", "QQQQ")
-    assert r.returncode == 1
+def test_lookup_missing_exits_1():
+    # QQQQ is a valid MIC pattern but is not in the registry.
+    assert run("lookup", "QQQQ").returncode == 1
+
+
+def test_validate_missing_exits_1():
+    assert run("validate", "XNYS", "QQQQ").returncode == 1
 
 
 def test_missing_registry_is_3():
