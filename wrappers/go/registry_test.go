@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -501,25 +502,139 @@ func TestByMICReturnsCopy(t *testing.T) {
 	}
 }
 
-// ByMIC returns a shallow copy: value fields are independent and
-// pointer fields alias registry-owned strings. This test pins that
-// documented behavior; a change to deep copies must update it.
-func TestByMICReturnsIndependentStruct(t *testing.T) {
+// ByMIC returns a deep copy: value fields and pointer fields are both
+// independent of the registry, so writing through a returned pointer
+// cannot change a later lookup.
+func TestByMICReturnsDeepCopy(t *testing.T) {
 	r := load(t)
-	a := r.ByMIC("XNYS")
-	b := r.ByMIC("XNYS")
+	mic := loadContract(t)["lookup_xnys"]["args"].([]any)[0].(string)
+	a := r.ByMIC(mic)
+	b := r.ByMIC(mic)
 	if a == nil || b == nil {
-		t.Fatal("XNYS missing")
+		t.Fatalf("%s missing", mic)
 	}
 	if a == b {
 		t.Fatal("expected distinct pointers")
 	}
 	a.MIC = "ZZZZ"
-	if b.MIC != "XNYS" {
+	if b.MIC != mic {
 		t.Fatal("value field was shared between returned structs")
 	}
-	if a.MarketName == nil || a.MarketName != b.MarketName {
-		t.Fatal("documented aliasing changed: update the ByMIC docs and this test")
+	if a.MarketName == nil || b.MarketName == nil {
+		t.Fatal("fixture entry has no market_name to test with")
+	}
+	if a.MarketName == b.MarketName {
+		t.Fatal("pointer field was shared between returned structs")
+	}
+	want := *b.MarketName
+	*a.MarketName = "x"
+	if got := *r.ByMIC(mic).MarketName; got != want {
+		t.Fatalf("write through ByMIC result reached the registry: %q != %q",
+			got, want)
+	}
+	if *b.MarketName != want {
+		t.Fatal("write through one result reached another result")
+	}
+}
+
+// ptrFields returns the address of every *string field of m, found by
+// reflection so a *string field added to MIC later is covered without
+// editing this helper.
+func ptrFields(m *MIC) []**string {
+	var out []**string
+	v := reflect.ValueOf(m).Elem()
+	want := reflect.TypeOf((*string)(nil))
+	for i := 0; i < v.NumField(); i++ {
+		if v.Field(i).Type() == want {
+			out = append(out, v.Field(i).Addr().Interface().(**string))
+		}
+	}
+	return out
+}
+
+// A *string field added to MIC but not to cloneMIC would alias the
+// registry again. This fails until cloneMIC copies it.
+func TestCloneMICCopiesEveryPointerField(t *testing.T) {
+	var m MIC
+	fields := ptrFields(&m)
+	if len(fields) == 0 {
+		t.Fatal("MIC has no *string fields; the test lost its target")
+	}
+	for i, f := range fields {
+		s := "v" + string(rune('a'+i))
+		*f = &s
+	}
+	c := cloneMIC(m)
+	for i, f := range ptrFields(&c) {
+		orig := ptrFields(&m)[i]
+		if *f == nil || *f == *orig {
+			t.Fatalf("pointer field %d not deep-copied", i)
+		}
+		if **f != **orig {
+			t.Fatalf("pointer field %d changed value: %q != %q", i, **f, **orig)
+		}
+	}
+}
+
+// Every slice-returning query hands back deep copies: scribbling over
+// each *string in a result must leave the registry unchanged.
+func TestQueryResultsAreDeepCopies(t *testing.T) {
+	r := load(t)
+	before := r.All()
+
+	var seg, withCountry, withCategory, withName MIC
+	var haveSeg, haveCountry, haveCategory, haveName bool
+	for _, m := range before {
+		if !haveSeg && m.MICType == "SEGMENT" {
+			seg, haveSeg = m, true
+		}
+		if !haveCountry && m.CountryCode != nil {
+			withCountry, haveCountry = m, true
+		}
+		if !haveCategory && m.MarketCategory != nil {
+			withCategory, haveCategory = m, true
+		}
+		if !haveName && m.MarketName != nil && *m.MarketName != "" {
+			withName, haveName = m, true
+		}
+	}
+	if !(haveSeg && haveCountry && haveCategory && haveName) {
+		t.Fatal("registry lacks an entry needed to drive every query")
+	}
+
+	queries := []struct {
+		name string
+		run  func() []MIC
+	}{
+		{"All", r.All},
+		{"Segments", func() []MIC { return r.Segments(seg.OperatingMIC) }},
+		{"Expired", func() []MIC { return r.Expired("") }},
+		{"ByCountry", func() []MIC { return r.ByCountry(*withCountry.CountryCode) }},
+		{"ByStatus", func() []MIC { return r.ByStatus(before[0].Status) }},
+		{"ByMICType", func() []MIC { return r.ByMICType(before[0].MICType) }},
+		{"ByCategory", func() []MIC { return r.ByCategory(*withCategory.MarketCategory) }},
+		{"Search", func() []MIC { return r.Search(*withName.MarketName) }},
+	}
+	for _, q := range queries {
+		rows := q.run()
+		if len(rows) == 0 {
+			t.Fatalf("%s: no rows returned to test with", q.name)
+		}
+		scribbled := 0
+		for i := range rows {
+			for _, f := range ptrFields(&rows[i]) {
+				if *f != nil {
+					**f = "scribbled"
+					scribbled++
+				}
+			}
+		}
+		if scribbled == 0 {
+			t.Fatalf("%s: no pointer fields to write through", q.name)
+		}
+		if !reflect.DeepEqual(before, r.All()) {
+			t.Fatalf("%s: a write through the result changed the registry", q.name)
+		}
 	}
 }
 

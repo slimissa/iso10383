@@ -39,6 +39,34 @@ type MIC struct {
 	Note               *string `json:"note"`
 }
 
+// cloneMIC returns a deep copy of m: every *string field points at a
+// fresh string, so a caller who writes through a returned pointer cannot
+// reach the registry's own data.
+func cloneMIC(m MIC) MIC {
+	c := m
+	for _, f := range []struct{ src, dst **string }{
+		{&m.MarketName, &c.MarketName},
+		{&m.LegalEntityName, &c.LegalEntityName},
+		{&m.LEI, &c.LEI},
+		{&m.MarketCategory, &c.MarketCategory},
+		{&m.Acronym, &c.Acronym},
+		{&m.CountryCode, &c.CountryCode},
+		{&m.City, &c.City},
+		{&m.Website, &c.Website},
+		{&m.CreationDate, &c.CreationDate},
+		{&m.LastUpdateDate, &c.LastUpdateDate},
+		{&m.LastValidationDate, &c.LastValidationDate},
+		{&m.ExpirationDate, &c.ExpirationDate},
+		{&m.Note, &c.Note},
+	} {
+		if *f.src != nil {
+			s := **f.src
+			*f.dst = &s
+		}
+	}
+	return c
+}
+
 // BrokenChain records a segment whose parent chain does not terminate
 // at an operating MIC. The bundled snapshot has zero of these.
 type BrokenChain struct {
@@ -120,25 +148,26 @@ func (r *Registry) Len() int { return len(r.mics) }
 // IsEmpty reports whether the registry has no entries.
 func (r *Registry) IsEmpty() bool { return len(r.mics) == 0 }
 
-// All returns a copy of the slice of entries. The slice is independent
-// of the registry, but each entry's pointer fields (*string) still
-// reference registry-owned strings: do not mutate through them.
+// All returns a deep copy of the entries. Neither the slice nor any
+// entry's pointer fields (*string) share memory with the registry.
 func (r *Registry) All() []MIC {
 	out := make([]MIC, len(r.mics))
-	copy(out, r.mics)
+	for i, m := range r.mics {
+		out[i] = cloneMIC(m)
+	}
 	return out
 }
 
-// ByMIC returns a copy of the entry for mic, or nil. The copy is
-// shallow: value fields are independent, but pointer fields (*string)
-// reference registry-owned strings, so do not mutate through them.
-// The lookup is case-insensitive.
+// ByMIC returns a deep copy of the entry for mic, or nil. Pointer
+// fields (*string) do not share memory with the registry, so writing
+// through them cannot change later lookups. The lookup is
+// case-insensitive.
 func (r *Registry) ByMIC(mic string) *MIC {
 	i, ok := r.byMIC[strings.ToUpper(mic)]
 	if !ok {
 		return nil
 	}
-	m := r.mics[i]
+	m := cloneMIC(r.mics[i])
 	return &m
 }
 
@@ -151,7 +180,7 @@ func (r *Registry) Segments(mic string) []MIC {
 	var out []MIC
 	for _, m := range r.mics {
 		if m.MICType == "SEGMENT" && m.OperatingMIC == u {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
@@ -185,7 +214,7 @@ func (r *Registry) Expired(since string) []MIC {
 				continue
 			}
 		}
-		out = append(out, m)
+		out = append(out, cloneMIC(m))
 	}
 	sort.SliceStable(out, func(i, j int) bool {
 		di, dj := "", ""
@@ -206,7 +235,7 @@ func (r *Registry) ByCountry(code string) []MIC {
 	var out []MIC
 	for _, m := range r.mics {
 		if m.CountryCode != nil && *m.CountryCode == u {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
@@ -218,7 +247,7 @@ func (r *Registry) ByStatus(status string) []MIC {
 	var out []MIC
 	for _, m := range r.mics {
 		if m.Status == u {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
@@ -230,7 +259,7 @@ func (r *Registry) ByMICType(micType string) []MIC {
 	var out []MIC
 	for _, m := range r.mics {
 		if m.MICType == u {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
@@ -243,7 +272,7 @@ func (r *Registry) ByCategory(category string) []MIC {
 	var out []MIC
 	for _, m := range r.mics {
 		if m.MarketCategory != nil && *m.MarketCategory == u {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
@@ -264,7 +293,7 @@ func (r *Registry) Search(q string) []MIC {
 			acr = strings.ToLower(*m.Acronym)
 		}
 		if strings.Contains(name, q) || strings.Contains(acr, q) {
-			out = append(out, m)
+			out = append(out, cloneMIC(m))
 		}
 	}
 	return out
