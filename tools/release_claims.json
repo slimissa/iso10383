@@ -570,6 +570,22 @@
     {
       "file": "tools/check_mojibake.py",
       "contains": "unclosed code fence"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "132 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "115 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "243 across all five"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "226 across all five"
     }
   ]
 }
