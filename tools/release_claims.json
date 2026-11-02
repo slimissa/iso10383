@@ -209,7 +209,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-243"
+      "contains": "tests-257"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
@@ -573,7 +573,7 @@
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "132 tests"
+      "contains": "139 tests"
     },
     {
       "file": "CONTRIBUTING.md",
@@ -581,11 +581,15 @@
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "243 across all five"
+      "contains": "257 across all five"
     },
     {
       "file": "CONTRIBUTING.md",
       "absent": "226 across all five"
+    },
+    {
+      "file": "tests/cross_language_consistency.json",
+      "contains": "expired_tie_break_mic_synthetic"
     }
   ]
 }
