@@ -27,6 +27,14 @@ def test_real_file_passes():
     assert "OK" in r.stdout
 
 
+def test_only_and_skip_are_mutually_exclusive():
+    # --only used to overwrite --skip, so the combination silently
+    # ignored the skip. argparse errors exit 2.
+    r = run(str(REGISTRY), "--only", "schema", "--skip", "business",
+            expect=2)
+    assert "mutually exclusive" in r.stderr
+
+
 def test_strict_fails_on_warning(tmp_path):
     # The allowlist is empty, so the real file produces no warning. Build
     # one: a snapshot naming a MIC the registry lacks, under --advisory

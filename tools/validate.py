@@ -253,6 +253,9 @@ def main() -> int:
     p.add_argument("--quiet", action="store_true")
     args = p.parse_args()
 
+    if args.only and args.skip:
+        p.error("--only and --skip are mutually exclusive")
+
     if not args.path.is_file():
         print(f"not found: {args.path}", file=sys.stderr)
         return 2
