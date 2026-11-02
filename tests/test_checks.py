@@ -1,9 +1,9 @@
-"""Tests for the claim-checking tools.
+"""Tests for the checking tools other than check_release_claims.py.
 
 Each test pins one way a check used to pass because it could not see the
-defect: an `absent` claim that was never implemented, an unclosed code
-fence, a snapshot whose metadata disagrees with it, a Parquet footer that
-was skipped when pyarrow was missing, a manifest key that was ignored.
+defect: an unclosed code fence, a snapshot whose metadata disagrees with
+it, a Parquet footer that was skipped when pyarrow was missing. The
+release-claims checker has its own file, test_check_release_claims.py.
 """
 
 import json
@@ -18,43 +18,10 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 import check_mojibake  # noqa: E402
-import check_release_claims  # noqa: E402
 import check_snapshot_freshness  # noqa: E402
 import check_version_consistency  # noqa: E402
 
 FENCE = "`" * 3
-
-
-def test_absent_fails_when_text_present(tmp_path, monkeypatch):
-    monkeypatch.setattr(check_release_claims, "PROJECT_ROOT", tmp_path)
-    (tmp_path / "doc.md").write_text("old text and new text\n",
-                                     encoding="utf-8")
-
-    ok, detail = check_release_claims.check_claim(
-        {"file": "doc.md", "absent": "old text"})
-    assert not ok
-    assert "must be absent" in detail
-
-    ok, _ = check_release_claims.check_claim(
-        {"file": "doc.md", "absent": "never written"})
-    assert ok
-
-    # A missing file fails any claim, including absent-only ones.
-    # Absent-only claims on missing files used to pass vacuously;
-    # that is the class the fix at audit time closed.
-    ok, detail = check_release_claims.check_claim(
-        {"file": "gone.md", "absent": "x"})
-    assert not ok
-    assert "missing" in detail
-    ok, _ = check_release_claims.check_claim({"file": "gone.md"})
-    assert not ok
-
-
-def test_list_prints_claims_without_checking(capsys):
-    assert check_release_claims.main(["1.0.4", "--list"]) == 0
-    out = capsys.readouterr().out
-    assert "[1.0.4]" in out
-    assert "[doc-facts]" in out
 
 
 def test_odd_fence_count_is_detected(tmp_path, capsys):
@@ -109,19 +76,6 @@ def test_unreadable_parquet_fails_instead_of_skipping(
 
     assert check_version_consistency.main() == 1
     assert "iso10383.parquet" in capsys.readouterr().err
-
-
-def test_manifest_has_no_unknown_keys():
-    manifest = json.loads(
-        (TOOLS / "release_claims.json").read_text(encoding="utf-8"))
-    allowed = {"file", "contains", "absent"}
-    sections = {k: v for k, v in manifest.items() if not k.startswith("_")}
-    assert "doc-facts" in sections and sections["doc-facts"]
-    for name, claims in sections.items():
-        assert isinstance(claims, list), name
-        for claim in claims:
-            assert "file" in claim, (name, claim)
-            assert set(claim) <= allowed, (name, sorted(set(claim) - allowed))
 
 
 # --- shell scripts ---------------------------------------------------------

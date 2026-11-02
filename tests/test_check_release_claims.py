@@ -1,109 +1,100 @@
-"""AST test for check_release_claims.py: aliased clock reads.
+"""Tests for tools/check_release_claims.py.
 
-The absence claims in tools/release_claims.json are substring checks, so
-an alias (`import datetime as dt; dt.datetime.now()`) defeats them. This
-test walks the AST of each generator and fails on any call that reads the
-clock, aliased or not. Defense in depth; the manifest claim is precise,
-the AST test is comprehensive.
+Each test pins one way the claim checker used to pass, or could pass,
+without seeing a defect: an `absent` claim that was never implemented, a
+claim on a missing file that passed vacuously, a manifest key that was
+ignored, a missing manifest or version that did not stop the run.
+
+The AST test for the snapshot generators lives in test_generators.py.
 """
-from __future__ import annotations
 
-import ast
+import json
+import sys
 from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "tools"
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
 
-GEN_FILES = [
-    ROOT / "tools" / "gen_iso3166_snapshot.py",
-    ROOT / "tools" / "gen_exchange_calendar_snapshot.py",
-]
-
-# attr names whose parent chain must resolve to a clock source
-FIXED_ATTRS = {"now", "today", "time", "uuid4"}
-
-# names that, if they resolve to the clock source, make a call a clock read
-CLOCK_SOURCES = {"datetime", "date", "time", "uuid", "random"}
-
-# For `random.`, method name is unconstrained (random.random(), random.uniform()).
-# Detected by checking func.value is a Name whose id is `random` or an alias
-# that resolves to it.
+import check_release_claims  # noqa: E402
 
 
-def _module_aliases(tree: ast.Module) -> dict[str, str]:
-    """Map alias -> canonical name for `import X as Y` and `from X import Y as Z`."""
-    aliases: dict[str, str] = {}
-    for node in tree.body:
-        if isinstance(node, ast.Import):
-            for a in node.names:
-                local = a.asname or a.name.split(".")[0]
-                aliases[local] = a.name.split(".")[0]
-        elif isinstance(node, ast.ImportFrom):
-            for a in node.names:
-                local = a.asname or a.name
-                aliases[local] = a.name
-    return aliases
+def test_absent_fails_when_text_present(tmp_path, monkeypatch):
+    monkeypatch.setattr(check_release_claims, "PROJECT_ROOT", tmp_path)
+    (tmp_path / "doc.md").write_text("old text and new text\n",
+                                     encoding="utf-8")
+
+    ok, detail = check_release_claims.check_claim(
+        {"file": "doc.md", "absent": "old text"})
+    assert not ok
+    assert "must be absent" in detail
+
+    ok, _ = check_release_claims.check_claim(
+        {"file": "doc.md", "absent": "never written"})
+    assert ok
+
+    # A missing file fails any claim, including absent-only ones.
+    # Absent-only claims on missing files used to pass vacuously;
+    # that is the class the fix at audit time closed.
+    ok, detail = check_release_claims.check_claim(
+        {"file": "gone.md", "absent": "x"})
+    assert not ok
+    assert "missing" in detail
+    ok, _ = check_release_claims.check_claim({"file": "gone.md"})
+    assert not ok
 
 
-def _resolve(chain: ast.expr, aliases: dict[str, str]) -> str | None:
-    """Return the canonical root of an attribute chain, or None."""
-    node = chain
-    while isinstance(node, ast.Attribute):
-        node = node.value
-    if isinstance(node, ast.Name):
-        return aliases.get(node.id, node.id)
-    return None
+def test_list_prints_claims_without_checking(capsys):
+    assert check_release_claims.main(["1.0.4", "--list"]) == 0
+    out = capsys.readouterr().out
+    assert "[1.0.4]" in out
+    assert "[doc-facts]" in out
 
 
-def _clock_reads(tree: ast.Module) -> list[tuple[int, str]]:
-    aliases = _module_aliases(tree)
-    hits: list[tuple[int, str]] = []
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        func = node.func
-        if not isinstance(func, ast.Attribute):
-            continue
-        root = _resolve(func.value, aliases)
-        # Random: method name unconstrained
-        if root == "random":
-            hits.append((node.lineno, f"random.{func.attr}()"))
-            continue
-        # Fixed-method clock sources
-        if func.attr in FIXED_ATTRS and root in {"datetime", "date", "time", "uuid"}:
-            hits.append((node.lineno, f"{root}.{func.attr}()"))
-    return hits
+def test_manifest_has_no_unknown_keys():
+    manifest = json.loads(
+        (TOOLS / "release_claims.json").read_text(encoding="utf-8"))
+    allowed = {"file", "contains", "absent"}
+    sections = {k: v for k, v in manifest.items() if not k.startswith("_")}
+    assert "doc-facts" in sections and sections["doc-facts"]
+    for name, claims in sections.items():
+        assert isinstance(claims, list), name
+        for claim in claims:
+            assert "file" in claim, (name, claim)
+            assert set(claim) <= allowed, (name, sorted(set(claim) - allowed))
 
 
-@pytest.mark.parametrize("path", GEN_FILES, ids=lambda p: p.name)
-def test_no_clock_read_in_generator(path: Path):
-    assert path.is_file(), f"missing: {path}"
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    hits = _clock_reads(tree)
-    assert not hits, "\n".join(
-        f"{path.name}:{lineno}: {call}" for lineno, call in hits)
+def test_missing_manifest_exits_2(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(check_release_claims, "MANIFEST",
+                        tmp_path / "no_such_manifest.json")
+    with pytest.raises(SystemExit) as exc:
+        check_release_claims.main(["1.0.4"])
+    assert exc.value.code == 2
+    assert "manifest not found" in capsys.readouterr().err
 
 
-def test_aliased_datetime_is_detected():
-    src = "import datetime as dt\ndt.datetime.now()\n"
-    tree = ast.parse(src)
-    assert _clock_reads(tree), "aliased datetime.now not caught"
+def test_unknown_version_exits_2(capsys):
+    with pytest.raises(SystemExit) as exc:
+        check_release_claims.main(["0.0.0"])
+    assert exc.value.code == 2
+    assert "no claims for version 0.0.0" in capsys.readouterr().err
 
 
-def test_aliased_random_is_detected():
-    src = "import random as rnd\nrnd.uniform(0, 1)\n"
-    tree = ast.parse(src)
-    assert _clock_reads(tree), "aliased random.uniform not caught"
+def test_claim_with_unknown_key_exits_1(tmp_path, monkeypatch, capsys):
+    # A misspelled key must fail the run, not silently weaken the claim.
+    manifest = tmp_path / "release_claims.json"
+    manifest.write_text(json.dumps({
+        "1.0.4": [{"file": "doc.md", "containz": "text"}],
+        "doc-facts": [],
+    }), encoding="utf-8")
+    (tmp_path / "doc.md").write_text("text\n", encoding="utf-8")
+    monkeypatch.setattr(check_release_claims, "MANIFEST", manifest)
+    monkeypatch.setattr(check_release_claims, "PROJECT_ROOT", tmp_path)
 
-
-def test_from_import_is_detected():
-    src = "from datetime import datetime as dtn\ndtn.now()\n"
-    tree = ast.parse(src)
-    assert _clock_reads(tree), "from-imported datetime.now not caught"
-
-
-def test_clean_source_has_no_hits():
-    src = "def f(x):\n    return x + 1\n"
-    tree = ast.parse(src)
-    assert _clock_reads(tree) == []
+    assert check_release_claims.main(["1.0.4"]) == 1
+    out = capsys.readouterr().out
+    assert "FAIL" in out
+    assert "unknown claim key" in out
