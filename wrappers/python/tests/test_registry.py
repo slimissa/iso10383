@@ -1,5 +1,9 @@
 """Python wrapper tests. Every expected value reads from anchors.py."""
 
+import os
+import subprocess
+import sys
+import zipfile
 from pathlib import Path
 
 from iso10383 import MICRegistry
@@ -15,6 +19,26 @@ def test_load_bundled():
     assert r.version == REG.version
     assert r.source_snapshot == REG.source_snapshot
     assert r.source_hash.startswith("sha256:")
+
+
+def test_load_bundled_from_zip(tmp_path):
+    # A zipapp or frozen install has no data file on disk, only a
+    # Traversable into the archive. Import the package from a zip and
+    # load the bundled snapshot there.
+    pkg = Path(__file__).resolve().parents[1] / "src" / "iso10383"
+    archive = tmp_path / "app.zip"
+    with zipfile.ZipFile(archive, "w") as z:
+        for f in sorted(pkg.rglob("*")):
+            if f.is_file() and "__pycache__" not in f.parts:
+                z.write(f, Path("iso10383") / f.relative_to(pkg))
+    r = subprocess.run(
+        [sys.executable, "-c",
+         "from iso10383 import MICRegistry; print(len(MICRegistry()))"],
+        capture_output=True, text=True, cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(archive)},
+    )
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.strip() == str(len(REG))
 
 
 def test_load_from_explicit_path():

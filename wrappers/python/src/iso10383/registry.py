@@ -9,8 +9,15 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-def _bundled_path() -> Path:
-    return Path(str(files("iso10383").joinpath("data/iso10383.json")))
+def _load_bundled() -> dict[str, Any]:
+    """Parse the bundled snapshot.
+
+    Reads through the importlib.resources Traversable and never turns it
+    into a filesystem path, so it also works from a zipapp or a frozen
+    install, where the data file is not a file on disk.
+    """
+    resource = files("iso10383").joinpath("data").joinpath("iso10383.json")
+    return json.loads(resource.read_text(encoding="utf-8"))
 
 
 @dataclass(frozen=True)
@@ -50,7 +57,7 @@ class MICRegistry:
 
     def __init__(self, source: str | Path | dict | None = None):
         if source is None:
-            data = json.loads(_bundled_path().read_text(encoding="utf-8"))
+            data = _load_bundled()
         elif isinstance(source, dict):
             data = source
         else:
