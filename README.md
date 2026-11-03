@@ -1172,6 +1172,7 @@ Stated plainly, because a canonical registry is a claim and a claim needs its ed
 - **Network-dependent gates.** `check_*_current.py` and `gen_*_snapshot.py --check` reach GitHub; offline, they cannot run.
 - **Language packages are not published** to PyPI, npm, crates.io or a Go proxy. Install from a clone.
 - **No XLSX or XML distribution.** SWIFT's original offers both; this registry publishes JSON, SQL, CSV, TSV and Parquet only.
+- **Where the edges and the numbers are recorded.** The Known limitations and README-AUDIT-NOTES sections together serve the role a `STATE.md` plays in the sibling registries: this section states the edges, and the audit notes are the receipt of how the numbers in the 2026-10-18 README were measured. Numbers added since are pinned by the claims in `tools/release_claims.json`, not by the notes.
 
 ---
 
