@@ -2,12 +2,18 @@
 
 import json
 import re
+import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 ROOT_JSON = (ROOT / "iso10383.json").read_bytes()
 VERSION = (ROOT / "VERSION").read_text().strip()
 
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import sync_wrappers  # noqa: E402
 
 BUNDLES = {
     "python":     "wrappers/python/src/iso10383/data/iso10383.json",
@@ -51,3 +57,30 @@ def test_rust_manifest_version():
 def test_registry_meta_version_matches_version_file():
     data = json.loads((ROOT / "iso10383.json").read_text(encoding="utf-8"))
     assert data["meta"]["version"] == VERSION
+
+
+def test_sync_check_fails_on_missing_target(tmp_path, monkeypatch, capsys):
+    source = tmp_path / "iso10383.json"
+    source.write_bytes(ROOT_JSON)
+    targets = [tmp_path / rel for rel in BUNDLES.values()]
+    for t in targets:
+        t.parent.mkdir(parents=True)
+        t.write_bytes(ROOT_JSON)
+    monkeypatch.setattr(sync_wrappers, "SOURCE", source)
+    monkeypatch.setattr(sync_wrappers, "TARGETS", [str(t) for t in targets])
+
+    assert sync_wrappers.main(["--check"]) == 0
+
+    targets[0].unlink()
+    assert sync_wrappers.main(["--check"]) == 1
+    assert "missing" in capsys.readouterr().err
+    assert sync_wrappers.main(["--check", "--allow-missing"]) == 0
+
+    # --allow-missing tolerates absence, not drift.
+    targets[1].write_bytes(ROOT_JSON + b" ")
+    assert sync_wrappers.main(["--check", "--allow-missing"]) == 1
+
+    # The flag means nothing without --check.
+    with pytest.raises(SystemExit) as exc:
+        sync_wrappers.main(["--allow-missing"])
+    assert exc.value.code == 2

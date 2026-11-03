@@ -292,6 +292,18 @@
       "contains": "nine version sites"
     },
     {
+      "file": "docs/LAYERS.md",
+      "contains": "`--allow-missing` reports a missing target"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "absent": "are noted but do not"
+    },
+    {
+      "file": "tools/sync_wrappers.py",
+      "contains": "--allow-missing"
+    },
+    {
       "file": "wrappers/python/src/iso10383/__init__.py",
       "absent": "\"0.1.0\""
     },

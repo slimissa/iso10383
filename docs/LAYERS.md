@@ -383,9 +383,9 @@ OK: 4 wrapper copies in sync
 ```
 
 If any copy has drifted, the tool prints `stale: <path>` and exits 1.
-Missing targets print `missing: <path>` and are noted but do not
-fail while wrappers are still being built. In CI (Phase 7), missing
-targets are a hard failure.
+A missing target prints `missing: <path>` and exits 1, like a stale one.
+`--allow-missing` reports a missing target as a note instead, for a
+checkout where a wrapper has not been built yet; stale copies still fail.
 
 `tests/test_wrappers.py::test_all_bundles_byte_identical` performs
 the same check from the test suite.

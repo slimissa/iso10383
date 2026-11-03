@@ -7,9 +7,12 @@ known path. `--check` verifies the copies match a fresh build.
 Usage:
   python3 tools/sync_wrappers.py             # write copies
   python3 tools/sync_wrappers.py --check     # verify copies
+  python3 tools/sync_wrappers.py --check --allow-missing
 
-Targets that do not yet exist are reported but do not fail the check.
-Phase 7's CI promotes missing targets to a hard failure.
+--check fails (exit 1) on a missing target as well as on a stale one,
+as check_version_consistency.py does for a missing version site.
+--allow-missing downgrades a missing target to a note, for a checkout
+where a wrapper has not been built yet; stale copies still fail.
 """
 
 from __future__ import annotations
@@ -29,12 +32,16 @@ TARGETS = [
 ]
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--check", action="store_true",
-                   help="Verify copies are in sync. Missing targets are notes, "
-                        "not failures, while wrappers are still being built.")
-    args = p.parse_args()
+                   help="Verify copies are in sync. A missing target fails.")
+    p.add_argument("--allow-missing", action="store_true",
+                   help="With --check, report a missing target as a note "
+                        "instead of failing (wrappers still being built).")
+    args = p.parse_args(argv)
+    if args.allow_missing and not args.check:
+        p.error("--allow-missing only applies with --check")
 
     if not SOURCE.is_file():
         print(f"missing: {SOURCE}", file=sys.stderr)
@@ -52,10 +59,15 @@ def main() -> int:
         for d in drift:
             print(f"stale:   {d}", file=sys.stderr)
         for m in missing:
-            print(f"missing: {m}")
+            print(f"missing: {m}",
+                  file=sys.stdout if args.allow_missing else sys.stderr)
         if drift:
             print(f"FAIL: {len(drift)} artifact(s) out of sync",
                   file=sys.stderr)
+            return 1
+        if missing and not args.allow_missing:
+            print(f"FAIL: {len(missing)} target(s) missing "
+                  f"(--allow-missing to tolerate)", file=sys.stderr)
             return 1
         if missing:
             print(f"note: {len(missing)} target(s) not yet present")
