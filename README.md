@@ -60,7 +60,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON |
 | **CLI** | `tools/iso10383_cli.py`, nine subcommands, five output modes; needs a checkout, no wrapper installs it |
 | **Vendored snapshots** | 2: ISO 3166 (252 codes, v1.6.9) and Exchange Calendar (74 MICs, v2.15.4) |
-| **Validation** | Six validator layers, 18 release-gate checks, 149 manifest claims, 257 tests |
+| **Validation** | Six validator layers, 17 release-gate checks, 182 manifest claims, 258 tests |
 | **CI** | Two workflows: `validate.yml` (seven jobs) and `refresh.yml` (monthly) |
 | **Version** | 1.0.4, one version number at nine sites |
 | **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. |
@@ -500,7 +500,7 @@ print(t.schema.metadata[b"iso10383.version"])   # b'1.0.4'
 
 ### Comparison semantics and the build pin
 
-`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2883 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. [`tests/test_pip_pins.py`](./tests/test_pip_pins.py) parses `validate.yml` and `refresh.yml` and fails, naming the file, job and line, if any `pip install` line that mentions `pyarrow` lacks `-c constraints.txt`; it runs in the root suite and as its own release gate. It is a structural test because a substring claim cannot see a second, unpinned install line added next to a pinned one. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
+`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2883 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. [`tests/test_pip_pins.py`](./tests/test_pip_pins.py) parses `validate.yml` and `refresh.yml` and fails, naming the file, job and line, if any `pip install` line that mentions `pyarrow` lacks `-c constraints.txt`; it runs in the root suite, which the release gate runs. It is a structural test because a substring claim cannot see a second, unpinned install line added next to a pinned one. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
 
 ---
 

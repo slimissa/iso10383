@@ -464,6 +464,22 @@
       "absent": "datetime.now("
     },
     {
+      "file": "README.md",
+      "contains": "17 release-gate checks, 182 manifest claims, 258 tests"
+    },
+    {
+      "file": "README.md",
+      "absent": "18 release-gate checks"
+    },
+    {
+      "file": "README.md",
+      "absent": "as its own release gate"
+    },
+    {
+      "file": "scripts/release.sh",
+      "absent": "pytest tests/test_pip_pins.py"
+    },
+    {
       "file": "tools/gen_iso3166_snapshot.py",
       "absent": "time.time("
     },
