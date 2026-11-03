@@ -42,7 +42,7 @@ release adds a Layer-0-to-Layer-1 check, add the row.
 | `tools/iso10383_cli.py check` | Registry invariants read through the CLI | `check-cli` | 9 |
 | `bash tools/check_cross_language.sh --strict` | Four wrapper suites agree | `check-cross-language` | 15 |
 | `tests/test_pip_pins.py` | Every pyarrow install line pinned | `validate-json` | 14 |
-| `tests/test_check_release_claims.py` | AST: no aliased clock reads in generators | `validate-json` (via `pytest tests/`) | via `pytest tests/` |
+| `tests/test_generators.py` | AST: no aliased clock reads in generators | `validate-json` (via `pytest tests/`) | via `pytest tests/` |
 | `tests/` (all) | Root suite | `validate-json` | 14 (via `pytest`) |
 | `wrappers/*/tests` (all) | Per-wrapper suites | `check-wrappers` | via `check_cross_language.sh` |
 

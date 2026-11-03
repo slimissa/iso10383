@@ -630,6 +630,98 @@
     {
       "file": "tests/cross_language_consistency.json",
       "contains": "expired_tie_break_mic_synthetic"
+    },
+    {
+      "file": "README.md",
+      "contains": "9 | `from iso10383 import MICRegistry` | 31 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "stry } = require(\"iso10383-registry\")` | 29 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "1 | `use iso10383_registry::Registry;` | 27 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "ub.com/slimissa/iso10383/wrappers/go\"` | 31 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 140 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| JavaScript | `(cd wrappers/javascript && node --test)` | 29 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Total** | | **258** |"
+    },
+    {
+      "file": "README.md",
+      "contains": "The Tests badge above reads 258, the sum of this table"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_check_registry_freshness.py` (6)."
+    },
+    {
+      "file": "README.md",
+      "contains": "sixteen files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "reads 243"
+    },
+    {
+      "file": "README.md",
+      "contains": "holds 182 machine-checkable claims"
+    },
+    {
+      "file": "README.md",
+      "contains": "and 171 under `doc-facts`"
+    },
+    {
+      "file": "README.md",
+      "contains": "# 182 {file, contains|absent} claims"
+    },
+    {
+      "file": "README.md",
+      "contains": "test_check_registry_freshness.py # check_registry_freshness.py --today"
+    },
+    {
+      "file": "README.md",
+      "contains": "test_registry.py         # 31 tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "registry.test.js        # 29 tests (node --test)"
+    },
+    {
+      "file": "README.md",
+      "contains": "tests/registry.rs            # 27 tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "registry_test.go             # 31 tests"
+    },
+    {
+      "file": "docs/AUDIT.md",
+      "absent": "test_check_release_claims.py"
     }
   ]
 }

@@ -699,10 +699,10 @@ Four wrappers, one contract. Each is verified against the shared fixture [`tests
 
 | Language | Package | Source | Minimum | Import | Tests |
 |----------|---------|--------|---------|--------|------:|
-| Python | `iso10383-registry` | [`wrappers/python`](./wrappers/python) | Python 3.9 | `from iso10383 import MICRegistry` | 29 |
-| JavaScript | `iso10383-registry` | [`wrappers/javascript`](./wrappers/javascript) | Node 18 | `const { MICRegistry } = require("iso10383-registry")` | 28 |
-| Rust | `iso10383-registry` | [`wrappers/rust`](./wrappers/rust) | edition 2021 | `use iso10383_registry::Registry;` | 26 |
-| Go | `github.com/slimissa/iso10383/wrappers/go` | [`wrappers/go`](./wrappers/go) | Go 1.21 | `import iso10383 "github.com/slimissa/iso10383/wrappers/go"` | 28 |
+| Python | `iso10383-registry` | [`wrappers/python`](./wrappers/python) | Python 3.9 | `from iso10383 import MICRegistry` | 31 |
+| JavaScript | `iso10383-registry` | [`wrappers/javascript`](./wrappers/javascript) | Node 18 | `const { MICRegistry } = require("iso10383-registry")` | 29 |
+| Rust | `iso10383-registry` | [`wrappers/rust`](./wrappers/rust) | edition 2021 | `use iso10383_registry::Registry;` | 27 |
+| Go | `github.com/slimissa/iso10383/wrappers/go` | [`wrappers/go`](./wrappers/go) | Go 1.21 | `import iso10383 "github.com/slimissa/iso10383/wrappers/go"` | 31 |
 
 Each wrapper has its own README with the full API. Python, JavaScript and Go have no runtime dependencies; the Rust crate depends on `serde` and `serde_json`.
 
@@ -784,20 +784,20 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 ### Release claims
 
-[`tools/release_claims.json`](./tools/release_claims.json) holds 149 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 138 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (143 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
+[`tools/release_claims.json`](./tools/release_claims.json) holds 182 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4 and 171 under `doc-facts`. `check_release_claims.py 1.0.4` verifies the `doc-facts` set plus the 1.0.4 set (176 claims) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
 
 ### Tests
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 132 |
-| Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 29 |
-| JavaScript | `(cd wrappers/javascript && node --test)` | 28 |
-| Rust | `(cd wrappers/rust && cargo test --quiet)` | 26 |
-| Go | `(cd wrappers/go && go test ./... -count=1)` | 28 |
-| **Total** | | **257** |
+| Root (Python) | `python3 -m pytest tests/ -q` | 140 |
+| Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
+| JavaScript | `(cd wrappers/javascript && node --test)` | 29 |
+| Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
+| Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
+| **Total** | | **258** |
 
-The Tests badge above reads 243, the sum of this table. The root suite is spread over fifteen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (17), `test_checks.py` (14), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (9), `test_export_csv.py` (7), `test_wrappers.py` (6), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6).
+The Tests badge above reads 258, the sum of this table. The root suite is spread over sixteen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (17), `test_checks.py` (14), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_check_registry_freshness.py` (6).
 
 ---
 
@@ -987,7 +987,7 @@ iso10383/
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
 │   ├── check_release_claims.py          # Verifies the claims manifest
-│   ├── release_claims.json              # 148 {file, contains|absent} claims
+│   ├── release_claims.json              # 182 {file, contains|absent} claims
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
@@ -1000,8 +1000,9 @@ iso10383/
 │   ├── cross_language_consistency.json  # Shared fixture for all four wrappers
 │   ├── conftest.py                      # Shared pytest setup
 │   ├── test_check_mojibake.py           # Mojibake checker, each class at runtime
-│   ├── test_check_release_claims.py     # The release-claims checker: exit codes, manifest keys
+│   ├── test_check_registry_freshness.py # check_registry_freshness.py --today, exit codes
 │   ├── test_checks.py                   # The checking tools
+│   ├── test_check_release_claims.py     # The release-claims checker: exit codes, manifest keys
 │   ├── test_cli.py                      # CLI behaviour and exit codes
 │   ├── test_export_csv.py               # CSV/TSV exporter
 │   ├── test_export_parquet.py           # Parquet exporter
@@ -1038,26 +1039,26 @@ iso10383/
 │   │   └── tests/
 │   │       ├── anchors.py               # Fixture anchors
 │   │       ├── conftest.py              # pytest setup
-│   │       └── test_registry.py         # 29 tests
+│   │       └── test_registry.py         # 31 tests
 │   ├── javascript/
 │   │   ├── README.md                    # JavaScript API
 │   │   ├── package.json                 # Package manifest (version site)
 │   │   ├── src/index.js                 # MICRegistry
 │   │   ├── src/data/iso10383.json       # Layer 3 copy
 │   │   ├── test/fixture.js              # Fixture anchors
-│   │   └── test/registry.test.js        # 28 tests (node --test)
+│   │   └── test/registry.test.js        # 29 tests (node --test)
 │   ├── rust/
 │   │   ├── README.md                    # Rust API
 │   │   ├── Cargo.toml                   # Crate manifest (version site)
 │   │   ├── src/lib.rs                   # Registry
 │   │   ├── data/iso10383.json           # Layer 3 copy
 │   │   ├── examples/smoke.rs            # End-to-end smoke example
-│   │   └── tests/registry.rs            # 26 tests
+│   │   └── tests/registry.rs            # 27 tests
 │   └── go/
 │       ├── README.md                    # Go API
 │       ├── go.mod                       # Module path; carries no version
 │       ├── registry.go                  # Registry (embeds data/)
-│       ├── registry_test.go             # 28 tests
+│       ├── registry_test.go             # 31 tests
 │       └── data/iso10383.json           # Layer 3 copy
 │
 ├── docs/
