@@ -776,7 +776,7 @@ Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not fou
 | **CLI smoke test** | `iso10383_cli.py check` | Counts or chain integrity wrong when read through the CLI |
 | **Cross-language** | `check_cross_language.sh --strict` | A wrapper suite that fails or cannot run |
 
-`tools/check_iso4217_current.py` is retained but inactive: it exits 0 with a note because ISO 10383 has no currency field and no ISO 4217 snapshot, and neither CI nor the release gate runs it.
+There is no ISO 4217 check: ISO 10383 has no currency field and no ISO 4217 snapshot. The inactive tool that once stood in for one was removed in v1.0.5.
 
 ### Cross-registry checks are blocking
 
@@ -991,7 +991,6 @@ iso10383/
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
-│   ├── check_iso4217_current.py         # Retained, inactive: no ISO 4217 snapshot exists
 │   └── check_cross_language.sh          # The four wrapper suites plus sync (--strict)
 │
 ├── scripts/
@@ -1247,6 +1246,6 @@ Nothing is scheduled. D14 forbids a roadmap before the previous release has ship
 | **A feature outside the charter** (hours, regulatory status, trading currency, MIC to ISIN) | A consumer asks for it; it is then a new decision, not an extension | [ADR 0010](./docs/decisions/0010-platform-charter.md) |
 | **An agent and its proposal schema** | An agent is built; the read-surface table and a freshness check for `docs/JOINS.md` drift are the prerequisites | [ADR 0012](./docs/decisions/0012-agent-read-surface.md) |
 | **`check_workflows_covered` in `release.sh`** | A second per-push workflow is added; the poll cannot otherwise tell that an expected workflow has not started | `scripts/release.sh` header, [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) invariant 6 |
-| **An ISO 4217 snapshot** | A field that references a currency is added to this registry | `tools/check_iso4217_current.py` docstring |
+| **An ISO 4217 snapshot** | A field that references a currency is added to this registry | ADR 0010, amendment of 2026-10-18 |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for release history and [`docs/decisions/`](./docs/decisions/) for locked decisions.

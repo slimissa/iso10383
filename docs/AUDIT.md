@@ -53,7 +53,6 @@ Tools that run outside CI and the release gate.
 | Tool | What it does | Runs where |
 |------|--------------|------------|
 | `tools/refresh_diff.py` | ADDED / CHANGED / REMOVED between two registry files | `refresh.yml` (PR body) |
-| `tools/check_iso4217_current.py` | No-op: no ISO 4217 snapshot exists | Not in CI, retained as future |
 | `tools/export_columns.py` | Column order; not a producer | Imported by exporters |
 | `.github/workflows/refresh.yml` | Monthly fetch, diff, PR | Scheduled |
 

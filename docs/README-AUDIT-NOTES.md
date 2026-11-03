@@ -20,7 +20,7 @@ The old README badge said `tests-205`, and `tools/release_claims.json` pins that
 | 6 | Rust and Go return "borrowed references", Python and JS "fresh copies" | Not verified | Dropped |
 | 7 | `go get github.com/slimissa/iso10383/wrappers/go`; PROVENANCE says "resolves from git via its own tag" and `cargo add --path` | Not verifiable here (no module proxy access, no tags). The `replace` form was run and works. | Replaced with the `replace` form |
 | 8 | JS quick start `require("iso10383-registry")` | Works only after install; the path form `require("./wrappers/javascript")` was run | Used the path form |
-| 9 | "What's next": two companions plus wrapper publication, "no other work is planned" | ADRs 0008 to 0012 and the script/tool headers carry more triggers | Replaced with a trigger table. Two rows (`check_workflows_covered`, ISO 4217 snapshot) come from the `release.sh` header and the `check_iso4217_current.py` docstring, not an ADR. |
+| 9 | "What's next": two companions plus wrapper publication, "no other work is planned" | ADRs 0008 to 0012 and the script/tool headers carry more triggers | Replaced with a trigger table. Two rows (`check_workflows_covered`, ISO 4217 snapshot) come from the `release.sh` header and the docstring of the former `check_iso4217_current.py` (removed in v1.0.5), not an ADR. |
 | 10 | No Known limitations, FAQ, Where to start, Documentation index, CI table, validation table, Consumed-by proofs | Added from the tree | New sections |
 
 ## C. Differences between the brief and the tree

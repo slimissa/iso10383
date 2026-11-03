@@ -123,6 +123,18 @@
       "absent": "Exit 0 unless"
     },
     {
+      "file": "docs/decisions/0010-platform-charter.md",
+      "contains": "removed in v1.0.5"
+    },
+    {
+      "file": "README.md",
+      "absent": "check_iso4217_curr"
+    },
+    {
+      "file": "docs/AUDIT.md",
+      "absent": "check_iso4217_curr"
+    },
+    {
       "file": "docs/source_format.md"
     },
     {

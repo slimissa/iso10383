@@ -291,8 +291,10 @@ explain, and this question is closed.
 The Non-determinism table lists `check_iso4217_current.py` among the sibling
 comparisons "run in the `validate-json` job on every push". That has been
 false since `e38d4bf`, which removed the step from `validate.yml`. The tool
-remains in the tree as an inactive no-op (there is no ISO 4217 snapshot; it
-exits 0 with a note) and `scripts/release.sh` does not run it. The two
+was an inactive no-op (there is no ISO 4217 snapshot; it exited 0 with a
+note) and `scripts/release.sh` did not run it. It was removed in v1.0.5;
+this ADR's reopening condition will produce a new check against a different
+snapshot shape when a currency field is added. The two
 sibling comparisons that run on every push, under `--strict`, are
 `check_iso3166_current.py` and `check_exchange_calendar_current.py`. The
 section's conclusion is unchanged: both read the outside world and neither
