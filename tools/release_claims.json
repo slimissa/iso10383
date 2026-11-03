@@ -744,6 +744,9 @@
     {
       "file": "docs/AUDIT.md",
       "absent": "test_check_release_claims.py"
+    },
+    {
+      "file": "docs/decisions/README.md"
     }
   ]
 }
