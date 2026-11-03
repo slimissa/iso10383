@@ -1072,11 +1072,13 @@ iso10383/
 │   ├── mic_bic_source_format.md         # MIC to BIC reconnaissance (ADR 0009)
 │   ├── exchange_calendar_mics.txt       # The 74 MICs Exchange Calendar references
 │   ├── README-AUDIT-NOTES.md            # Receipt: how each README number was measured
+│   ├── AUDIT.md                         # Tool inventory: does each tool run, and where
 │   ├── v1.0.0-verification.md          # Gate record for v1.0.0
 │   ├── v1.0.1-verification.md          # Gate record for v1.0.1
 │   ├── v1.0.2-verification.md          # Gate record for v1.0.2
 │   ├── v1.0.3-verification.md          # Gate record for v1.0.3
 │   ├── v1.0.4-verification.md          # Gate record for v1.0.4
+│   ├── v1.0.5-verification.md          # Gate record for v1.0.5
 │   └── decisions/
 │       ├── v1.0.0-decisions.md          # D1 to D17
 │       ├── 0001-source-format.md        # What SWIFT's file is
