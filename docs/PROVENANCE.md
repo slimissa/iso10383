@@ -19,6 +19,11 @@ parses it, and emits `iso10383.json`. A copy of the raw CSV is cached
 in `raw/` (gitignored) and never re-downloaded unless `--force` is
 passed. The cache is the artifact that `meta.source_hash` refers to.
 
+The registry reproduces SWIFT's file. If SWIFT corrects a MIC, the correction reaches the
+registry on the next monthly refresh. To file a correction against the registry for a value
+SWIFT has not corrected, open an issue with the source URL (`CONTRIBUTING.md` § Reporting a
+bug says what to include); the registry will not diverge from SWIFT without an ADR.
+
 ---
 
 ## File format consumed
