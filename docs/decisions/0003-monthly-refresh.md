@@ -274,6 +274,11 @@ the change would be a persistent failure of the current schedule.
 step fails loudly. The fix is a manual refresh from a different
 network, or a proxy. Not a v1.0.0 concern.
 
+This affects the refresh workflow, not the release gate. A release
+can ship a snapshot that is stale but under the 60-day limit (the
+freshness gate fails past 60 days), but a refresh that cannot
+download fails at step 1.
+
 **What if the source file's column set changes?** The fetcher
 raises on unknown columns. A new column is a schema change and
 requires a code change, not a silent absorb. This is intentional.
