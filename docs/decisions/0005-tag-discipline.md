@@ -40,9 +40,8 @@ The ADR fixes all three with one rule and one procedure.
 
 ## Scope
 
-The tag-move procedure in this ADR is a **recovery operation**. It
-applies only when the release pipeline itself failed after the tag
-was pushed:
+This ADR covers two cases in which the release pipeline itself
+failed after the tag was pushed. Only case 1 moves a tag:
 
 1. **Pipeline-failure-before-verification.** The tag landed on a
    commit that CI later rejected because the release script was
@@ -50,7 +49,7 @@ was pushed:
    `680884d` before the CI-polling loop's jq expression was fixed.
    CI failed. The tag was moved to `753cbbb` after the fix landed.
 
-2. **Post-tag-step-failure.** The release completed through the
+2. **Post-tag step completion.** The release completed through the
    tag, then a post-tag step (verification report, artifact
    upload, notification) failed. The tag stays; the failed step
    is completed manually; a follow-up commit closes the release.
@@ -58,7 +57,11 @@ was pushed:
    on the CI-green commit while the verification report landed as
    follow-up commit `ca36664`.
 
-The procedure does **not** apply to:
+   Case 2 does not move the tag; the tag was correct, the step after
+   it was not. The procedure for case 2 is: complete the failed step
+   manually, commit, push. See the ISO 3166 v1.6.2 precedent.
+
+Neither case applies to:
 
 - Post-shipment discoveries. A tag that shipped with a known issue
   is reconciled by the next CHANGELOG entry, not by a tag move.
