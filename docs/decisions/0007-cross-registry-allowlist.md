@@ -273,6 +273,19 @@ has since removed" was never tested against the possibility that
 Exchange Calendar's codes were wrong. They were. Resolution option 1 in
 the original Context ("replace them with the correct MICs") is what happened.
 
+**The original Context listed** resolution options before it was
+rewritten to the current state shown above. The two passages this
+amendment relies on, as the original read (the rest is not
+reproduced here):
+
+> … SWIFT either never assigned or has since removed … *(the claim
+> about the three codes)*
+>
+> … replace them with the correct MICs … *(Resolution option 1)*
+
+The full original text is in this file's history:
+`git log --follow -p -- docs/decisions/0007-cross-registry-allowlist.md`.
+
 **What changed.**
 
 - `tools/exchange_calendar_snapshot.json` regenerated from Exchange
