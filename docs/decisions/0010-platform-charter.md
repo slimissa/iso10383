@@ -286,6 +286,10 @@ example in the README (replaced in `9c3d821`) and is the release date of
 v1.0.2 to v1.0.4, not a value in the data. There is no divergence to
 explain, and this question is closed.
 
+A second amendment of the same date, below, corrects a different
+claim (the Non-determinism table's iso4217 comparison). The two are
+independent; neither changes the other's conclusion.
+
 ## Amendment (2026-10-18) — the iso4217 comparison is not in CI
 
 The Non-determinism table lists `check_iso4217_current.py` among the sibling
