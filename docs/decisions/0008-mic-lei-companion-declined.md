@@ -69,6 +69,9 @@ whose findings are empty.
   publication and a future GLEIF publication ever disagree, the
   reconnaissance document names both and the reconciliation can be
   re-run. That possibility is what the document preserves.
+- **No CI monitor watches the reopening condition.** The check is
+  manual. A future maintainer should re-run it before proposing a
+  MIC→LEI companion, or when GLEIF publishes a new mapping table.
 
 ---
 
