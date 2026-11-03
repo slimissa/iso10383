@@ -135,6 +135,36 @@ must match `VERSION`. CI enforces this with
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
   the tool is retained in the tree with a docstring note).
 
+## [1.0.5] - 2026-11-03
+
+### Added
+
+- `--today` flag to `check_registry_freshness.py`.
+- `expired_tie_break_mic_synthetic` fixture case to test the deterministic tie-break in `expired()`.
+- `--allow-missing` flag to `sync_wrappers.py` for the "wrappers being built" case.
+
+### Changed
+
+- `expired()` in all four wrappers now sorts by `(expiration_date, mic)` instead of source order.
+- `check_iso3166_current.py` and `check_exchange_calendar_current.py` treat an unreachable sibling as a failure, not a silent pass.
+- `release.sh` gate list drops the duplicate `test_pip_pins.py` call; the README now says "17 release-gate checks".
+- README, CONTRIBUTING, and `release_claims.json` test counts synced to 140 root / 258 total.
+- Cross-reference validation is now blocking by default.
+
+### Fixed
+
+- Go wrapper's `ByMIC` and query methods now return a deep copy (`cloneMIC`), preventing callers from mutating the registry through `*string` pointer aliases.
+- Python wrapper's `_bundled_path()` uses `read_text()` directly, fixing a crash on zipapp/frozen installs.
+- `validate.py` now rejects `--only` combined with `--skip`.
+- Removed `check_iso4217_current.py` (it was an inactive no-op).
+- Fixed stale references to `test_check_release_claims.py` in `docs/AUDIT.md`.
+- Fixed the README's Tests table rows, which still showed T0's counts.
+
+### Tests
+
+- The root suite grew from 132 to 140 tests.
+- The release manifest grew from 148 to 182 claims.
+
 ## [1.0.4] - 2026-09-28
 
 ### Added
@@ -294,7 +324,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/slimissa/iso10383/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/slimissa/iso10383/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/slimissa/iso10383/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/slimissa/iso10383/compare/v1.0.1...v1.0.2
