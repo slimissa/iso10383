@@ -381,6 +381,10 @@
       "contains": "check_cross_language.sh --strict"
     },
     {
+      "file": "docs/decisions/README.md",
+      "contains": "| 0001 |"
+    },
+    {
       "file": "iso10383.postgresql.sql",
       "absent": "REFERENCES countries"
     },
