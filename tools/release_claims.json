@@ -45,6 +45,28 @@
       "contains": "## [1.0.4]"
     }
   ],
+    "1.0.5": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.0.5]"
+    },
+    {
+      "file": "tests/cross_language_consistency.json",
+      "contains": "expired_tie_break_mic_synthetic"
+    },
+    {
+      "file": "tools/check_iso4217_current.py",
+      "absent": "active"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "Seventeen `gate` calls"
+    },
+    {
+      "file": "tests/test_wrappers.py",
+      "contains": "TestSyncWrappersCheckFailsOnMissing"
+    }
+  ],
   "doc-facts": [
     {
       "file": "README.md"
