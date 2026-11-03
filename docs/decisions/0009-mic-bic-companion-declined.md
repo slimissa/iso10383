@@ -73,6 +73,9 @@ precedent does not transfer.
   companion would be "sourced from SWIFT's published mapping" is
   removed from `README.md` and `docs/PROVENANCE.md`. It has no
   citation.
+- **No CI monitor watches for the source file.** A maintainer should
+  check it when SWIFT publishes a new MIC page, or when a sibling
+  registry announces a BIC-related feature.
 
 ---
 
