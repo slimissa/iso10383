@@ -222,6 +222,9 @@
       "absent": "# 1. Delete the tag locally"
     },
     {
+      "file": "docs/README-AUDIT-NOTES.md"
+    },
+    {
       "file": "docs/decisions/0010-platform-charter.md",
       "absent": "The original text said"
     },
