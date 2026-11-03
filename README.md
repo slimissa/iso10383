@@ -906,7 +906,7 @@ The script conforms to [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md), t
 7. **Tag** only on green: the message is the `CHANGELOG.md` section (first line `Release v<version>`), checked for a header, a body and placeholders, then `git tag -a -F ... --cleanup=verbatim`. The recorded message is read back with `git for-each-ref` and compared with the file; on a mismatch the local tag is deleted and nothing is pushed. Then `git push origin "v<version>"`.
 8. **Verification document.** Writes `docs/v<version>-verification.md` with the commit SHA, the tag object SHA, and the exit code of every gate from `GATE_LOG`, so a gate added to the script cannot be missing from the document.
 
-Tags are immutable ([ADR 0005](./docs/decisions/0005-tag-discipline.md)). Five verification documents exist: [`v1.0.0`](./docs/v1.0.0-verification.md), [`v1.0.1`](./docs/v1.0.1-verification.md), [`v1.0.2`](./docs/v1.0.2-verification.md), [`v1.0.3`](./docs/v1.0.3-verification.md), [`v1.0.4`](./docs/v1.0.4-verification.md). The gate's `pyarrow` and toolchain requirements are the ones in [Flat exports](#comparison-semantics-and-the-build-pin).
+Tags are immutable ([ADR 0005](./docs/decisions/0005-tag-discipline.md)). A verification document exists per release: [`v1.0.0`](./docs/v1.0.0-verification.md), [`v1.0.1`](./docs/v1.0.1-verification.md), [`v1.0.2`](./docs/v1.0.2-verification.md), [`v1.0.3`](./docs/v1.0.3-verification.md), [`v1.0.4`](./docs/v1.0.4-verification.md), [`v1.0.5`](./docs/v1.0.5-verification.md). The gate's `pyarrow` and toolchain requirements are the ones in [Flat exports](#comparison-semantics-and-the-build-pin).
 
 ---
 
