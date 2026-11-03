@@ -1238,7 +1238,7 @@ Apache 2.0. See [`LICENSE`](./LICENSE). The MIC data is factual information sour
 
 ## What's next
 
-Nothing is scheduled. D14 forbids a roadmap before the previous release has shipped, and v1.0.4 has; the next release follows the first trigger below that fires.
+The registry is complete for its charter; the deferred items below are extensions, not corrections, and each has a named trigger. Nothing is scheduled. D14 forbids a roadmap before the previous release has shipped, and v1.0.5 has; the next release follows the first trigger below that fires.
 
 | Deferred item | Trigger to start | Where decided |
 |---------------|------------------|---------------|
