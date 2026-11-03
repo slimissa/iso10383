@@ -45,7 +45,7 @@
       "contains": "## [1.0.4]"
     }
   ],
-    "1.0.5": [
+  "1.0.5": [
     {
       "file": "CHANGELOG.md",
       "contains": "## [1.0.5]"
@@ -55,16 +55,16 @@
       "contains": "expired_tie_break_mic_synthetic"
     },
     {
-      "file": "tools/check_iso4217_current.py",
-      "absent": "active"
-    },
-    {
-      "file": "scripts/release.sh",
-      "contains": "Seventeen `gate` calls"
+      "file": "docs/decisions/0010-platform-charter.md",
+      "contains": "removed in v1.0.5"
     },
     {
       "file": "tests/test_wrappers.py",
-      "contains": "TestSyncWrappersCheckFailsOnMissing"
+      "contains": "def test_sync_check_fails_on_missing_target"
+    },
+    {
+      "file": "tools/validate.py",
+      "absent": "check_iso4217"
     }
   ],
   "doc-facts": [
