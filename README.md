@@ -1115,7 +1115,7 @@ iso10383/
 | [`docs/mic_lei_source_format.md`](./docs/mic_lei_source_format.md) | What did the MIC to LEI reconnaissance find, and what would reopen it? |
 | [`docs/mic_bic_source_format.md`](./docs/mic_bic_source_format.md) | Which sources were checked for a MIC to BIC mapping, and what would reopen it? |
 | [`docs/decisions/v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md) | Why was each v1.0.0 design choice (D1 to D17) made? |
-| [`docs/decisions/`](./docs/decisions) | Why was each later choice made? One ADR per decision, twelve in all (0001 to 0012). |
+| [`docs/decisions/`](./docs/decisions) | Why was each later choice made? One ADR per decision: twelve ADRs (0001 to 0012), plus the D1-D17 register in [`v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md); [`docs/decisions/README.md`](./docs/decisions/README.md) indexes them. |
 | [`docs/decisions/0012-agent-read-surface.md`](./docs/decisions/0012-agent-read-surface.md) | What may a future agent read, and at what freshness? |
 | `docs/v<version>-verification.md` | What did the release gate print when this version shipped? |
 | [`docs/README-AUDIT-NOTES.md`](./docs/README-AUDIT-NOTES.md) | How was each number in this README measured, and at what commit? |
