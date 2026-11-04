@@ -667,6 +667,10 @@
       "contains": "expired_tie_break_mic_synthetic"
     },
     {
+      "file": "docs/RELEASE_PATTERN.md",
+      "contains": "first instance of this variant"
+    },
+    {
       "file": "README.md",
       "contains": "9 | `from iso10383 import MICRegistry` | 31 |"
     },

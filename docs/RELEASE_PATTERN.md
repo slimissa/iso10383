@@ -139,8 +139,8 @@ on push to the release branch. Wait for all of them to complete.
 `in_progress`, `queued`, and `pending` are not green. Only
 `completed success` is.
 
-Schedule-driven workflows (`monitor`, `fetch`, `refresh`) are
-deliberately excluded. The exclusion list is enumerated by hand
+Schedule-driven workflows (`monitor`, `fetch`, `refresh`,
+`check-sources`) are deliberately excluded. The exclusion list is enumerated by hand
 and must be checked against the workflows directory before every
 release; a new per-push workflow added silently to the repo would
 otherwise be missed.
@@ -180,6 +180,16 @@ added to the declared list. ISO 10383 has one per-push workflow
 today (`validate.yml`), so the check is trivially satisfied and not
 yet implemented. The trigger is a second per-push workflow. The same
 trigger applies on ISO 3166's side.
+
+**The one per-push workflow variant.** A repo may keep a single
+per-push workflow and still follow this pattern: the poll then has one
+workflow to wait on, and the coverage check is trivially satisfied.
+ISO 10383 is the first instance of this variant. The invariant holds:
+the release script must poll every per-push workflow that exists. When
+a second per-push workflow is added, the release script must be
+updated to poll it. Schedule-driven workflows (`refresh.yml`,
+`check-sources.yml`) are not per-push workflows and do not count
+toward that trigger.
 
 ### 7. Tag only on green
 
