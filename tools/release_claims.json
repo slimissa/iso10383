@@ -500,7 +500,7 @@
     },
     {
       "file": "README.md",
-      "contains": "17 release-gate checks, 190 manifest claims, 258 tests"
+      "contains": "17 release-gate checks, 193 manifest claims, 258 tests"
     },
     {
       "file": "README.md",
@@ -736,7 +736,7 @@
     },
     {
       "file": "README.md",
-      "contains": "# 190 {file, contains|absent} claims"
+      "contains": "# 193 {file, contains|absent} claims"
     },
     {
       "file": "README.md",
