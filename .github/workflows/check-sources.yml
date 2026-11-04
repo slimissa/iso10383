@@ -1,0 +1,60 @@
+name: check-sources
+
+# Weekly health check on SWIFT's published file. It is not a per-push
+# workflow: it does not run on push and is not part of the release poll.
+# It fetches the file the monthly refresh depends on; if the download
+# fails, or the response is under 100,000 bytes (the refresh's own
+# threshold), it opens an issue, or adds a comment to the one already open.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"     # 06:00 UTC every Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch SWIFT's file
+        id: probe
+        continue-on-error: true
+        env:
+          SOURCE_URL: https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv
+        run: |
+          python3 -c "
+          import os, sys, urllib.request
+          url = os.environ['SOURCE_URL']
+          try:
+              with urllib.request.urlopen(url, timeout=60) as r:
+                  data = r.read()
+          except Exception as e:
+              print('FAIL: download failed: ' + repr(e), file=sys.stderr)
+              sys.exit(1)
+          if len(data) < 100000:
+              print('FAIL: response is ' + str(len(data)) + ' bytes, under 100000', file=sys.stderr)
+              sys.exit(1)
+          print('OK: ' + str(len(data)) + ' bytes')
+          " > "$RUNNER_TEMP/probe.out" 2>&1 || { cat "$RUNNER_TEMP/probe.out"; exit 1; }
+          cat "$RUNNER_TEMP/probe.out"
+
+      - name: Open an issue
+        if: steps.probe.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="SWIFT source check failed"
+          printf '%s\n\n' "The weekly check could not fetch a usable ISO 10383 file." > "$RUNNER_TEMP/body.md"
+          printf '%s\n\n' "Run: $RUN_URL" >> "$RUNNER_TEMP/body.md"
+          cat "$RUNNER_TEMP/probe.out" >> "$RUNNER_TEMP/body.md"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/body.md"
+          fi

@@ -424,6 +424,9 @@
       "contains": "read_pinned_version"
     },
     {
+      "file": ".github/workflows/check-sources.yml"
+    },
+    {
       "file": "tools/export_parquet.py",
       "contains": "dict(sorted(footer.items()))"
     },
