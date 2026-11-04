@@ -145,6 +145,9 @@
       "absent": "Exit 0 unless"
     },
     {
+      "file": "Makefile"
+    },
+    {
       "file": "docs/decisions/0010-platform-charter.md",
       "contains": "removed in v1.0.5"
     },
