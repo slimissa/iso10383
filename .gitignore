@@ -9,3 +9,7 @@ wrappers/rust/target/
 # libraries. CI resolves serde and serde_json at build time; the data and
 # tests do not depend on a particular patch release.
 wrappers/rust/Cargo.lock
+
+# Python build artifacts
+wrappers/python/dist/
+wrappers/python/build/

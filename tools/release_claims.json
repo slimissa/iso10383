@@ -728,11 +728,11 @@
     },
     {
       "file": "README.md",
-      "contains": "holds 190 machine-checkable claims"
+      "contains": "holds 193 machine-checkable claims"
     },
     {
       "file": "README.md",
-      "contains": "and 174 under `doc-facts`"
+      "contains": "and 177 under `doc-facts`"
     },
     {
       "file": "README.md",
