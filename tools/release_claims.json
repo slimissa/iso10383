@@ -542,6 +542,9 @@
       "absent": "time.time("
     },
     {
+      "file": "docs/ENRICHMENT.md"
+    },
+    {
       "file": "tools/gen_exchange_calendar_snapshot.py",
       "absent": "random."
     },
