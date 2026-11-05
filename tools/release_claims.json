@@ -67,6 +67,29 @@
       "absent": "check_iso4217"
     }
   ],
+  "1.1.0": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.1.0]"
+    },
+    {
+      "file": "Makefile",
+      "contains": "build-wheel"
+    },
+    {
+      "file": ".github/workflows/check-sources.yml"
+    },
+    {
+      "file": "examples/orders-5k/README.md"
+    },
+    {
+      "file": "docs/ENRICHMENT.md"
+    },
+    {
+      "file": "docs/decisions/README.md",
+      "contains": "| 0010 |"
+    }
+  ],
   "doc-facts": [
     {
       "file": "README.md"
