@@ -182,6 +182,9 @@
       "file": "docs/PROVENANCE.md"
     },
     {
+      "file": "examples/orders-5k/README.md"
+    },
+    {
       "file": "docs/PROVENANCE.md",
       "absent": "v0.1.0"
     },
