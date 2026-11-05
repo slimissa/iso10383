@@ -135,6 +135,26 @@ must match `VERSION`. CI enforces this with
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
   the tool is retained in the tree with a docstring note).
 
+## [1.1.0] - 2026-11-04
+
+### Added
+- `Makefile` with `package`, `build-wheel`, and `test` targets.
+- `check-sources.yml` workflow for weekly SWIFT URL health monitoring.
+- `examples/orders-5k/` demo showing the cost of not joining on MICs.
+- `docs/ENRICHMENT.md` explaining why nullable fields are null.
+- `docs/decisions/README.md` navigation index for the twelve ADRs.
+- `descendants`, `root`, and `siblings` methods to all four wrappers.
+
+### Changed
+- `RELEASE_PATTERN.md` now sanctions the one-per-push-workflow variant.
+- `docs/decisions/v1.0.0-decisions.md` now has per-decision `**Status:**` lines, stale references fixed, and D14 clarified.
+- The README now carries durable framings ("A verification document exists per release", "twelve ADRs plus the register").
+- Claims and test counts synced across the tree (184 claims, 140 tests).
+
+### Fixed
+- Resolved contradictions in ADRs 0003, 0005, 0007, 0008, 0009, and 0010.
+- Added `dist/` and `build/` to `.gitignore` to prevent `release.sh` from failing after `make build-wheel`.
+
 ## [1.0.5] - 2026-11-03
 
 ### Added
@@ -324,7 +344,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/slimissa/iso10383/compare/v1.0.5...v1.1.0
 [1.0.5]: https://github.com/slimissa/iso10383/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/slimissa/iso10383/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/slimissa/iso10383/compare/v1.0.2...v1.0.3
