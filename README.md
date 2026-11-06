@@ -11,91 +11,117 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.0-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-257-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-258-success.svg)](./tests/)
 
 ---
 
 ## Contents
 
-1. [At a glance](#at-a-glance)
-2. [Why this exists](#why-this-exists)
-3. [Where to start](#where-to-start)
-4. [Quick start](#quick-start)
-5. [The data model: five layers](#the-data-model-five-layers)
-6. [The registry file](#the-registry-file)
-7. [Flat exports: SQL, CSV, TSV, Parquet](#flat-exports-sql-csv-tsv-parquet)
-8. [Bundled copies and vendored snapshots](#bundled-copies-and-vendored-snapshots)
-9. [Worked example: a venue tree in ten commands](#worked-example-a-venue-tree-in-ten-commands)
-10. [Command-line interface](#command-line-interface)
-11. [Language wrappers](#language-wrappers)
-12. [Validation](#validation)
-13. [Continuous integration](#continuous-integration)
-14. [Refreshing the data](#refreshing-the-data)
-15. [Release pipeline](#release-pipeline)
-16. [Versioning](#versioning)
-17. [Project structure](#project-structure)
-18. [Documentation index](#documentation-index)
-19. [Contributing](#contributing)
-20. [Known limitations](#known-limitations)
-21. [FAQ](#faq)
-22. [Consumed by](#consumed-by)
-23. [License and author](#license-and-author)
-24. [What's next](#whats-next)
+1. [At a glance](#1-at-a-glance)
+2. [Why this exists](#2-why-this-exists)
+3. [Where to start](#3-where-to-start)
+4. [Quick start](#4-quick-start)
+5. [The data model: five layers](#5-the-data-model-five-layers)
+6. [The registry file](#6-the-registry-file)
+7. [The hierarchy layer](#7-the-hierarchy-layer)
+8. [Flat exports: SQL, CSV, TSV, Parquet](#8-flat-exports-sql-csv-tsv-parquet)
+9. [Bundled copies and vendored snapshots](#9-bundled-copies-and-vendored-snapshots)
+10. [Worked example: a venue tree in ten commands](#10-worked-example-a-venue-tree-in-ten-commands)
+11. [Command-line interface](#11-command-line-interface)
+12. [Language wrappers](#12-language-wrappers)
+13. [Validation](#13-validation)
+14. [Continuous integration](#14-continuous-integration)
+15. [Release pipeline](#15-release-pipeline)
+16. [Versioning](#16-versioning)
+17. [Project structure](#17-project-structure)
+18. [Documentation index](#18-documentation-index)
+19. [Contributing](#19-contributing)
+20. [Known limitations](#20-known-limitations)
+21. [FAQ](#21-faq)
+22. [Consumed by](#22-consumed-by)
+23. [License and author](#23-license-and-author)
+24. [What's next](#24-whats-next)
 
 ---
 
-## At a glance
+## 1. At a glance
 
 | | |
 |---|---|
 | **MICs** | 2,883: 1,594 operating, 1,289 segment |
-| **Status** | 2,296 `ACTIVE`, 21 `UPDATED`, 566 `EXPIRED` |
-| **Hierarchy** | Every segment's parent chain ends at an operating MIC. 1,281 segments sit directly under an operating MIC, 8 sit two levels down. 0 broken chains. |
+| **Status** | 2,296 `ACTIVE`, 21 `UPDATED`, 566 `EXPIRED`. Expired entries stay in the file, with their `expiration_date`. |
+| **Hierarchy** | Every segment's parent chain ends at an operating MIC. 1,281 segments sit directly under an operating MIC, 8 sit under another segment (three levels in all). 0 broken chains. |
 | **Countries** | 149 distinct `country_code` values: 148 ISO 3166-1 alpha-2 codes plus `ZZ` (3 MICs: `BILT`, `XOFF`, `XXXX`) |
 | **Market categories** | 14 of the 16 ISO codes are in use (`ARMS` and `CTPS` are defined, unassigned) |
-| **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-09-23, `sha256:79de0f77...` recorded in `meta.source_hash` |
-| **Source of truth** | [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json) (version 1.0.0) |
-| **Layers** | Five: Raw, Curated, Derived, Bundled, Cross-referenced ([`docs/LAYERS.md`](./docs/LAYERS.md)) |
-| **Export formats** | 9 derived files: SQL (4 dialects), CSV/TSV (4 variants), Parquet (1 file) |
-| **Wrappers** | Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON |
-| **CLI** | `tools/iso10383_cli.py`, nine subcommands, five output modes; needs a checkout, no wrapper installs it |
-| **Vendored snapshots** | 2: ISO 3166 (252 codes, v1.6.9) and Exchange Calendar (74 MICs, v2.15.4) |
-| **Validation** | Six validator layers, 17 release-gate checks, 193 manifest claims, 258 tests |
-| **CI** | Two workflows: `validate.yml` (seven jobs) and `refresh.yml` (monthly) |
-| **Version** | 1.0.4, one version number at nine sites |
-| **Dependencies** | The JSON needs none. Python, JavaScript and Go wrappers have none. The Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. |
-| **License** | Apache 2.0 |
+| **Flat exports** | 9 derived files: SQL (4 dialects), CSV/TSV (4 variants), Parquet (1 file) |
+| **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
+| **Release gate** | 17 checks in [`scripts/release.sh`](./scripts/release.sh) |
+| **Manifest claims** | 201 in [`tools/release_claims.json`](./tools/release_claims.json) (179 `doc-facts` plus 22 for four releases); the 1.1.0 gate verifies 185 |
+| **Tests** | 258: 140 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Version** | 1.1.0, one version number at nine sites; the schema is 1.0.0 |
+| **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-09-23, `sha256:79de0f77...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
+| **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 v1.6.9, Exchange Calendar v2.15.4); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel` and `test`; one example, [`examples/orders-5k`](./examples/orders-5k) |
+| **Dependencies and license** | The JSON needs none. Python, JavaScript and Go wrappers have none; the Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. Apache 2.0. |
+
+### Reproduce every number
+
+Each command runs from a clone, prints one line, and is the source of the figure above (the line it printed when this README was written is shown).
+
+| Figure | Command | Prints |
+|--------|---------|--------|
+| MICs | `python3 -c "import json; print(len(json.load(open('iso10383.json'))['mics']))"` | `2883` |
+| Operating / segment | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['mic_type'] for x in m).items()))"` | `[('OPERATING', 1594), ('SEGMENT', 1289)]` |
+| Active / updated / expired | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['status'] for x in m).items()))"` | `[('ACTIVE', 2296), ('EXPIRED', 566), ('UPDATED', 21)]` |
+| Segments under an operating MIC / under a segment | `python3 -c "import json; m={x['mic']:x for x in json.load(open('iso10383.json'))['mics']}; s=[x for x in m.values() if x['mic_type']=='SEGMENT']; print(sum(m[x['operating_mic']]['mic_type']=='OPERATING' for x in s), sum(m[x['operating_mic']]['mic_type']=='SEGMENT' for x in s))"` | `1281 8` |
+| Broken chains | `python3 tools/validate.py \| tail -1` | `0 broken chains` |
+| Distinct country codes | `python3 -c "import json; print(len({x['country_code'] for x in json.load(open('iso10383.json'))['mics']}))"` | `149` |
+| Market categories in use | `python3 -c "import json; print(len({x['market_category'] for x in json.load(open('iso10383.json'))['mics']}))"` | `14` |
+| Flat exports | `ls iso10383* \| grep -v 'json$' \| wc -l` | `9` |
+| Wrappers | `ls wrappers \| wc -l` | `4` |
+| Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `17` |
+| Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | `201` |
+| Claims the 1.1.0 gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all 185 claim(s) verified` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `140 passed` |
+| Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on 1.1.0` |
+| Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
+| CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
+| CI workflows | `ls .github/workflows \| wc -l` | `3` |
 
 ---
 
-## Why this exists
+## 2. Why this exists
 
 Every trading system, quant library and fintech app maintains its own MIC list, and the lists drift. Some keep expired codes and some drop them. Some flatten the operating-versus-segment hierarchy, and some assume every segment hangs directly off an operating MIC, when in this data eight segments hang off another segment.
 
 **A MIC is the join key that financial data uses to say "where".** An instrument trades on a MIC, a quote comes from a MIC, a filing references a MIC, and an exchange calendar is keyed by one. The argument of this registry is that venue identity is a **join dimension**: every fact table needs it and none should own it. A fact table that carries only a MIC inherits country, category, operator, parent venue and expiry from one versioned file instead of copying them, and a change in SWIFT's monthly publication reaches every consumer through a version bump rather than through a hundred hand-edited lists.
 
-One versioned, schema-validated JSON file, guarded by CI, replaces the lists. The JSON is the contract; the SQL, CSV, Parquet, wrapper and CLI forms are ways to consume it without writing a parser. The registry deliberately stays narrow: it reproduces SWIFT's file and nothing else (see [Known limitations](#known-limitations)).
+One versioned, schema-validated JSON file, guarded by CI, replaces the lists. The JSON is the contract; the SQL, CSV, Parquet, wrapper and CLI forms are ways to consume it without writing a parser. The registry deliberately stays narrow: it reproduces SWIFT's file and nothing else (see [Known limitations](#20-known-limitations)).
+
+Two other things are facts here and not metadata. **Time:** a venue that closed is still a row, with its `expiration_date` (566 of them, 82 on or after 2024-01-01), so a fact table from 2021 still joins. **Hierarchy:** the path from a segment to its operator is explicit in the data, not implied by a naming convention (see [The hierarchy layer](#7-the-hierarchy-layer)). **Currency is not here**: the registry does not store a trading currency, and says so under [Known limitations](#20-known-limitations).
 
 ---
 
-## Where to start
+## 3. Where to start
 
 | If you are... | Start with |
 |---------------|------------|
-| A programmer who wants a library | [Language wrappers](#language-wrappers) |
+| A programmer who wants a library | [Language wrappers](#12-language-wrappers) |
 | A database engineer | [`iso10383.postgresql.sql`](./iso10383.postgresql.sql) and the other dialects; see [SQL](#sql) |
 | An analyst in Excel, Sheets, pandas or DuckDB | [`iso10383.csv`](./iso10383.csv) or [`iso10383.parquet`](./iso10383.parquet); see [CSV and TSV](#csv-and-tsv) and [Parquet](#parquet) |
-| A shell user | [Command-line interface](#command-line-interface) |
-| Asking "which venues sit under this operator?" | `iso10383 segments XJPX` and the [worked example](#worked-example-a-venue-tree-in-ten-commands) |
-| Evaluating whether to trust the data | [`docs/PROVENANCE.md`](./docs/PROVENANCE.md), [Validation](#validation) and [Known limitations](#known-limitations) |
+| A shell user | [Command-line interface](#11-command-line-interface) |
+| Asking "which venues sit under this operator?" | `iso10383 segments XJPX` and the [worked example](#10-worked-example-a-venue-tree-in-ten-commands) |
+| Evaluating whether to trust the data | [`docs/PROVENANCE.md`](./docs/PROVENANCE.md), [Validation](#13-validation) and [Known limitations](#20-known-limitations) |
 | Running the monthly refresh | [Refreshing the data](#refreshing-the-data) |
-| Cutting a release | [Release pipeline](#release-pipeline) and [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) |
-| Contributing a correction or a tool change | [Contributing](#contributing) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
-| Joining MICs from another registry | [`docs/JOINS.md`](./docs/JOINS.md) and [Consumed by](#consumed-by) |
+| Cutting a release | [Release pipeline](#15-release-pipeline) and [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) |
+| Wondering why a field is null | [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) |
+| Weighing "copy the venue fields" against "join on the MIC" | [`examples/orders-5k`](./examples/orders-5k) and [the worked example](#10-worked-example-a-venue-tree-in-ten-commands) |
+| Regenerating everything after a change | [`make package`](#build-and-test-with-make) |
+| Contributing a correction or a tool change | [Contributing](#19-contributing) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
+| Joining MICs from another registry | [`docs/JOINS.md`](./docs/JOINS.md) and [Consumed by](#22-consumed-by) |
 
 ---
 
-## Quick start
+## 4. Quick start
 
 Nothing here is published to PyPI, npm, crates.io or a Go proxy. Every path below starts from a clone:
 
@@ -196,9 +222,27 @@ import pandas as pd
 df = pd.read_parquet("iso10383.parquet")
 ```
 
+### Command line
+
+```bash
+python3 tools/iso10383_cli.py parent XTKS      # XTKS -> XJPX
+```
+
+The CLI is a repository artifact, covered in [Command-line interface](#11-command-line-interface).
+
+### Build and test with make
+
+```bash
+make package      # regenerate the nine flat exports and the four wrapper copies; idempotent
+make build-wheel  # package, then build the Python wheel and sdist (needs: pip install build)
+make test         # root pytest, then check_cross_language.sh --strict
+```
+
+`make package` is the one command to run after modifying `iso10383.json`. It runs `export_csv.py`, `export_sql.py`, `export_parquet.py` and `sync_wrappers.py`; running it twice changes nothing the second time.
+
 ---
 
-## The data model: five layers
+## 5. The data model: five layers
 
 The registry is not one file. It is five layers, each with a different authority, a different regeneration cost and a different guarantee. [`docs/LAYERS.md`](./docs/LAYERS.md) is the full model.
 
@@ -225,14 +269,14 @@ Only Layer 0 cannot be regenerated from this repository. **Back up `raw/`.** The
 
 ---
 
-## The registry file
+## 6. The registry file
 
 [`iso10383.json`](./iso10383.json) has two top-level keys, `meta` and `mics`. `mics` is an array sorted by `mic`. Output is deterministic (`json.dumps(..., sort_keys=True)`, LF line endings, trailing newline), and two runs on the same raw file produce byte-identical JSON.
 
 ```json
 {
   "meta": {
-    "version": "1.0.4",
+    "version": "1.1.0",
     "updated": "2026-09-23",
     "source_snapshot": "2026-09-23",
     "source_url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv",
@@ -302,23 +346,6 @@ An operating MIC self-references: `operating_mic == mic`.
 
 A segment never self-references. Its `operating_mic` is its direct parent.
 
-### A multi-level chain
-
-The parent of a segment can itself be a segment. The 2026-09-23 snapshot has eight such entries, and the schema models them directly instead of assuming a two-level tree:
-
-| Segment | Parent | Root operating MIC |
-|---------|--------|--------------------|
-| `EXPA` | `MTAA` | `XMIL` |
-| `ICAT` | `ICAH` | `ICAP` |
-| `LIQH` | `LIQU` | `ICPM` |
-| `NBXO` | `XBXO` | `XNAS` |
-| `PCDS` | `TPCD` | `XTUP` |
-| `THRD` | `XNIM` | `XNAS` |
-| `VRXP` | `XMLI` | `XPAR` |
-| `XEAS` | `XEQT` | `XBER` |
-
-There is no `root_mic` field: the root is computed by walking `operating_mic` until it equals `mic`. A stored root would be a second value to keep in sync when a parent changes ([`docs/JOINS.md`](./docs/JOINS.md)). The validator and the parser refuse chains deeper than eight levels or chains that do not terminate.
-
 ### An expired MIC
 
 `XJAS`, the TSE JASDAQ segment that closed on 2022-04-04:
@@ -365,7 +392,7 @@ Seventeen fields per entry, every one present on every entry. The schema (`addit
 | `expiration_date` | date or null | 2,317 | ISO 8601; present exactly when `status` is `EXPIRED` |
 | `note` | string or null | 1,324 | Free text from the source |
 
-Ten fields are never null in this snapshot: the four non-nullable keys plus `market_name`, `country_code`, `creation_date`, `last_update_date`, `market_category` and `city`.
+Why each nullable field is null, field by field, is in [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md). Ten fields are never null in this snapshot: the four non-nullable keys plus `market_name`, `country_code`, `creation_date`, `last_update_date`, `market_category` and `city`.
 
 ### Coverage
 
@@ -418,11 +445,97 @@ Three closed vocabularies. An unknown value raises in the parser and fails the s
 
 **Countries.** Every `country_code` is an ISO 3166-1 alpha-2 code or `ZZ`, ISO 10383's placeholder for "no fixed country", which is not an ISO 3166 code. The validator skips `ZZ` and checks the other 148 against the vendored ISO 3166 snapshot.
 
+<details>
+<summary>The 149 values of <code>country_code</code></summary>
+
+`AE` `AG` `AL` `AM` `AO` `AR` `AT` `AU` `AZ` `BA` `BB` `BD` `BE` `BG` `BH` `BM` `BO` `BR` `BS` `BW` `BY` `CA` `CH` `CI` `CL` `CM` `CN` `CO` `CR` `CV` `CW` `CY` `CZ` `DE` `DK` `DO` `DZ` `EC` `EE` `EG` `ES` `FI` `FJ` `FO` `FR` `GB` `GE` `GG` `GH` `GI` `GR` `GT` `GY` `HK` `HN` `HR` `HU` `ID` `IE` `IL` `IN` `IQ` `IR` `IS` `IT` `JM` `JO` `JP` `KE` `KG` `KH` `KN` `KR` `KW` `KY` `KZ` `LA` `LB` `LI` `LK` `LT` `LU` `LV` `LY` `MA` `MD` `ME` `MG` `MK` `MN` `MT` `MU` `MV` `MW` `MX` `MY` `MZ` `NA` `NG` `NI` `NL` `NO` `NP` `NZ` `OM` `PA` `PE` `PG` `PH` `PK` `PL` `PS` `PT` `PY` `QA` `RO` `RS` `RU` `RW` `SA` `SC` `SD` `SE` `SG` `SI` `SK` `SV` `SY` `SZ` `TH` `TN` `TR` `TT` `TW` `TZ` `UA` `UG` `US` `UY` `UZ` `VC` `VE` `VG` `VN` `VU` `ZA` `ZM` `ZW` `ZZ`
+
+</details>
+
+The multi-level chains (a segment whose parent is a segment) are in [The hierarchy layer](#7-the-hierarchy-layer).
+
 Design decisions behind these fields are recorded in [`docs/decisions/v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md) (D2 one array, D3 self-reference, D4 categories, D5 closed enums), [ADR 0002](./docs/decisions/0002-operating-segment-model.md) (operating/segment model) and [ADR 0004](./docs/decisions/0004-market-category-codes.md) (category codes).
 
 ---
 
-## Flat exports: SQL, CSV, TSV, Parquet
+## 7. The hierarchy layer
+
+Every entry has an `operating_mic`. An operating MIC points to itself. A segment points to its **direct parent**, and the parent of a segment can itself be a segment, so the hierarchy is a tree of unknown depth, not a two-level list ([ADR 0002](./docs/decisions/0002-operating-segment-model.md), D2 and D3 in [`v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md)).
+
+| Measure | Value |
+|---------|------:|
+| Operating MICs | 1,594 |
+| Operating MICs that have at least one segment | 376 |
+| Segments directly under an operating MIC (one hop to the root) | 1,281 |
+| Segments under another segment (two hops to the root) | 8 |
+| Chains of three hops or more | 0 |
+| Broken chains (cycle, missing parent, deeper than 8 hops) | 0 |
+
+The parser and the validator refuse a chain longer than eight hops, a cycle, and a missing parent ([`tools/validate.py`](./tools/validate.py), `chain_terminates`). The deepest chain in this snapshot has three entries.
+
+### The eight chains of three entries
+
+| Segment | Parent | Root operating MIC |
+|---------|--------|--------------------|
+| `EXPA` | `MTAA` | `XMIL` |
+| `ICAT` | `ICAH` | `ICAP` |
+| `LIQH` | `LIQU` | `ICPM` |
+| `NBXO` | `XBXO` | `XNAS` |
+| `PCDS` | `TPCD` | `XTUP` |
+| `THRD` | `XNIM` | `XNAS` |
+| `VRXP` | `XMLI` | `XPAR` |
+| `XEAS` | `XEQT` | `XBER` |
+
+`XEAS` is the Equiduct segment (`EXPIRED`) under `XEQT` (Boerse Berlin Equiduct Trading), which is under `XBER`, the operating MIC for Boerse Berlin. Grouping by `operating_mic` alone credits `XEAS` to `XEQT` and never to `XBER`.
+
+### There is no `root_mic`
+
+A stored root would be a second value to keep in sync with `operating_mic` whenever a parent changes ([ADR 0002](./docs/decisions/0002-operating-segment-model.md); [`docs/JOINS.md`](./docs/JOINS.md)). The root is computed by walking `operating_mic` until it equals `mic`. With at most three entries in a chain the walk is short.
+
+In pandas:
+
+```python
+import pandas as pd
+df = pd.read_parquet("iso10383.parquet")
+by = df.set_index("mic")
+
+def root(m):
+    while by.at[m, "operating_mic"] != m:
+        m = by.at[m, "operating_mic"]
+    return m
+
+df["root"] = df["mic"].map(root)
+print((df.root != df.operating_mic).sum())        # 8
+print(df.root.value_counts().head(3).to_string())
+# root
+# XSTO    37
+# XMTS    25
+# XWAR    24
+```
+
+Eight MICs have a root different from their direct parent (the chains above). Grouping by `operating_mic` alone would credit `XBXO` and `XNIM` with their own segments but not with the ones one level further down, which is why the walk is needed.
+
+In SQL, with the 11-column export (`iso10383.sqlite.sql` loaded into a database), a recursive query returns the same eight rows:
+
+```sql
+WITH RECURSIVE walk(mic, cur, hops) AS (
+  SELECT mic, mic, 0 FROM mics
+  UNION ALL
+  SELECT w.mic, m.operating_mic, w.hops + 1
+  FROM walk w JOIN mics m ON m.mic = w.cur
+  WHERE m.operating_mic <> w.cur
+)
+SELECT mic, cur AS root, MAX(hops) AS hops
+FROM walk GROUP BY mic HAVING MAX(hops) >= 2 ORDER BY mic;
+-- EXPA|XMIL|2, ICAT|ICAP|2, LIQH|ICPM|2, NBXO|XNAS|2,
+-- PCDS|XTUP|2, THRD|XNAS|2, VRXP|XPAR|2, XEAS|XBER|2
+```
+
+The CLI gives the direct parent only (`iso10383 parent XEAS` prints `XEAS -> XEQT`); walking further is a loop over `parent`, or the queries above.
+
+---
+
+## 8. Flat exports: SQL, CSV, TSV, Parquet
 
 All nine flat exports are Layer 2. They are regenerated from `iso10383.json`, committed, and compared in CI by each generator's `--check` mode. `tools/export_columns.py` is the single source of column order for every exporter.
 
@@ -495,7 +608,7 @@ Typing, because Parquet has a type system:
 ```python
 import pyarrow.parquet as pq
 t = pq.read_table("iso10383.parquet")
-print(t.schema.metadata[b"iso10383.version"])   # b'1.0.4'
+print(t.schema.metadata[b"iso10383.version"])   # b'1.1.0'
 ```
 
 ### Comparison semantics and the build pin
@@ -504,7 +617,7 @@ print(t.schema.metadata[b"iso10383.version"])   # b'1.0.4'
 
 ---
 
-## Bundled copies and vendored snapshots
+## 9. Bundled copies and vendored snapshots
 
 ISO 10383 has no aggregated layer: it publishes one grain (one row per MIC) and every derived file keeps it. The artifacts that are not a base export are the Layer 3 bundles and the Layer 4 snapshots.
 
@@ -543,9 +656,9 @@ The Exchange Calendar snapshot's 74 MICs are 68 operating-active, 3 segment-acti
 
 ---
 
-## Worked example: a venue tree in ten commands
+## 10. Worked example: a venue tree in ten commands
 
-`examples/` does not exist in this repository, so this is a reproducible session instead: a shell pass against the CLI and one pandas read of the Parquet. Every output below was produced from the committed files at version 1.0.4 (snapshot 2026-09-23). Run it from the repository root; the CLI is written `iso10383` for `python3 tools/iso10383_cli.py`.
+A reproducible session: a shell pass against the CLI and a pandas read of the Parquet, then a runnable example that puts a number on the join argument. Every output below was produced from the committed files at version 1.1.0 (snapshot 2026-09-23). Run the first two parts from the repository root; the CLI is written `iso10383` for `python3 tools/iso10383_cli.py`.
 
 ### In the shell
 
@@ -618,24 +731,7 @@ print(seg.groupby("operating_mic").size().sort_values(ascending=False).head(3))
 # XWAR    23
 ```
 
-Resolving the root operator of every MIC is a walk up `operating_mic`, because there is no `root_mic` column:
-
-```python
-by = df.set_index("mic")
-def root(m):
-    while by.at[m, "operating_mic"] != m:
-        m = by.at[m, "operating_mic"]
-    return m
-
-df["root"] = df["mic"].map(root)
-print((df.root != df.operating_mic).sum())        # 8
-print(df.root.value_counts().head(3).to_string())
-# XSTO    37
-# XMTS    25
-# XWAR    24
-```
-
-Eight MICs have a root different from their direct parent (the chains in [The registry file](#the-registry-file)). Grouping by `operating_mic` alone would credit `XBXO` and `XNIM`, but not `XNAS`, with the venues that sit under them; grouping by `root` credits `XNAS`. That is the reason a consumer that wants "the operator" should not stop at one hop.
+The root of every MIC (a walk up `operating_mic`, because there is no `root_mic` column) is in [The hierarchy layer](#7-the-hierarchy-layer).
 
 Expirations per year, from the same frame:
 
@@ -647,9 +743,50 @@ print(pd.to_datetime(exp.expiration_date).dt.year.value_counts().sort_index().ta
 # 2026    32
 ```
 
+### The cost of copying: `examples/orders-5k`
+
+[`examples/orders-5k`](./examples/orders-5k) is a runnable comparison of the argument in [Why this exists](#2-why-this-exists). `generate_facts.py` builds 5,000 fictional orders across 50 real venues, as a narrow table (the MIC only) and a wide one (registry fields copied in). `analyze.py` measures both and then simulates a registry change. **Real:** the 50 venues and their registry fields. **Synthetic:** every order. The example's own README says so line by line.
+
+```bash
+cd examples/orders-5k && pip install -r requirements.txt
+python3 generate_facts.py && python3 analyze.py
+```
+
+```text
+5,000 synthetic orders, 50 real venues, registry snapshot 2026-09-23
+
+1. Storage
+                    parquet   in memory    as CSV
+   narrow           108,060     234,333   295,441
+   wide             129,415     712,533   721,371
+   copying adds 21,355 bytes of Parquet and 478,200 bytes in memory (95 per order)
+   the join's other side, iso10383.parquet, is 202,257 bytes, shared by every table
+   narrow + the whole registry file: 310,317 bytes, more than wide (129,415) in Parquet at this row count
+
+2. Join on mic
+   5,000 of 5,000 orders found their MIC in the registry
+   joined fields equal the copied fields: True
+   on the day the copy is made, the two layouts agree
+
+3. A registry change (simulated; iso10383.parquet is not touched)
+   ATLN: market_name changes; BAMX: status becomes EXPIRED
+   registry rows to change:        2
+   order rows the join corrects:   1,708 of 5,000, with no write to the orders
+   order rows the copy leaves stale: 1,708
+   to fix the copy, those rows must be found and rewritten
+```
+
+How to read it, and what it does not claim:
+
+- **Parquet size is not the argument.** Dictionary encoding absorbs the repeated strings, so the copy adds about 20% to the file, and at 5,000 rows the registry file is larger than that saving.
+- **Memory and text are.** In memory the wide table is about 3 times the narrow one; as CSV about 2.4 times.
+- **Correctness is the difference.** On day one the join and the copy agree. After a registry change the join corrects every affected order with no write to the orders, and the copy keeps the old value until it is rewritten. The change in part 3 is simulated; `iso10383.parquet` is never written.
+- **A copy is right when you want the value as of the order date.** Then record the registry version with the order instead of copying whole fields.
+
+
 ---
 
-## Command-line interface
+## 11. Command-line interface
 
 The CLI is [`tools/iso10383_cli.py`](./tools/iso10383_cli.py), a repository artifact: it needs a checkout of this repository, and no wrapper installs it as a command. `bin/iso10383` is a repo-local shim for it. The Python wrapper's `python -m iso10383` is a shim that looks for `tools/iso10383_cli.py` in a source checkout and exits 3 with a one-line message when it cannot find one. All commands are read-only and offline. Nine subcommands:
 
@@ -693,7 +830,7 @@ iso10383 info --json
 
 ---
 
-## Language wrappers
+## 12. Language wrappers
 
 Four wrappers, one contract. Each is verified against the shared fixture [`tests/cross_language_consistency.json`](./tests/cross_language_consistency.json) and each bundles a byte-identical copy of `iso10383.json` (see [Bundled copies](#layer-3-bundled-copies)).
 
@@ -724,6 +861,8 @@ Each wrapper has its own README with the full API. Python, JavaScript and Go hav
 
 `validate` returns whether every MIC exists plus the list of missing ones (Python: `(False, ['ZZZZ'])`). Lookups accept lower-case input and tie order in `expired` is the same in all four, both pinned by shared-fixture cases. `search("nasdaq")` returns 81 entries in the Python wrapper and in the CLI.
 
+The query surface is eleven methods in every wrapper: the ten operations above plus `all()`. The shared fixture, [`tests/cross_language_consistency.json`](./tests/cross_language_consistency.json), has 22 cases over those operations, and the four wrapper suites hold 31 + 29 + 27 + 31 = 118 tests.
+
 ### Verify every wrapper agrees
 
 ```bash
@@ -739,7 +878,7 @@ Tests must not hardcode fixture values. Each language reads its expected values 
 
 ---
 
-## Validation
+## 13. Validation
 
 [`tools/validate.py`](./tools/validate.py) has six independent layers, each runnable in isolation:
 
@@ -753,28 +892,49 @@ python3 tools/validate.py --advisory            # cross-registry gaps become war
 
 Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not found), 3 schema violation or malformed JSON. A clean run prints `OK: 2883 MICs validated`.
 
-| Check | Tool | What it catches |
-|-------|------|-----------------|
-| **Schema** | `validate.py` + `schema.json` | JSON Schema draft-07; `additionalProperties: false` at every level; closed enums for `mic_type`, `status`, `market_category`; the 10 required keys |
-| **Integrity** | `validate.py` | MIC pattern `^[A-Z0-9]{4}$`, country pattern `^[A-Z]{2}$`, ISO 8601 dates, non-empty strings |
-| **Business** | `validate.py` | MIC uniqueness; operating MICs self-reference; segments do not; `EXPIRED` has an `expiration_date` |
-| **Cross-reference** | `validate.py` | Every segment chain terminates at an operating MIC (max 8 hops); every `country_code` except `ZZ` is in the ISO 3166 snapshot; every MIC in the Exchange Calendar snapshot is in the registry |
-| **Ground truth** | `validate.py` | Spot checks: `XNYS` (OPERATING, US), `XLON` (OPERATING, GB), `XTKS` (SEGMENT, JP), `XPAR` (FR) |
-| **Coverage** | `validate.py` | Operating >= 1,500, segment >= 1,000, total >= 2,500 |
-| **Raw-to-curated parse** | `fetch_swift_mic.py` | Unknown type or status values, bad self-reference, malformed dates, missing columns, broken chains with `--strict` |
-| **Refresh diff** | `refresh_diff.py` | NEW / EXPIRED / CHANGED / REMOVED counts between two registry files (CHANGED watches six fields); a REMOVED count above 0 exits 1 and opens the refresh PR as a draft |
-| **Version consistency** | `check_version_consistency.py` | Any of the nine sites disagreeing; the schema version disagreeing with the schema badge |
-| **Registry freshness** | `check_registry_freshness.py` | `meta.source_snapshot` more than 60 days old |
-| **Snapshot freshness** | `check_snapshot_freshness.py` | A vendored snapshot past its `review_by` date; takes `--today YYYY-MM-DD` |
-| **Release claims** | `check_release_claims.py` | A documentation or version claim that no longer matches the tree |
-| **Mojibake** | `check_mojibake.py` | UTF-8 / Latin-1 round-trip corruption, replacement characters, unclosed code fences; `--path` scans one file |
-| **ISO 3166 drift** | `check_iso3166_current.py` | Snapshot code set differs from the live sibling (`--strict` fails; a version-label drift only warns; an unreachable sibling fails unless `--advisory`) |
-| **Exchange Calendar drift** | `check_exchange_calendar_current.py` | Snapshot MIC set differs from the live sibling (same severity rules, including the unreachable case) |
-| **Snapshot reproduction** | `gen_iso3166_snapshot.py --check`, `gen_exchange_calendar_snapshot.py --check` | A committed snapshot that differs byte-for-byte from the pinned tag |
-| **Export drift** | `export_csv.py`, `export_sql.py`, `export_parquet.py` with `--check` | A derived file that is stale against `iso10383.json` |
-| **Wrapper sync** | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json` |
-| **CLI smoke test** | `iso10383_cli.py check` | Counts or chain integrity wrong when read through the CLI |
-| **Cross-language** | `check_cross_language.sh --strict` | A wrapper suite that fails or cannot run |
+### The release gate, in order
+
+The 17 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it runs them. Each is a `gate` call: the script records its exit code and stops on a non-zero one.
+
+| # | Check | Tool | What it catches |
+|--:|-------|------|-----------------|
+| 1 | Version consistency | `check_version_consistency.py` | Any of the nine sites disagreeing; the schema version disagreeing with the schema badge |
+| 2 | Six-layer validator | `validate.py` | Any data error in the six layers below |
+| 3 | Registry freshness | `check_registry_freshness.py` | `meta.source_snapshot` more than 60 days old; takes `--today YYYY-MM-DD` |
+| 4 | Snapshot freshness | `check_snapshot_freshness.py` | A vendored snapshot past its `review_by` date; takes `--today YYYY-MM-DD` |
+| 5 | Mojibake | `check_mojibake.py` | Six byte patterns of UTF-8 / Latin-1 round-trip corruption (five literal signatures, one regex range), plus unclosed code fences; `--path` scans one file |
+| 6 | Release claims | `check_release_claims.py "$VERSION"` | A documentation or version claim that no longer matches the tree |
+| 7 | ISO 3166 drift | `check_iso3166_current.py --strict` | Snapshot code set differs from the live sibling (`--strict` fails; a version-label drift only warns; an unreachable sibling fails unless `--advisory`) |
+| 8 | Exchange Calendar drift | `check_exchange_calendar_current.py --strict` | Snapshot MIC set differs from the live sibling (same severity rules, including the unreachable case) |
+| 9 | CLI smoke test | `iso10383_cli.py check` | Counts or chain integrity wrong when read through the CLI |
+| 10 | CSV/TSV export drift | `export_csv.py --check` | A derived file that is stale against `iso10383.json` |
+| 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
+| 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
+| 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 140 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
+| 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
+| 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
+
+### The six layers of `validate.py`
+
+| Layer | What it checks |
+|-------|----------------|
+| **Schema** | JSON Schema draft-07; `additionalProperties: false` at every level; closed enums for `mic_type`, `status` and `market_category`; the 10 required keys |
+| **Integrity** | MIC pattern `^[A-Z0-9]{4}$`, country pattern `^[A-Z]{2}$`, ISO 8601 dates, non-empty strings |
+| **Business** | MIC uniqueness; operating MICs self-reference; segments do not; `EXPIRED` has an `expiration_date` |
+| **Cross-reference** | Every segment chain terminates at an operating MIC (max 8 hops); every `country_code` except `ZZ` is in the ISO 3166 snapshot; every MIC in the Exchange Calendar snapshot is in the registry |
+| **Ground truth** | Spot checks: `XNYS` (OPERATING, US), `XLON` (OPERATING, GB), `XTKS` (SEGMENT, JP), `XPAR` (FR) |
+| **Coverage** | Operating >= 1,500, segment >= 1,000, total >= 2,500 |
+
+### Checks that run outside the release gate
+
+| Check | Where | What it catches |
+|-------|-------|-----------------|
+| Raw-to-curated parse | `fetch_swift_mic.py` (the refresh) | Unknown type or status values, bad self-reference, malformed dates, missing columns, broken chains with `--strict` |
+| Refresh diff | `refresh_diff.py` (the refresh) | NEW / EXPIRED / CHANGED / REMOVED counts between two registry files (CHANGED watches six fields); a REMOVED count above 0 exits 1 and opens the refresh PR as a draft |
+| Python wrapper suite | `pytest wrappers/python/tests -q`, in `check-wrappers` and inside gate 15 | The 31 Python wrapper tests |
+| SWIFT source health | `check-sources.yml`, weekly | SWIFT's file failing to download, or under 100,000 bytes (it opens an issue) |
 
 There is no ISO 4217 check: ISO 10383 has no currency field and no ISO 4217 snapshot. The inactive tool that once stood in for one was removed in v1.0.5.
 
@@ -784,7 +944,7 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 ### Release claims
 
-[`tools/release_claims.json`](./tools/release_claims.json) holds 193 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4, 5 for 1.0.5 and 177 under `doc-facts`. `check_release_claims.py <version>` verifies the `doc-facts` set plus that version's set (182 claims for 1.0.5) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
+[`tools/release_claims.json`](./tools/release_claims.json) holds 201 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4, 5 for 1.0.5, 6 for 1.1.0 and 179 under `doc-facts`. `check_release_claims.py <version>` verifies the `doc-facts` set plus that version's set (185 claims for 1.1.0) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
 
 ### Tests
 
@@ -801,14 +961,17 @@ The Tests badge above reads 258, the sum of this table. The root suite is spread
 
 ---
 
-## Continuous integration
+## 14. Continuous integration
 
-Two workflows in [`.github/workflows`](./.github/workflows):
+Three workflows in [`.github/workflows`](./.github/workflows):
 
 | Workflow | Runs on | Jobs | Protects against |
 |----------|---------|------|------------------|
-| **`validate.yml`** | push to `main`, pull requests to `main`, manual dispatch | seven, below | A stale derived file, a failing validator, a drifting wrapper, a snapshot that no longer reproduces, a version mismatch |
-| **`refresh.yml`** | 00:00 UTC on the 15th of every month, manual dispatch | one: download, parse, diff, regenerate, validate, open a pull request | A registry that silently falls behind SWIFT's monthly file |
+| **`validate.yml`** | push to `main`, pull requests to `main`, manual dispatch | seven, below | A stale derived file, a failing validator, a drifting wrapper, a snapshot that no longer reproduces, a corrupted text file |
+| **`refresh.yml`** | 00:00 UTC on the 15th of every month, manual dispatch | one: download, parse, diff, regenerate, validate, open a pull request | A registry that silently falls behind SWIFT |
+| **`check-sources.yml`** | 06:00 UTC every Monday, manual dispatch | one: fetch SWIFT's file; on failure open an issue | SWIFT's file moving, vanishing or shrinking between refreshes |
+
+`check-sources.yml` is not a per-push workflow: it does not run on push and is not part of the release poll. It fetches the file with `urllib.request.urlopen`; if the download fails or the response is under 100,000 bytes it opens a GitHub issue, or comments on the one already open.
 
 CI runs seven jobs on every push and pull request:
 
@@ -824,13 +987,11 @@ CI runs seven jobs on every push and pull request:
 
 Every job that installs `pyarrow` installs with `-c constraints.txt`. [ADR 0006](./docs/decisions/0006-ci-toolchain-parity.md) records why the local gate and CI run the same toolchain.
 
----
-
-## Refreshing the data
+### Refreshing the data
 
 SWIFT publishes the MIC file on the **second Monday of each month**; modifications become effective on the fourth Monday. `tools/check_registry_freshness.py` fails CI when `meta.source_snapshot` is more than **60 days** old, two missed publication cycles, which signals that the update process broke rather than that the source is late.
 
-### The monthly process
+#### The monthly process
 
 [`refresh.yml`](./.github/workflows/refresh.yml) runs on the 15th. It downloads the current file to `raw/MIC_new.csv`, copies the old registry aside, parses the new file into `iso10383.json` (`--version` from `VERSION`, `--snapshot-date` today), diffs old against new with `refresh_diff.py`, regenerates the exports and bundles, runs the validator and the root tests, and opens a pull request with `peter-evans/create-pull-request@v6`. Nothing merges on its own. **A refresh with `REMOVED > 0` opens the PR as a draft**, and a human converts it to ready after reading the removed MICs in the workflow log: a removed MIC is the change class most likely to break a consumer. The history of that guard, including the 2026-10-10 defect fix, is in [ADR 0003](./docs/decisions/0003-monthly-refresh.md) and [ADR 0011](./docs/decisions/0011-reprocessing.md). The registry is a monthly batch, not a stream.
 
@@ -849,7 +1010,7 @@ python3 tools/check_version_consistency.py
 python3 -m pytest tests/ -q
 ```
 
-### Audit
+#### Audit
 
 `meta.source_hash` is the `sha256:` digest of the raw file the JSON came from. To verify a JSON against a raw file:
 
@@ -867,7 +1028,7 @@ Replace `MIC_YYYYMMDD.csv` with the cached raw file's name. Two runs on the same
 
 ---
 
-## Release pipeline
+## 15. Release pipeline
 
 Releases are cut by [`scripts/release.sh`](./scripts/release.sh):
 
@@ -906,11 +1067,11 @@ The script conforms to [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md), t
 7. **Tag** only on green: the message is the `CHANGELOG.md` section (first line `Release v<version>`), checked for a header, a body and placeholders, then `git tag -a -F ... --cleanup=verbatim`. The recorded message is read back with `git for-each-ref` and compared with the file; on a mismatch the local tag is deleted and nothing is pushed. Then `git push origin "v<version>"`.
 8. **Verification document.** Writes `docs/v<version>-verification.md` with the commit SHA, the tag object SHA, and the exit code of every gate from `GATE_LOG`, so a gate added to the script cannot be missing from the document.
 
-Tags are immutable ([ADR 0005](./docs/decisions/0005-tag-discipline.md)). A verification document exists per release: [`v1.0.0`](./docs/v1.0.0-verification.md), [`v1.0.1`](./docs/v1.0.1-verification.md), [`v1.0.2`](./docs/v1.0.2-verification.md), [`v1.0.3`](./docs/v1.0.3-verification.md), [`v1.0.4`](./docs/v1.0.4-verification.md), [`v1.0.5`](./docs/v1.0.5-verification.md). The gate's `pyarrow` and toolchain requirements are the ones in [Flat exports](#comparison-semantics-and-the-build-pin).
+Tags are immutable ([ADR 0005](./docs/decisions/0005-tag-discipline.md)). A verification document exists per release: [`v1.0.0`](./docs/v1.0.0-verification.md), [`v1.0.1`](./docs/v1.0.1-verification.md), [`v1.0.2`](./docs/v1.0.2-verification.md), [`v1.0.3`](./docs/v1.0.3-verification.md), [`v1.0.4`](./docs/v1.0.4-verification.md), [`v1.0.5`](./docs/v1.0.5-verification.md), [`v1.1.0`](./docs/v1.1.0-verification.md). The gate's `pyarrow` and toolchain requirements are the ones in [Flat exports](#comparison-semantics-and-the-build-pin).
 
 ---
 
-## Versioning
+## 16. Versioning
 
 One version number, nine sites, all enforced by [`tools/check_version_consistency.py`](./tools/check_version_consistency.py):
 
@@ -938,7 +1099,7 @@ The registry follows [Semantic Versioning](https://semver.org/): major for break
 
 ---
 
-## Project structure
+## 17. Project structure
 
 ```text
 iso10383/
@@ -953,6 +1114,7 @@ iso10383/
 ├── requirements-dev.txt                 # jsonschema, pyarrow, pytest, pyyaml; applies constraints.txt
 ├── .gitattributes                       # LF endings for text exports; parquet is binary
 ├── .gitignore                           # raw/, caches, .venv, rust target and lockfile
+├── Makefile                             # package, build-wheel, test
 │
 ├── iso10383.sql                         # Layer 2: generic dialect (ON CONFLICT DO NOTHING)
 ├── iso10383.postgresql.sql              # Layer 2: PostgreSQL 12+
@@ -987,7 +1149,7 @@ iso10383/
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
 │   ├── check_release_claims.py          # Verifies the claims manifest
-│   ├── release_claims.json              # 193 {file, contains|absent} claims
+│   ├── release_claims.json              # 201 {file, contains|absent} claims
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
@@ -995,6 +1157,13 @@ iso10383/
 │
 ├── scripts/
 │   └── release.sh                       # The release pipeline
+│
+├── examples/
+│   └── orders-5k/
+│       ├── README.md                    # What is real and what is synthetic; how to read the output
+│       ├── generate_facts.py            # 5,000 fictional orders across 50 real venues
+│       ├── analyze.py                   # Copy-versus-join storage, join equivalence, simulated registry change
+│       └── requirements.txt             # pyarrow==25.0.1
 │
 ├── tests/
 │   ├── cross_language_consistency.json  # Shared fixture for all four wrappers
@@ -1073,14 +1242,17 @@ iso10383/
 │   ├── exchange_calendar_mics.txt       # The 74 MICs Exchange Calendar references
 │   ├── README-AUDIT-NOTES.md            # Receipt: how each README number was measured
 │   ├── AUDIT.md                         # Tool inventory: does each tool run, and where
+│   ├── ENRICHMENT.md                    # Why each nullable field is null
 │   ├── v1.0.0-verification.md          # Gate record for v1.0.0
 │   ├── v1.0.1-verification.md          # Gate record for v1.0.1
 │   ├── v1.0.2-verification.md          # Gate record for v1.0.2
 │   ├── v1.0.3-verification.md          # Gate record for v1.0.3
 │   ├── v1.0.4-verification.md          # Gate record for v1.0.4
 │   ├── v1.0.5-verification.md          # Gate record for v1.0.5
+│   ├── v1.1.0-verification.md          # Gate record for v1.1.0
 │   └── decisions/
-│       ├── v1.0.0-decisions.md          # D1 to D17
+│       ├── README.md                    # Index of the twelve ADRs: question, status, amendments
+│       ├── v1.0.0-decisions.md          # D1 to D17, each with a status
 │       ├── 0001-source-format.md        # What SWIFT's file is
 │       ├── 0002-operating-segment-model.md  # One array, self-reference, multi-level
 │       ├── 0003-monthly-refresh.md      # Monthly cadence and the REMOVED > 0 guard
@@ -1097,42 +1269,58 @@ iso10383/
 └── .github/
     └── workflows/
         ├── validate.yml                 # Seven jobs on push and pull request
-        └── refresh.yml                  # Monthly refresh, opens a pull request
+        ├── refresh.yml                  # Monthly refresh, opens a pull request
+        └── check-sources.yml            # Weekly: fetch SWIFT's file, open an issue on failure
 ```
 
 ---
 
-## Documentation index
+## 18. Documentation index
 
 | Document | What does it answer? |
 |----------|----------------------|
 | [`docs/LAYERS.md`](./docs/LAYERS.md) | Which layer does a file belong to, how is it produced and validated, and what is irreplaceable? |
 | [`docs/PROVENANCE.md`](./docs/PROVENANCE.md) | Where does each field come from, how often is it refreshed, how do I audit it, and what is not covered? |
 | [`docs/JOINS.md`](./docs/JOINS.md) | Which registries reference `mic`, at what granularity, and what does this registry not answer? |
+| [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) | Why is a field null, and what can I do about it? |
 | [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) | What invariants does every release refuse on, and what are the operator-hygiene rules? |
+| [`docs/AUDIT.md`](./docs/AUDIT.md) | Which tools exist, does each one run, and where? |
+| [`docs/README-AUDIT-NOTES.md`](./docs/README-AUDIT-NOTES.md) | How was each number in the 2026-10-18 README measured, and at what commit? (A historical receipt, not current documentation.) |
 | [`docs/action_types.md`](./docs/action_types.md) | What do `OPERATING`, `SEGMENT` and each status mean, and which combinations occur? |
 | [`docs/source_format.md`](./docs/source_format.md) | Exactly what does SWIFT's file contain (headers, value sets, dates)? |
 | [`docs/mic_lei_source_format.md`](./docs/mic_lei_source_format.md) | What did the MIC to LEI reconnaissance find, and what would reopen it? |
 | [`docs/mic_bic_source_format.md`](./docs/mic_bic_source_format.md) | Which sources were checked for a MIC to BIC mapping, and what would reopen it? |
-| [`docs/decisions/v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md) | Why was each v1.0.0 design choice (D1 to D17) made? |
-| [`docs/decisions/`](./docs/decisions) | Why was each later choice made? One ADR per decision: twelve ADRs (0001 to 0012), plus the D1-D17 register in [`v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md); [`docs/decisions/README.md`](./docs/decisions/README.md) indexes them. |
-| [`docs/decisions/0012-agent-read-surface.md`](./docs/decisions/0012-agent-read-surface.md) | What may a future agent read, and at what freshness? |
+| [`docs/exchange_calendar_mics.txt`](./docs/exchange_calendar_mics.txt) | Which 74 MICs does Exchange Calendar reference? |
+| [`docs/decisions/README.md`](./docs/decisions/README.md) | Which ADR answers which question, and what is each one's status? |
+| [`docs/decisions/v1.0.0-decisions.md`](./docs/decisions/v1.0.0-decisions.md) | Why was each v1.0.0 design choice (D1 to D17) made, and is it still active? |
+| | [`docs/decisions/0001-source-format.md`](./docs/decisions/0001-source-format.md) | What is SWIFT's file, exactly? |
+| | [`docs/decisions/0002-operating-segment-model.md`](./docs/decisions/0002-operating-segment-model.md) | How are operating MICs and segment MICs modelled? |
+| | [`docs/decisions/0003-monthly-refresh.md`](./docs/decisions/0003-monthly-refresh.md) | How often does the registry refresh, and when is a snapshot too old? |
+| | [`docs/decisions/0004-market-category-codes.md`](./docs/decisions/0004-market-category-codes.md) | Which market category codes are allowed? |
+| | [`docs/decisions/0005-tag-discipline.md`](./docs/decisions/0005-tag-discipline.md) | When is a release tag created, and what does the verification document record? |
+| | [`docs/decisions/0006-ci-toolchain-parity.md`](./docs/decisions/0006-ci-toolchain-parity.md) | How do the local gate and the CI gate agree on what "verified" means? |
+| | [`docs/decisions/0007-cross-registry-allowlist.md`](./docs/decisions/0007-cross-registry-allowlist.md) | How is a known gap against Exchange Calendar tolerated? |
+| | [`docs/decisions/0008-mic-lei-companion-declined.md`](./docs/decisions/0008-mic-lei-companion-declined.md) | Should there be a MIC→LEI companion file? |
+| | [`docs/decisions/0009-mic-bic-companion-declined.md`](./docs/decisions/0009-mic-bic-companion-declined.md) | Should there be a MIC→BIC companion file? |
+| | [`docs/decisions/0010-platform-charter.md`](./docs/decisions/0010-platform-charter.md) | What is the registry for, who consumes it, and what layers does it have? |
+| | [`docs/decisions/0011-reprocessing.md`](./docs/decisions/0011-reprocessing.md) | What does the refresh do step by step, and is reprocessing a capability? |
+| | [`docs/decisions/0012-agent-read-surface.md`](./docs/decisions/0012-agent-read-surface.md) | What may a future agent read, and what may it write? |
 | `docs/v<version>-verification.md` | What did the release gate print when this version shipped? |
-| [`docs/README-AUDIT-NOTES.md`](./docs/README-AUDIT-NOTES.md) | How was each number in this README measured, and at what commit? |
+| [`examples/orders-5k/README.md`](./examples/orders-5k/README.md) | What does copying registry fields into a fact table cost, against a join on the MIC? |
 | [`CHANGELOG.md`](./CHANGELOG.md) | What changed in each release, and what is queued under `[Unreleased]`? |
 | [`CONTRIBUTING.md`](./CONTRIBUTING.md) | What are the four rules, and how do I fix data, add a field, add an export or cut a release? |
 | `wrappers/*/README.md` | What is the full API of each wrapper? |
 
 ---
 
-## Contributing
+## 19. Contributing
 
 Open an issue before starting a large change. Data corrections go through a tool, never a hand edit of `iso10383.json`. The quick workflow, in the order the release script expects:
 
 1. Set up (once): `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements-dev.txt && pip install -e wrappers/python`
 2. Change the source or the tool. A data change means a new SWIFT file: `python3 tools/fetch_swift_mic.py --download --force --strict --version "$(cat VERSION)"`
 3. Validate: `python3 tools/validate.py` (must exit 0)
-4. Regenerate the derived files, Layer 2 then Layer 3:
+4. Regenerate the derived files, Layer 2 then Layer 3 (`make package` runs the same four commands):
    `python3 tools/export_csv.py && python3 tools/export_sql.py && python3 tools/export_parquet.py && python3 tools/sync_wrappers.py`
 5. Check the drift gates: `python3 tools/export_csv.py --check && python3 tools/export_sql.py --check && python3 tools/export_parquet.py --check && python3 tools/sync_wrappers.py --check`
 6. Check the conventions: `python3 tools/check_version_consistency.py && python3 tools/check_mojibake.py && python3 tools/check_release_claims.py "$(cat VERSION)"`
@@ -1154,7 +1342,7 @@ Everything else, including how to add a field, an export format or a wrapper met
 
 ---
 
-## Known limitations
+## 20. Known limitations
 
 Stated plainly, because a canonical registry is a claim and a claim needs its edges drawn.
 
@@ -1163,29 +1351,30 @@ Stated plainly, because a canonical registry is a claim and a claim needs its ed
 - **A snapshot, not a history.** `UPDATED` is transient: it means "changed since the last publication" and reverts to `ACTIVE` later. No file records what changed in a MIC or when beyond the four date fields. Replaying an earlier state means checking out an earlier tag; Layer 0 keeps only the current raw file.
 - **No LEI, BIC or ISIN companion.** The `lei` field carries SWIFT's published LEI where there is one (2,254 of 2,883 entries; 629 are null). GLEIF's mapping was found to be a subset of that field and a companion file was declined ([ADR 0008](./docs/decisions/0008-mic-lei-companion-declined.md)). No MIC to BIC source file was found ([ADR 0009](./docs/decisions/0009-mic-bic-companion-declined.md)). MIC to ISIN is out of scope (D11).
 - **No trading currency, operating hours or regulatory status.** Trading currency is not stored per MIC; the nearest derivation is `country_code` to ISO 4217, which cannot express a venue trading in a non-local currency. Operating hours belong to Exchange Calendar. Regulatory status is out of scope (D11).
-- **Sparse optional fields.** 1,867 entries have no `acronym`, 1,494 no `legal_entity_name`, 1,324 no `note`, 163 no `website` and 1,896 no `last_validation_date`. A null is the source's silence, never a guess.
-- **Three MICs have no country.** `BILT`, `XOFF` and `XXXX` carry `ZZ`, which is not an ISO 3166 code; the validator skips it.
+- **Sparse optional fields.** 1,867 entries have no `acronym`, 1,494 no `legal_entity_name`, 1,324 no `note`, 163 no `website` and 1,896 no `last_validation_date`. A null is the source's silence, never a guess; [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) goes field by field.
+- **Three MICs have no fixed country.** `BILT`, `XOFF` and `XXXX` carry `ZZ`, ISO 10383's placeholder, which is not an ISO 3166 code; the validator skips it. `country_code` is never null.
 - **Text is as published.** Names and websites are upper case, as SWIFT supplies them. The registry does not normalise.
 - **The SQL export is a reference table.** It carries 11 of the 17 fields, and only the PostgreSQL and SQLite files declare the self-referencing foreign key.
 - **Chains are capped at eight hops.** The deepest in this snapshot is three levels. A deeper chain is refused by the parser and the validator.
 - **The cross-checks cover 74 MICs, not all of them.** Exchange Calendar references 74 MICs; the other 2,809 have no sibling that checks them.
 - **Network-dependent gates.** `check_*_current.py` and `gen_*_snapshot.py --check` reach GitHub; offline, they cannot run.
 - **Language packages are not published** to PyPI, npm, crates.io or a Go proxy. Install from a clone.
+- **No aggregated layer.** One grain, one row per MIC: there is no count-by-country or count-by-category file. Aggregate from the Parquet or the CSV.
 - **No XLSX or XML distribution.** SWIFT's original offers both; this registry publishes JSON, SQL, CSV, TSV and Parquet only.
 - **Where the edges and the numbers are recorded.** The Known limitations and README-AUDIT-NOTES sections together serve the role a `STATE.md` plays in the sibling registries: this section states the edges, and the audit notes are the receipt of how the numbers in the 2026-10-18 README were measured. Numbers added since are pinned by the claims in `tools/release_claims.json`, not by the notes.
 
 ---
 
-## FAQ
+## 21. FAQ
 
 **Why does every segment have a parent, and why does every operating MIC point to itself?**
 So `operating_mic` is `NOT NULL` everywhere and a join never needs a special case. The root is reached by walking `operating_mic` until it equals `mic` ([ADR 0002](./docs/decisions/0002-operating-segment-model.md)).
 
 **Why is there no `root_mic` column?**
-It would be a second value to keep consistent with `operating_mic` when a parent changes. Eight chains have three levels, so the walk is short, and the [worked example](#worked-example-a-venue-tree-in-ten-commands) shows it in pandas.
+It would be a second value to keep consistent with `operating_mic` when a parent changes. Eight chains have three levels, so the walk is short, and the [worked example](#10-worked-example-a-venue-tree-in-ten-commands) shows it in pandas.
 
 **What does a null mean?**
-The source file had no value, and the field stays null rather than carrying a guess. In JSON it is `null`, in CSV an empty field, in Parquet a null, in SQL `NULL`.
+The source file had no value, and the field stays null rather than carrying a guess ([`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) explains each nullable field). In JSON it is `null`, in CSV an empty field, in Parquet a null, in SQL `NULL`.
 
 **What does `UPDATED` mean, and should I treat it as active?**
 It means the entry changed since the last publication (21 entries in this snapshot). It is not expired. A consumer that wants "currently valid" should accept `ACTIVE` and `UPDATED` and exclude `EXPIRED`.
@@ -1195,6 +1384,9 @@ Cross-registry checks have been blocking since v1.0.1, and the allowlist of tole
 
 **Why does `check_cross_language.sh --strict` fail on my machine?**
 A wrapper toolchain (`node`, `cargo` or `go`) is missing, and `--strict` refuses to pass with a skipped suite. Install the toolchain or run without `--strict`.
+
+**Where is the trading currency, or the operating hours?**
+Not in the registry: SWIFT's file does not carry them, and the registry reproduces SWIFT's file (see [Known limitations](#20-known-limitations)).
 
 **Why does the SQL export lack `lei` and `website`?**
 It is the foreign-key-ready minimum, 11 columns. The CSV, TSV and Parquet carry all 17.
@@ -1206,14 +1398,14 @@ So a consumer can download one file and run nothing, and so drift between the JS
 JSON: `meta.version`. Parquet: footer key `iso10383.version`. SQL: the `-- version:` comment on line 3.
 
 **Why can't I `pip install iso10383-registry`?**
-Publication is deferred until a consumer needs it (see [What's next](#whats-next)). Use `pip install -e wrappers/python` from a clone.
+Publication is deferred until a consumer needs it (see [What's next](#24-whats-next)). Use `pip install -e wrappers/python` from a clone.
 
 **Why does `iso10383` not exist as a command after installing the Python wrapper?**
 The CLI is a repository artifact. Use `python3 tools/iso10383_cli.py` or `bin/iso10383` from a checkout.
 
 ---
 
-## Consumed by
+## 22. Consumed by
 
 ISO 10383 is the leaf of the MIC join graph: other registries reference `mic`; this one references none of them except for validation. [`docs/JOINS.md`](./docs/JOINS.md) names every edge. Each row gives the proof that exists in this repository, and says where the proof lives in a sibling repository that is not part of this tree.
 
@@ -1223,13 +1415,14 @@ ISO 10383 is the leaf of the MIC join graph: other registries reference `mic`; t
 | [ISO 3166](https://github.com/slimissa/iso3166) | Reverse edge: this registry's `country_code` joins ISO 3166's alpha-2 codes | `tools/iso3166_snapshot.json` (252 codes, v1.6.9), reproduced by `gen_iso3166_snapshot.py --check`; `validate.py` checks every `country_code` except `ZZ` against it |
 | Asset Identifiers | `exchange` and `listings[].exchange` reference a MIC, "Either" granularity | Declared in that repository's `schema.json`, per `docs/JOINS.md`. JOINS records that the public repository holds only the schema and a fixture, so the edge is verified against a schema, not records. Not checkable from this tree. |
 | Corporate Actions | `exchange` per action | `docs/JOINS.md` marks it planned and records that none of its 240 actions carries an `exchange` field as of 2026-10-11. Not checkable from this tree. |
-| [Tempus](https://github.com/slimissa/Tempus), [LAS_Shell](https://github.com/slimissa/Las_shell) | Compile-time `@market_context` validation (Tempus); market status and prompt display (LAS_Shell) | None in this repository. Both are named as intended consumers; neither appears in `docs/JOINS.md`, and no artifact here depends on them. |
+| [Tempus](https://github.com/slimissa/Tempus) | Compile-time `@market_context` validation | None in this repository. Named as an intended consumer; it does not appear in `docs/JOINS.md`, and no artifact here depends on it. |
+| [LAS_Shell](https://github.com/slimissa/Las_shell) | Market status and prompt display | None in this repository. Named as an intended consumer; it does not appear in `docs/JOINS.md`, and no artifact here depends on it. |
 
 No external adopter is recorded. *Using this registry in your project? Open a pull request to add a row.*
 
 ---
 
-## License and author
+## 23. License and author
 
 Apache 2.0. See [`LICENSE`](./LICENSE). The MIC data is factual information sourced from SWIFT's published ISO 10383 file; the compilation, schema, tooling, wrappers and documentation are licensed works.
 
@@ -1237,9 +1430,9 @@ Apache 2.0. See [`LICENSE`](./LICENSE). The MIC data is factual information sour
 
 ---
 
-## What's next
+## 24. What's next
 
-The registry is complete for its charter; the deferred items below are extensions, not corrections, and each has a named trigger. Nothing is scheduled. D14 forbids a roadmap before the previous release has shipped, and v1.0.5 has; the next release follows the first trigger below that fires.
+The registry is complete for its charter; the deferred items below are extensions, not corrections, and each has a named trigger. Nothing is scheduled. D14 forbids a roadmap before the previous release has shipped, and v1.1.0 has; the next release follows the first trigger below that fires.
 
 | Deferred item | Trigger to start | Where decided |
 |---------------|------------------|---------------|

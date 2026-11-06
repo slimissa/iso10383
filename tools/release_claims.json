@@ -275,7 +275,7 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-257"
+      "contains": "tests-258"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
@@ -526,7 +526,7 @@
     },
     {
       "file": "README.md",
-      "contains": "17 release-gate checks, 193 manifest claims, 258 tests"
+      "contains": "| **Manifest claims** | 201 in"
     },
     {
       "file": "README.md",
@@ -757,15 +757,15 @@
     },
     {
       "file": "README.md",
-      "contains": "holds 193 machine-checkable claims"
+      "contains": "holds 201 machine-checkable claims"
     },
     {
       "file": "README.md",
-      "contains": "and 177 under `doc-facts`"
+      "contains": "and 179 under `doc-facts`"
     },
     {
       "file": "README.md",
-      "contains": "# 193 {file, contains|absent} claims"
+      "contains": "# 201 {file, contains|absent} claims"
     },
     {
       "file": "README.md",
