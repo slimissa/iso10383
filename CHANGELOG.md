@@ -135,6 +135,16 @@ must match `VERSION`. CI enforces this with
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
   the tool is retained in the tree with a docstring note).
 
+## [1.1.1] - 2026-11-06
+ 
+### Changed
+- README rewritten to the ISO 4217 / ISO 3166 bar.
+- 24 sections, 14 at-a-glance rows, 17 gates in the release pipeline.
+- 18 data figures re-derived from the tree.
+- 50 internal links, all verified against the tree's heading slugs.
+- `release_claims.json`: 5 claims updated to match the new README counts
+  (tests-258, 201 total, 179 doc-facts, 185 for 1.1.0, 15 examples).
+
 ## [1.1.0] - 2026-11-04
 
 ### Added
