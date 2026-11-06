@@ -90,6 +90,28 @@
       "contains": "| 0010 |"
     }
   ],
+  "1.1.1": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.1.1]"
+    },
+    {
+      "file": "README.md",
+      "contains": "tests-258"
+    },
+    {
+      "file": "README.md",
+      "contains": "holds 201 machine-checkable claims"
+    },
+    {
+      "file": "README.md",
+      "contains": "and 179 under `doc-facts`"
+    },
+    {
+      "file": "README.md",
+      "contains": "185 claims for 1.1.0"
+    }
+  ],
   "doc-facts": [
     {
       "file": "README.md"
