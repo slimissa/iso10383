@@ -1077,7 +1077,7 @@
     },
     {
       "file": "tools/exchange_calendar_snapshot.meta.json",
-      "contains": "\"source_version\": \"2.24.0\""
+      "contains": "\"source_version\": \"2.26.0\""
     },
     {
       "file": "registry_release.json",

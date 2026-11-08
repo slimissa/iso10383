@@ -472,7 +472,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/slimissa/iso10383/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/slimissa/iso10383/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/slimissa/iso10383/compare/v1.0.5...v1.1.0
 [1.0.5]: https://github.com/slimissa/iso10383/compare/v1.0.4...v1.0.5
