@@ -6,7 +6,7 @@
     "claims": {
       "doc_facts": 246,
       "in_file": 277,
-      "verified": 247
+      "verified": 254
     },
     "countries": 149,
     "expired": 566,
@@ -31,7 +31,7 @@
       "bytes": 1712419,
       "layer": 1,
       "path": "iso10383.json",
-      "sha256": "a38205af31a0dc004b465047cc8cee1741e62d4b3782045af343f6320078f43f"
+      "sha256": "ad51f71faecdde4916a9956ceaddfb573dda711299f2ba089278db030b7681aa"
     },
     {
       "bytes": 5930,
@@ -61,31 +61,31 @@
       "bytes": 375528,
       "layer": 2,
       "path": "iso10383.mysql.sql",
-      "sha256": "196dfaa723b221931cb587300fe471b072fc7ba9cf6f555c55e2ebb0ab75f0b4"
+      "sha256": "b7e19eca2efa1e5a3950842419cb7fe9b28e532c3fc9309efbaa6852dca8f201"
     },
     {
       "bytes": 202257,
       "layer": 2,
       "path": "iso10383.parquet",
-      "sha256": "fa4128dd257d0a5ed0b9607fcb2176a6204bb54887d70b8b7e510ee549a29e60"
+      "sha256": "da33cb67a255bdd1a340acdb2e667cfb9c95f0175c01bcaae022a81010ceec8a"
     },
     {
       "bytes": 976216,
       "layer": 2,
       "path": "iso10383.postgresql.sql",
-      "sha256": "b17b1a77596808970aad67f8df76718460f22ba99362e47814683d0594517d2b"
+      "sha256": "78c70608062754549261a56e230911125dabd102b1e09c9be7530c591bc889bc"
     },
     {
       "bytes": 976102,
       "layer": 2,
       "path": "iso10383.sql",
-      "sha256": "2a071e8259a18043e3e98732c0e8cc2e6ac4b213963e0a12c1aa2713ffa14055"
+      "sha256": "b720eed7810cc4731e940f1267678c9e05017292a25c764f617a62ee25d34297"
     },
     {
       "bytes": 921198,
       "layer": 2,
       "path": "iso10383.sqlite.sql",
-      "sha256": "f94bf49e489e75d04bb96659a03167a6effc85fe6d37481d2261baebe88aaf3c"
+      "sha256": "e179e672db64d5d6425fd3d480cf347566d10b92c55b79c078a417f691c710ac"
     },
     {
       "bytes": 519367,
@@ -97,29 +97,29 @@
       "bytes": 1712419,
       "layer": 3,
       "path": "wrappers/go/data/iso10383.json",
-      "sha256": "a38205af31a0dc004b465047cc8cee1741e62d4b3782045af343f6320078f43f"
+      "sha256": "ad51f71faecdde4916a9956ceaddfb573dda711299f2ba089278db030b7681aa"
     },
     {
       "bytes": 1712419,
       "layer": 3,
       "path": "wrappers/javascript/src/data/iso10383.json",
-      "sha256": "a38205af31a0dc004b465047cc8cee1741e62d4b3782045af343f6320078f43f"
+      "sha256": "ad51f71faecdde4916a9956ceaddfb573dda711299f2ba089278db030b7681aa"
     },
     {
       "bytes": 1712419,
       "layer": 3,
       "path": "wrappers/python/src/iso10383/data/iso10383.json",
-      "sha256": "a38205af31a0dc004b465047cc8cee1741e62d4b3782045af343f6320078f43f"
+      "sha256": "ad51f71faecdde4916a9956ceaddfb573dda711299f2ba089278db030b7681aa"
     },
     {
       "bytes": 1712419,
       "layer": 3,
       "path": "wrappers/rust/data/iso10383.json",
-      "sha256": "a38205af31a0dc004b465047cc8cee1741e62d4b3782045af343f6320078f43f"
+      "sha256": "ad51f71faecdde4916a9956ceaddfb573dda711299f2ba089278db030b7681aa"
     }
   ],
   "registry": "iso10383",
-  "released": "2026-11-06",
+  "released": "2026-11-08",
   "schema_version": "1.0.0",
   "source": {
     "name": "SWIFT ISO10383_MIC.csv",
@@ -127,7 +127,7 @@
     "snapshot": "2026-09-23",
     "url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv"
   },
-  "tag": "v1.1.1",
+  "tag": "v1.1.2",
   "tag_object": null,
   "vendors": [
     {
@@ -147,5 +147,5 @@
       "vendored_at": "2026-11-08"
     }
   ],
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
