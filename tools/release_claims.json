@@ -94,22 +94,6 @@
     {
       "file": "CHANGELOG.md",
       "contains": "## [1.1.1]"
-    },
-    {
-      "file": "README.md",
-      "contains": "tests-258"
-    },
-    {
-      "file": "README.md",
-      "contains": "holds 201 machine-checkable claims"
-    },
-    {
-      "file": "README.md",
-      "contains": "and 179 under `doc-facts`"
-    },
-    {
-      "file": "README.md",
-      "contains": "185 claims for 1.1.0"
     }
   ],
   "doc-facts": [
@@ -294,10 +278,6 @@
     {
       "file": "docs/JOINS.md",
       "absent": "uses the operating MIC"
-    },
-    {
-      "file": "README.md",
-      "contains": "tests-258"
     },
     {
       "file": "tools/check_exchange_calendar_current.py",
@@ -548,10 +528,6 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Manifest claims** | 201 in"
-    },
-    {
-      "file": "README.md",
       "absent": "18 release-gate checks"
     },
     {
@@ -699,15 +675,7 @@
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "139 tests"
-    },
-    {
-      "file": "CONTRIBUTING.md",
       "absent": "115 tests"
-    },
-    {
-      "file": "CONTRIBUTING.md",
-      "contains": "257 across all five"
     },
     {
       "file": "CONTRIBUTING.md",
@@ -727,10 +695,6 @@
     },
     {
       "file": "README.md",
-      "contains": "stry } = require(\"iso10383-registry\")` | 29 |"
-    },
-    {
-      "file": "README.md",
       "contains": "1 | `use iso10383_registry::Registry;` | 27 |"
     },
     {
@@ -739,15 +703,7 @@
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 140 |"
-    },
-    {
-      "file": "README.md",
       "contains": "| Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |"
-    },
-    {
-      "file": "README.md",
-      "contains": "| JavaScript | `(cd wrappers/javascript && node --test)` | 29 |"
     },
     {
       "file": "README.md",
@@ -759,35 +715,11 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **258** |"
-    },
-    {
-      "file": "README.md",
-      "contains": "The Tests badge above reads 258, the sum of this table"
-    },
-    {
-      "file": "README.md",
       "contains": "`test_check_registry_freshness.py` (6)."
     },
     {
       "file": "README.md",
-      "contains": "sixteen files in `tests/`"
-    },
-    {
-      "file": "README.md",
       "absent": "reads 243"
-    },
-    {
-      "file": "README.md",
-      "contains": "holds 201 machine-checkable claims"
-    },
-    {
-      "file": "README.md",
-      "contains": "and 179 under `doc-facts`"
-    },
-    {
-      "file": "README.md",
-      "contains": "# 201 {file, contains|absent} claims"
     },
     {
       "file": "README.md",
@@ -796,10 +728,6 @@
     {
       "file": "README.md",
       "contains": "test_registry.py         # 31 tests"
-    },
-    {
-      "file": "README.md",
-      "contains": "registry.test.js        # 29 tests (node --test)"
     },
     {
       "file": "README.md",
@@ -815,6 +743,321 @@
     },
     {
       "file": "docs/decisions/README.md"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Manifest claims** | One list per released version plus a `doc-facts` list"
+    },
+    {
+      "file": "README.md",
+      "contains": "holds machine-checkable claims, each of the form"
+    },
+    {
+      "file": "README.md",
+      "contains": "# {file, contains|absent} claims, one list per release plus doc-facts"
+    },
+    {
+      "file": "README.md",
+      "contains": "is a success message"
+    },
+    {
+      "file": "README.md",
+      "absent": "holds 201 machine-checkable claims"
+    },
+    {
+      "file": "README.md",
+      "absent": "gate verifies 185"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Version** | 1.1.0"
+    },
+    {
+      "file": "README.md",
+      "absent": "agree on 1.1.0"
+    },
+    {
+      "file": "README.md",
+      "absent": "\"version\": \"1.1.0\""
+    },
+    {
+      "file": "README.md",
+      "absent": "b'1.1.0'"
+    },
+    {
+      "file": "README.md",
+      "absent": "STRICT tables"
+    },
+    {
+      "file": "tools/check_release_claims.py",
+      "contains": "A claim about a file that does not exist FAILS"
+    },
+    {
+      "file": "tools/check_release_claims.py",
+      "absent": "a missing path passes"
+    },
+    {
+      "file": "README.md",
+      "absent": "1.6.9"
+    },
+    {
+      "file": "README.md",
+      "absent": "2.15.4"
+    },
+    {
+      "file": "README.md",
+      "absent": "2027-09-28"
+    },
+    {
+      "file": "README.md",
+      "absent": "2027-01-10"
+    },
+    {
+      "file": "tools/gen_registry_release.py"
+    },
+    {
+      "file": "registry_release.json"
+    },
+    {
+      "file": "registry_release.schema.json"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "gate python3 tools/gen_registry_release.py --check --version \"$VERSION\""
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "run python3 tools/gen_registry_release.py --version \"$VERSION\""
+    },
+    {
+      "file": "Makefile",
+      "contains": "registry-release:"
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"distribution\": \"source-only\""
+    },
+    {
+      "file": "README.md",
+      "contains": "### The release manifest"
+    },
+    {
+      "file": "README.md",
+      "contains": "18 checks in"
+    },
+    {
+      "file": "README.md",
+      "absent": "17 checks in"
+    },
+    {
+      "file": "README.md",
+      "absent": "Seventeen `gate` calls"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "139 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "257 across all five"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "[1.1.1]: https://github.com/slimissa/iso10383/compare/v1.1.0...v1.1.1"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "absent": "compare/v1.1.0...HEAD"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "absent": "## [Unreleased]\n\n### Added\n\n- `constraints.txt` pins"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "were never implemented"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "### Removed\n\n- The ISO 4217 `--check` step is removed from CI"
+    },
+    {
+      "file": "docs/decisions/0005-tag-discipline.md",
+      "contains": "## Amendment (2026-11-08) — Decision 4 and Scope reconciled"
+    },
+    {
+      "file": "docs/decisions/0010-platform-charter.md",
+      "contains": "## Amendment (2026-11-08) — the only scheduled workflow"
+    },
+    {
+      "file": "docs/decisions/0011-reprocessing.md",
+      "contains": "## Amendment (2026-11-08) — the retraction reaffirmed; two statements corrected"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-258"
+    },
+    {
+      "file": "README.md",
+      "absent": "require(\"iso10383-registry\")"
+    },
+    {
+      "file": "README.md",
+      "contains": "case-insensitive"
+    },
+    {
+      "file": "tests/test_counts.json"
+    },
+    {
+      "file": "tools/iso10383_cli.py",
+      "contains": "def _upper"
+    },
+    {
+      "file": "tests/test_cli.py",
+      "contains": "def test_cli_is_case_insensitive"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "140 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "258 across all five"
+    },
+    {
+      "file": "README.md",
+      "contains": "tests-261"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 143 |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Total** | | **261** |"
+    },
+    {
+      "file": "README.md",
+      "contains": "The Tests badge above reads 261, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "143 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "261 across all five"
+    },
+    {
+      "file": "README.md",
+      "contains": "| JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |"
+    },
+    {
+      "file": "README.md",
+      "contains": "`const { MICRegistry } = require(\"./wrappers/javascript\")` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |"
+    },
+    {
+      "file": "README.md",
+      "contains": "registry.test.js        # 29 tests as node --test reports them (28 test() definitions plus the fixture-anchor module)"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-259"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "141 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "259 across all five"
+    },
+    {
+      "file": "tools/fetch_swift_mic.py",
+      "contains": "unexpected columns"
+    },
+    {
+      "file": "tests/test_fetch_swift_mic.py"
+    },
+    {
+      "file": "tests/fixtures/valid_seventeen_plus_one.csv"
+    },
+    {
+      "file": "README.md",
+      "contains": "seventeen files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "sixteen files in `tests/`"
+    },
+    {
+      "file": "SECURITY.md"
+    },
+    {
+      "file": "SECURITY.md",
+      "contains": "## Data integrity"
+    },
+    {
+      "file": "SECURITY.md",
+      "contains": "security/advisories/new"
+    },
+    {
+      "file": "SECURITY.md",
+      "contains": "registry_release.json"
+    },
+    {
+      "file": "SECURITY.md",
+      "absent": "pip install"
+    },
+    {
+      "file": "SECURITY.md",
+      "absent": "npm install"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Security** | See [SECURITY.md](./SECURITY.md)"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "read `SECURITY.md` first"
+    },
+    {
+      "file": "docs/JOINS.md",
+      "absent": "74 files at v2.15.4"
+    }
+  ],
+  "1.1.2": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.1.2] - "
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "[1.1.2]: https://github.com/slimissa/iso10383/compare/v1.1.1...v1.1.2"
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "contains": "\"source_version\": \"1.12.5\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "contains": "\"source_version\": \"2.24.0\""
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"version\": \"1.1.2\""
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"tag\": \"v1.1.2\""
+    },
+    {
+      "file": "tests/test_counts.json",
+      "contains": "\"root\": 143"
+    },
+    {
+      "file": "README.md",
+      "contains": "tests-261"
     }
   ]
 }

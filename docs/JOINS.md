@@ -24,7 +24,7 @@ The registry is at https://github.com/slimissa/iso10383.
 
 | Registry | Field | Granularity | Notes |
 |----------|-------|-------------|-------|
-| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files at v2.15.4: 68 active operating, 3 active segment, 3 expired here. |
+| Exchange Calendar | `exchanges/*.json` → `mic` (or `code`) | Either | One entry per exchange. 74 files: 68 active operating, 3 active segment, 3 expired here. |
 | Asset Identifiers | each entry's `exchange` | Either | Primary listing venue. Declared in its `schema.json`. |
 | Asset Identifiers | `listings[].exchange` | Either | Per-listing venue. |
 | Corporate Actions (planned) | each action's `exchange` | Either | Per action. Not yet implemented. |
