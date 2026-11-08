@@ -1024,6 +1024,14 @@
     {
       "file": "docs/JOINS.md",
       "absent": "74 files at v2.15.4"
+    },
+    {
+      "file": "docs/LAYERS.md",
+      "absent": "pip install iso10383-registry"
+    },
+    {
+      "file": "docs/decisions/v1.0.0-decisions.md",
+      "contains": "Amendment (v1.1.2)"
     }
   ],
   "1.1.2": [
