@@ -86,10 +86,11 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
     version_drift = live_version is not None and live_version != local_version
     if version_drift:
-        if version_drift and args.fail_on_version_drift:
-        print(f"FAIL: version drift: snapshot source_version {local_version}, upstream {live_version}", file=sys.stderr)
-        return 1
-    print(f"warning: version drift: snapshot source_version {local_version}, "
+        if getattr(args, "fail_on_version_drift", False):
+            print(f"FAIL: version drift with --fail-on-version-drift",
+                  file=sys.stderr)
+            return 1
+        print(f"warning: version drift: snapshot source_version {local_version}, "
               f"upstream version {live_version}; does not fail.",
               file=sys.stderr)
 
