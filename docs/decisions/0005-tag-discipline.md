@@ -329,3 +329,16 @@ history.
 - `docs/v1.0.0-verification.md` — the corrected v1.0.0 verification
 - `docs/decisions/v1.0.0-decisions.md` D12 — release.sh ported before
   v1.0.0
+
+---
+
+## Amendment (2026-11-08) — Decision 4 and Scope reconciled
+
+Decision 4 lists three reasons a tag may be moved. Scope, added in v1.0.2,
+narrows that to one: pipeline failure before verification (the v1.0.0
+case). Scope is controlling. The third reason Decision 4 lists, a release
+cut against the wrong CHANGELOG section, is not a tag move: Scope's
+"Neither case applies to" list says a CHANGELOG disagreement is resolved
+by correcting the CHANGELOG ("the tag is the claim about what shipped; the
+CHANGELOG is the claim about what was known when"). Decision 4 is not
+rewritten; read it with this amendment.

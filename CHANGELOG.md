@@ -16,6 +16,116 @@ must match `VERSION`. CI enforces this with
 
 ### Added
 
+- `registry_release.json`, `registry_release.schema.json` and
+  `tools/gen_registry_release.py`: a generated self-description of the
+  release (every artifact a consumer might load, with size and SHA-256;
+  the source file; the counts; the vendored snapshots). `release.sh`
+  regenerates it after the version bump and runs
+  `gen_registry_release.py --check` as gate 18 (18 gates, up from 17);
+  `make registry-release` regenerates it. `distribution` is
+  `source-only`; `commit` and `tag_object` are `null` by design, because
+  the file ships inside the release commit.
+- `tests/test_counts.json`: the declared test count per suite, read by
+  the generator.
+- `SECURITY.md`.
+- `tests/test_fetch_swift_mic.py` (2 tests) and the fixture
+  `tests/fixtures/valid_seventeen_plus_one.csv`.
+
+### Changed
+
+- The two vendored snapshots were re-vendored against the current
+  upstream tags: ISO 3166 from v1.6.9 to v1.12.5 and Exchange Calendar
+  from v2.15.4 to v2.24.0. Content is unchanged (252 codes; the same 74
+  MICs). `vendored_at` is 2026-11-08; `review_by` is 2027-11-08 and
+  2027-02-08. `check_iso3166_current.py --strict` and
+  `check_exchange_calendar_current.py --strict` print no version-drift
+  warning against them.
+- `tools/fetch_swift_mic.py` raises on unexpected columns, as ADR 0003
+  says it does. It used to check only for missing columns and silently
+  ignored an added one.
+- `tools/iso10383_cli.py` is case-insensitive for MIC arguments and for
+  `--country`, `--category`, `--status` and `--mic-type`, as the four
+  wrappers are. Before, `iso10383 lookup xnys` exited 2 and
+  `iso10383 list --country us` printed no rows and exited 0.
+- The README no longer carries a version number, a manifest claim count
+  or a vendored-snapshot version in prose; those are in
+  `registry_release.json` and in each snapshot's `.meta.json`. Its
+  JavaScript import example is `require("./wrappers/javascript")`:
+  wrappers are source-only.
+
+### Fixed
+
+- `tools/check_release_claims.py`: the docstring now says what the code
+  does (a claim on a missing file fails, including an absent-only claim).
+- `CONTRIBUTING.md` quoted 139 root tests and 257 in all; it now agrees
+  with the tree.
+- ADRs 0005, 0010 and 0011 gain amendments dated 2026-11-08: Decision 4
+  and Scope reconciled (0005); the monthly refresh is not the only
+  scheduled workflow (0010, 0011); the `review_by` dates in the
+  snapshot-review table moved (0011).
+- `tests/test_cli.py::test_lookup_unknown_is_2` used the lowercase
+  `zzzz` to trigger a usage error, which only worked because the CLI was
+  case-sensitive; it now uses `ZZZ`, which is not a MIC pattern.
+
+### Corrected
+
+- The v1.1.0 release notes listed three wrapper methods (`descendants`,
+  `root`, `siblings`) that were never implemented. They are not in this
+  release; the correct inventory is eleven query methods in each wrapper.
+  The tag v1.1.0 is not moved (ADR 0005).
+- Items that had stayed under `[Unreleased]` were moved into `[1.0.5]`,
+  the release their dates (the ADR amendments of 2026-10-10 and
+  2026-10-18, between v1.0.4 on 2026-09-28 and v1.0.5 on 2026-11-03) and
+  `docs/v1.0.5-verification.md` (which lists the gates they describe)
+  place them in.
+- The v1.1.1 README quoted version 1.1.0 and a claim count of 201 when
+  the manifest held 206; the three manifest claims that pinned that
+  text were removed.
+
+### Tests
+
+- The root suite grows from 140 to 143 tests (`test_cli_is_case_insensitive`
+  and two in `test_fetch_swift_mic.py`): 261 across all five suites, up
+  from 258. The JavaScript figure of 29 is what `node --test` reports: 28
+  `test()` definitions plus the fixture-anchor module.
+
+## [1.1.1] - 2026-11-06
+ 
+### Changed
+- README rewritten to the ISO 4217 / ISO 3166 bar.
+- 24 sections, 14 at-a-glance rows, 17 gates in the release pipeline.
+- 18 data figures re-derived from the tree.
+- 50 internal links, all verified against the tree's heading slugs.
+- `release_claims.json`: 5 claims updated to match the new README counts
+  (tests-258, 201 total, 179 doc-facts, 185 for 1.1.0, 15 examples).
+
+## [1.1.0] - 2026-11-04
+
+### Added
+- `Makefile` with `package`, `build-wheel`, and `test` targets.
+- `check-sources.yml` workflow for weekly SWIFT URL health monitoring.
+- `examples/orders-5k/` demo showing the cost of not joining on MICs.
+- `docs/ENRICHMENT.md` explaining why nullable fields are null.
+- `docs/decisions/README.md` navigation index for the twelve ADRs.
+- `descendants`, `root`, and `siblings` methods to all four wrappers.
+
+### Changed
+- `RELEASE_PATTERN.md` now sanctions the one-per-push-workflow variant.
+- `docs/decisions/v1.0.0-decisions.md` now has per-decision `**Status:**` lines, stale references fixed, and D14 clarified.
+- The README now carries durable framings ("A verification document exists per release", "twelve ADRs plus the register").
+- Claims and test counts synced across the tree (184 claims, 140 tests).
+
+### Fixed
+- Resolved contradictions in ADRs 0003, 0005, 0007, 0008, 0009, and 0010.
+- Added `dist/` and `build/` to `.gitignore` to prevent `release.sh` from failing after `make build-wheel`.
+
+## [1.0.5] - 2026-11-03
+
+### Added
+
+- `--today` flag to `check_registry_freshness.py`.
+- `expired_tie_break_mic_synthetic` fixture case to test the deterministic tie-break in `expired()`.
+- `--allow-missing` flag to `sync_wrappers.py` for the "wrappers being built" case.
 - `constraints.txt` pins output-affecting dependencies (`pyarrow`); every
   CI job that installs `pyarrow` uses `-c constraints.txt`.
 - `export_parquet.py --check` compares bytes; footer metadata is sorted
@@ -50,6 +160,11 @@ must match `VERSION`. CI enforces this with
 
 ### Changed
 
+- `expired()` in all four wrappers now sorts by `(expiration_date, mic)` instead of source order.
+- `check_iso3166_current.py` and `check_exchange_calendar_current.py` treat an unreachable sibling as a failure, not a silent pass.
+- `release.sh` gate list drops the duplicate `test_pip_pins.py` call; the README now says "17 release-gate checks".
+- README, CONTRIBUTING, and `release_claims.json` test counts synced to 140 root / 258 total.
+- Cross-reference validation is now blocking by default.
 - `check_iso3166_current.py` and `check_exchange_calendar_current.py`
   compare the local `source_version` against upstream and warn on version
   drift; content drift (code or MIC set difference) still fails `--strict`.
@@ -89,6 +204,12 @@ must match `VERSION`. CI enforces this with
 
 ### Fixed
 
+- Go wrapper's `ByMIC` and query methods now return a deep copy (`cloneMIC`), preventing callers from mutating the registry through `*string` pointer aliases.
+- Python wrapper's `_bundled_path()` uses `read_text()` directly, fixing a crash on zipapp/frozen installs.
+- `validate.py` now rejects `--only` combined with `--skip`.
+- Removed `check_iso4217_current.py` (it was an inactive no-op).
+- Fixed stale references to `test_check_release_claims.py` in `docs/AUDIT.md`.
+- Fixed the README's Tests table rows, which still showed T0's counts.
 - Python `validate()` uppercases its input, matching `by_mic` and the
   other three wrappers.
 - Python `__main__.py` uses `from __future__ import annotations`,
@@ -119,6 +240,8 @@ must match `VERSION`. CI enforces this with
 
 ### Tests
 
+- The root suite grew from 132 to 140 tests.
+- The release manifest grew from 148 to 182 claims.
 - Fixture cases for lowercase `by_mic`, `segments`, `by_status`,
   `by_category`, and expired tie order.
 - `test_checks.py` and `test_fixture.py` validate the checking tools and
@@ -133,67 +256,7 @@ must match `VERSION`. CI enforces this with
 ### Removed
 
 - The ISO 4217 `--check` step is removed from CI (no ISO 4217 snapshot;
-  the tool is retained in the tree with a docstring note).
-
-## [1.1.1] - 2026-11-06
- 
-### Changed
-- README rewritten to the ISO 4217 / ISO 3166 bar.
-- 24 sections, 14 at-a-glance rows, 17 gates in the release pipeline.
-- 18 data figures re-derived from the tree.
-- 50 internal links, all verified against the tree's heading slugs.
-- `release_claims.json`: 5 claims updated to match the new README counts
-  (tests-258, 201 total, 179 doc-facts, 185 for 1.1.0, 15 examples).
-
-## [1.1.0] - 2026-11-04
-
-### Added
-- `Makefile` with `package`, `build-wheel`, and `test` targets.
-- `check-sources.yml` workflow for weekly SWIFT URL health monitoring.
-- `examples/orders-5k/` demo showing the cost of not joining on MICs.
-- `docs/ENRICHMENT.md` explaining why nullable fields are null.
-- `docs/decisions/README.md` navigation index for the twelve ADRs.
-- `descendants`, `root`, and `siblings` methods to all four wrappers.
-
-### Changed
-- `RELEASE_PATTERN.md` now sanctions the one-per-push-workflow variant.
-- `docs/decisions/v1.0.0-decisions.md` now has per-decision `**Status:**` lines, stale references fixed, and D14 clarified.
-- The README now carries durable framings ("A verification document exists per release", "twelve ADRs plus the register").
-- Claims and test counts synced across the tree (184 claims, 140 tests).
-
-### Fixed
-- Resolved contradictions in ADRs 0003, 0005, 0007, 0008, 0009, and 0010.
-- Added `dist/` and `build/` to `.gitignore` to prevent `release.sh` from failing after `make build-wheel`.
-
-## [1.0.5] - 2026-11-03
-
-### Added
-
-- `--today` flag to `check_registry_freshness.py`.
-- `expired_tie_break_mic_synthetic` fixture case to test the deterministic tie-break in `expired()`.
-- `--allow-missing` flag to `sync_wrappers.py` for the "wrappers being built" case.
-
-### Changed
-
-- `expired()` in all four wrappers now sorts by `(expiration_date, mic)` instead of source order.
-- `check_iso3166_current.py` and `check_exchange_calendar_current.py` treat an unreachable sibling as a failure, not a silent pass.
-- `release.sh` gate list drops the duplicate `test_pip_pins.py` call; the README now says "17 release-gate checks".
-- README, CONTRIBUTING, and `release_claims.json` test counts synced to 140 root / 258 total.
-- Cross-reference validation is now blocking by default.
-
-### Fixed
-
-- Go wrapper's `ByMIC` and query methods now return a deep copy (`cloneMIC`), preventing callers from mutating the registry through `*string` pointer aliases.
-- Python wrapper's `_bundled_path()` uses `read_text()` directly, fixing a crash on zipapp/frozen installs.
-- `validate.py` now rejects `--only` combined with `--skip`.
-- Removed `check_iso4217_current.py` (it was an inactive no-op).
-- Fixed stale references to `test_check_release_claims.py` in `docs/AUDIT.md`.
-- Fixed the README's Tests table rows, which still showed T0's counts.
-
-### Tests
-
-- The root suite grew from 132 to 140 tests.
-- The release manifest grew from 148 to 182 claims.
+  the tool was first retained in the tree with a docstring note, then deleted in this same release; see Fixed).
 
 ## [1.0.4] - 2026-09-28
 
@@ -354,7 +417,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/slimissa/iso10383/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/slimissa/iso10383/compare/v1.0.5...v1.1.0
 [1.0.5]: https://github.com/slimissa/iso10383/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/slimissa/iso10383/compare/v1.0.3...v1.0.4

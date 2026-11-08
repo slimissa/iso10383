@@ -1,0 +1,8 @@
+{
+  "_comment": "Declared test count per suite. tools/gen_registry_release.py copies these into registry_release.json (counts.tests); test-v1.1.2.sh compares them with what each runner reports. Update this file whenever a suite gains or loses a test.",
+  "root": 143,
+  "python": 31,
+  "javascript": 29,
+  "rust": 27,
+  "go": 31
+}

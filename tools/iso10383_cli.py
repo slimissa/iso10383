@@ -54,6 +54,12 @@ ENV_COLOR = "ISO10383_COLOR"
 
 MIC_RE = re.compile(r"^[A-Z0-9]{4}$")
 
+
+def _upper(s: str) -> str:
+    """argparse type: MIC and filter arguments are case-insensitive, as in
+    the four wrappers. Folding happens before the pattern and choices checks."""
+    return s.upper()
+
 # ---------------------------------------------------------------- color
 
 class C:
@@ -408,22 +414,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     sp = sub.add_parser("lookup", help="all fields for one MIC",
                         parents=[output])
-    sp.add_argument("mic")
+    sp.add_argument("mic", type=_upper)
 
     sp = sub.add_parser("list", help="filter across the registry",
                         parents=[output])
-    sp.add_argument("--country", metavar="CC")
-    sp.add_argument("--category", metavar="CODE")
-    sp.add_argument("--status", choices=["ACTIVE", "UPDATED", "EXPIRED"])
-    sp.add_argument("--mic-type", choices=["OPERATING", "SEGMENT"])
+    sp.add_argument("--country", metavar="CC", type=_upper)
+    sp.add_argument("--category", metavar="CODE", type=_upper)
+    sp.add_argument("--status", choices=["ACTIVE", "UPDATED", "EXPIRED"],
+                    type=_upper)
+    sp.add_argument("--mic-type", choices=["OPERATING", "SEGMENT"],
+                    type=_upper)
 
     sp = sub.add_parser("segments", help="direct segments of a parent MIC",
                         parents=[output])
-    sp.add_argument("mic")
+    sp.add_argument("mic", type=_upper)
 
     sp = sub.add_parser("parent", help="the operating_mic of a MIC",
                         parents=[output])
-    sp.add_argument("mic")
+    sp.add_argument("mic", type=_upper)
 
     sp = sub.add_parser("expired", help="expired MICs",
                         parents=[output])
@@ -431,7 +439,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     sp = sub.add_parser("validate", help="exit 0 if every MIC exists",
                         parents=[output])
-    sp.add_argument("mics", nargs="+")
+    sp.add_argument("mics", nargs="+", type=_upper)
 
     sp = sub.add_parser("search", help="substring on market_name and acronym",
                         parents=[output])

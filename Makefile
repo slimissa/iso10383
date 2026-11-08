@@ -10,10 +10,13 @@
 # bundle; it needs the `build` package (pip install build).
 # `make test` runs the root suite and every wrapper's suite; it needs
 # Node, Rust and Go (the cross-language check runs with --strict).
+#
+# `make registry-release` regenerates registry_release.json. Run it after
+# `make package` and after any change to a file the manifest lists.
 
 PYTHON ?= python3
 
-.PHONY: package build-wheel test
+.PHONY: package build-wheel test registry-release
 
 package:
 	$(PYTHON) tools/export_csv.py
@@ -28,3 +31,6 @@ build-wheel: package
 test:
 	$(PYTHON) -m pytest tests/ -q
 	bash tools/check_cross_language.sh --strict
+
+registry-release:
+	$(PYTHON) tools/gen_registry_release.py --version "$$(cat VERSION)"

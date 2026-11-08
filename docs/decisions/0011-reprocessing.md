@@ -245,3 +245,23 @@ headers and the four bundled copies. `git log -S'"updated": "2026-09-28"'
 example in the README (replaced in `9c3d821`) and is the release date of
 v1.0.2 to v1.0.4, not a value in the data. There is no divergence to
 explain, and this question is closed.
+
+---
+
+## Amendment (2026-11-08) — the retraction reaffirmed; two statements corrected
+
+The 2026-10-18 amendment above retracts the premise that `meta.updated` and
+`meta.source_snapshot` ever diverged. The retraction stands: in
+`iso10383.json` at this tree both are `2026-09-23`, and no committed
+registry has carried different values.
+
+Two statements in the body are out of date and are corrected here without
+rewriting the body:
+
+- "It is the only `schedule:` entry under `.github/`" (the monthly refresh,
+  step 1 of the refresh). Since v1.1.0 `check-sources.yml` is a second one
+  (weekly, 06:00 UTC on Monday; ADR 0010, amendment of 2026-11-08).
+- The *Snapshot review* row of the table, "Today: 2027-01-10 (Exchange
+  Calendar), 2027-09-28 (ISO 3166)". After the snapshots were re-vendored
+  on 2026-11-08 the `review_by` dates are 2027-02-08 (Exchange Calendar) and
+  2027-11-08 (ISO 3166). The dates are in each snapshot's `.meta.json`.

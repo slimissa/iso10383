@@ -148,7 +148,8 @@ def download(force: bool = False, target: Path | None = None) -> Path:
 
 def iter_rows(csv_path: Path) -> Iterator[tuple[int, dict[str, str]]]:
     """Yield (row_num, row_dict). Row 1 is the header, so the first data
-    row is row_num=2. Missing required columns fail immediately."""
+    row is row_num=2. Missing or unexpected columns fail immediately: a
+    new column is a schema change and needs a code change (ADR 0003)."""
     with csv_path.open(encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         headers = reader.fieldnames or []
@@ -156,6 +157,11 @@ def iter_rows(csv_path: Path) -> Iterator[tuple[int, dict[str, str]]]:
         if missing:
             raise ValueError(
                 f"{csv_path}: missing columns: {sorted(missing)}"
+            )
+        unexpected = set(headers) - REQUIRED_COLUMNS
+        if unexpected:
+            raise ValueError(
+                f"{csv_path}: unexpected columns: {sorted(unexpected)}"
             )
         for i, row in enumerate(reader):
             yield i + 2, row

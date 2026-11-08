@@ -35,7 +35,10 @@ def test_subcommand_runs(args):
 
 
 def test_lookup_unknown_is_2():
-    assert run("lookup", "zzzz").returncode == 2
+    # "ZZZ" is three characters, so it is not the MIC pattern: a usage error.
+    # (It used to be the lowercase "zzzz", which only failed because the CLI
+    # was case-sensitive.)
+    assert run("lookup", "ZZZ").returncode == 2
 
 
 def test_lookup_missing_exits_1():
@@ -79,3 +82,24 @@ def test_raw_mode():
     assert r.returncode == 0
     lines = [l for l in r.stdout.splitlines() if l]
     assert "XTKS" in lines
+
+
+def test_cli_is_case_insensitive():
+    """Every MIC and filter argument folds case, as the four wrappers do.
+    Each lowercase invocation must give the same non-empty answer as its
+    uppercase twin: a matched-zero-rows answer is a failure of the fold."""
+    pairs = [
+        (["lookup", "xnys"], ["lookup", "XNYS"]),
+        (["segments", "xjpx", "--raw", "mic"], ["segments", "XJPX", "--raw", "mic"]),
+        (["parent", "xtks"], ["parent", "XTKS"]),
+        (["validate", "xnys", "xlon"], ["validate", "XNYS", "XLON"]),
+        (["list", "--country", "us", "--raw", "mic"], ["list", "--country", "US", "--raw", "mic"]),
+        (["list", "--status", "active", "--raw", "mic"], ["list", "--status", "ACTIVE", "--raw", "mic"]),
+        (["list", "--category", "rmkt", "--raw", "mic"], ["list", "--category", "RMKT", "--raw", "mic"]),
+        (["list", "--mic-type", "segment", "--raw", "mic"], ["list", "--mic-type", "SEGMENT", "--raw", "mic"]),
+    ]
+    for lower, upper in pairs:
+        a, b = run(*lower), run(*upper)
+        assert a.returncode == 0 and b.returncode == 0, (lower, a.stderr, b.stderr)
+        assert a.stdout == b.stdout, lower
+        assert a.stdout.strip(), f"{lower}: zero rows"

@@ -303,3 +303,14 @@ sibling comparisons that run on every push, under `--strict`, are
 `check_iso3166_current.py` and `check_exchange_calendar_current.py`. The
 section's conclusion is unchanged: both read the outside world and neither
 interprets it.
+
+---
+
+## Amendment (2026-11-08) — the only scheduled workflow
+
+The body says "The only `schedule:` entry under `.github/` is the monthly
+refresh." Since v1.1.0 there are two: `refresh.yml` (monthly, 00:00 UTC on
+the 15th) and `check-sources.yml` (weekly, 06:00 UTC on Monday).
+`check-sources.yml` does not run on push and is not part of the release
+poll. The body's sentence is corrected here and is not rewritten. Command:
+`grep -n cron .github/workflows/*.yml`.

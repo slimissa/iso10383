@@ -10,9 +10,12 @@ Each claim is one of:
   {"file": "path"}                     — path must exist
   {"file": "path", "contains": "text"} — path must exist and include text
   {"file": "path", "absent": "text"}   — path must not include text
-                                         (a missing path passes; pair the
-                                         claim with a {"file": "path"}
-                                         claim to require the path)
+
+A claim about a file that does not exist FAILS, whatever its shape,
+including an absent-only claim: a claim cannot be verified against a
+file that is not there, and renaming a file must not silence every
+absence claim on it. (An earlier version let a missing path pass an
+absent-only claim; that was a bug, fixed before v1.1.1.)
 
 `contains` and `absent` may be combined in one claim. Any other key is
 an error: a misspelled key must not silently weaken a claim.
