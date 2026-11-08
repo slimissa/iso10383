@@ -8,6 +8,6 @@
     "review_by": "2027-11-08",
     "refresh_cadence": "monthly"
   },
-  "upstream_sha256": "<UPSTREAM_ISO3166_SHA>",
+  "upstream_sha256": "dc18f68a049b5b5674a1613cfa4543207b52f3526c2233971f1d2da99fe8eeb8",
   "snapshot_sha256": "a86cb869ffacda21864eac817264be6efb3c472e1c235fc993c3a62891ccf32d"
 }
