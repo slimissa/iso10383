@@ -236,6 +236,10 @@ run python3 tools/gen_registry_release.py --version "$VERSION"
 
 # --- Gate -----------------------------------------------------------------
 
+# Before the version-consistency gate, rewrite the README counts
+# from registry_release.json (the counts must not drift).
+python3 tools/gen_registry_release.py --update-readme-counts
+
 step "Version consistency (after regeneration)"
 gate python3 tools/check_version_consistency.py
 

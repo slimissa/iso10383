@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.1-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-258-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-261-success.svg)](./tests/)
 
 ---
 
@@ -55,12 +55,13 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Market categories** | 14 of the 16 ISO codes are in use (`ARMS` and `CTPS` are defined, unassigned) |
 | **Flat exports** | 9 derived files: SQL (4 dialects), CSV/TSV (4 variants), Parquet (1 file) |
 | **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
-| **Release gate** | 17 checks in [`scripts/release.sh`](./scripts/release.sh) |
-| **Manifest claims** | 201 in [`tools/release_claims.json`](./tools/release_claims.json) (179 `doc-facts` plus 22 for four releases); the 1.1.0 gate verifies 185 |
-| **Tests** | 258: 140 root and 118 in the wrappers (31 + 29 + 27 + 31) |
-| **Version** | 1.1.0, one version number at nine sites; the schema is 1.0.0 |
+| **Release gate** | 18 checks in [`scripts/release.sh`](./scripts/release.sh) |
+| **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
+| **Tests** | 261: 143 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
 | **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-09-23, `sha256:79de0f77...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
-| **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 v1.6.9, Exchange Calendar v2.15.4); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel` and `test`; one example, [`examples/orders-5k`](./examples/orders-5k) |
+| **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
+| **Security** | See [SECURITY.md](./SECURITY.md); integrity via `registry_release.json` |
 | **Dependencies and license** | The JSON needs none. Python, JavaScript and Go wrappers have none; the Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. Apache 2.0. |
 
 ### Reproduce every number
@@ -79,13 +80,15 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | Flat exports | `ls iso10383* \| grep -v 'json$' \| wc -l` | `9` |
 | Wrappers | `ls wrappers \| wc -l` | `4` |
 | Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `17` |
-| Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | `201` |
-| Claims the 1.1.0 gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all 185 claim(s) verified` |
-| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `140 passed` |
-| Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on 1.1.0` |
+| Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | the value of `counts.claims.in_file` in `registry_release.json` |
+| Claims the current gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all N claim(s) verified`, where N is `counts.claims.verified` in `registry_release.json` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `143 passed` |
+| Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on <VERSION>`, where `<VERSION>` is the contents of the `VERSION` file |
 | Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
 | CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
 | CI workflows | `ls .github/workflows \| wc -l` | `3` |
+
+The `0 broken chains` line that `validate.py` prints is a success message: the script reaches it only when no error was raised. The count itself is `meta.broken_chains` in `iso10383.json` and the output of `iso10383_cli.py check`.
 
 ---
 
@@ -236,6 +239,7 @@ The CLI is a repository artifact, covered in [Command-line interface](#11-comman
 make package      # regenerate the nine flat exports and the four wrapper copies; idempotent
 make build-wheel  # package, then build the Python wheel and sdist (needs: pip install build)
 make test         # root pytest, then check_cross_language.sh --strict
+make registry-release  # regenerate registry_release.json (after make package)
 ```
 
 `make package` is the one command to run after modifying `iso10383.json`. It runs `export_csv.py`, `export_sql.py`, `export_parquet.py` and `sync_wrappers.py`; running it twice changes nothing the second time.
@@ -258,7 +262,7 @@ The registry is not one file. It is five layers, each with a different authority
 
 **Where the rule is enforced by a tool, not by convention:**
 
-- **Layer 0 to 1.** `tools/fetch_swift_mic.py` is the only tool that reads `raw/`. Its parser raises on an unknown `OPRT/SGMT` or status value, an operating MIC that does not self-reference, a segment that does, a malformed date, or a missing column, and it writes nothing when it raises.
+- **Layer 0 to 1.** `tools/fetch_swift_mic.py` is the only tool that reads `raw/`. Its parser raises on an unknown `OPRT/SGMT` or status value, an operating MIC that does not self-reference, a segment that does, a malformed date, a missing column or an unexpected one, and it writes nothing when it raises.
 - **Layer 1 to 2.** Each exporter has a `--check` mode that regenerates in memory and compares with the committed file. `export_parquet.py --check` compares bytes.
 - **Layer 1 to 3.** `tools/sync_wrappers.py --check` compares the four bundled copies with `iso10383.json`.
 - **Layer 1 to 4.** `tools/validate.py` reads the two snapshots (and no sibling repository) at validation time; `gen_*_snapshot.py --check` reproduces each snapshot from its pinned upstream tag.
@@ -276,7 +280,7 @@ Only Layer 0 cannot be regenerated from this repository. **Back up `raw/`.** The
 ```json
 {
   "meta": {
-    "version": "1.1.0",
+    "version": "<the contents of VERSION>",
     "updated": "2026-09-23",
     "source_snapshot": "2026-09-23",
     "source_url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv",
@@ -608,7 +612,7 @@ Typing, because Parquet has a type system:
 ```python
 import pyarrow.parquet as pq
 t = pq.read_table("iso10383.parquet")
-print(t.schema.metadata[b"iso10383.version"])   # b'1.1.0'
+print(t.schema.metadata[b"iso10383.version"])   # the contents of VERSION, as bytes
 ```
 
 ### Comparison semantics and the build pin
@@ -640,10 +644,10 @@ Two committed snapshots provide the cross-reference data. No runtime dependency 
 
 | Snapshot | Grain | Join key into this registry | Contents | Source |
 |----------|-------|-----------------------------|----------|--------|
-| [`tools/iso3166_snapshot.json`](./tools/iso3166_snapshot.json) | one entry per alpha-2 code | `mics[].country_code` | 252 codes | ISO 3166 v1.6.9 |
-| [`tools/exchange_calendar_snapshot.json`](./tools/exchange_calendar_snapshot.json) | one entry per MIC | `mics[].mic` | 74 MICs | Exchange Calendar v2.15.4 |
+| [`tools/iso3166_snapshot.json`](./tools/iso3166_snapshot.json) | one entry per alpha-2 code | `mics[].country_code` | 252 codes | ISO 3166, at the `source_version` in `iso3166_snapshot.meta.json` |
+| [`tools/exchange_calendar_snapshot.json`](./tools/exchange_calendar_snapshot.json) | one entry per MIC | `mics[].mic` | 74 MICs | Exchange Calendar, at the `source_version` in `exchange_calendar_snapshot.meta.json` |
 
-Each has a `.meta.json` sibling with `source_version`, `vendored_at`, `vendored_from`, and a nested `meta` object holding `review_by` (2027-09-28 and 2027-01-10) and `refresh_cadence` (`monthly` for both). The snapshot files stay byte-for-byte as generated; the `.meta.json` records where they came from.
+Each has a `.meta.json` sibling with `source_version`, `vendored_at`, `vendored_from`, and a nested `meta` object holding `review_by` and `refresh_cadence` (`monthly` for both). The snapshot files stay byte-for-byte as generated; the `.meta.json` records where they came from.
 
 Each is produced by a generator that fetches the pinned tag named in its meta, never `main`: `tools/gen_iso3166_snapshot.py` reads `…/v<source_version>/iso3166.json`, and `tools/gen_exchange_calendar_snapshot.py` runs `git clone --branch v<source_version>`. Both have a `--check` mode that reproduces the committed snapshot from that tag and compares bytes. Both run in the `check-snapshots` CI job and in the release gate.
 
@@ -806,6 +810,8 @@ The CLI is [`tools/iso10383_cli.py`](./tools/iso10383_cli.py), a repository arti
 
 **Output modes**, mutually exclusive on every subcommand: `--json` (object or array), `--jsonl` (one object per line), `--csv`, `--tsv` (columns match `iso10383.csv` and `iso10383.tsv`), `--raw FIELD` (bare values, one per line).
 
+MIC arguments and the `--country`, `--category`, `--status` and `--mic-type` filters are case-insensitive, as in the four wrappers: `iso10383 lookup xnys` finds `XNYS`, and `iso10383 list --country us` lists the same rows as `--country US`.
+
 **Exit codes:** 0 success; 1 not found (`lookup`, `validate`); 2 usage error; 3 registry file missing or invalid. A script can tell "not in the registry" from "you typed the command wrong".
 
 **Color** is on when stdout is a terminal and off when piped. Override with `ISO10383_COLOR=never|auto|always`, `--color`, `--no-color`, or `NO_COLOR`.
@@ -837,7 +843,7 @@ Four wrappers, one contract. Each is verified against the shared fixture [`tests
 | Language | Package | Source | Minimum | Import | Tests |
 |----------|---------|--------|---------|--------|------:|
 | Python | `iso10383-registry` | [`wrappers/python`](./wrappers/python) | Python 3.9 | `from iso10383 import MICRegistry` | 31 |
-| JavaScript | `iso10383-registry` | [`wrappers/javascript`](./wrappers/javascript) | Node 18 | `const { MICRegistry } = require("iso10383-registry")` | 29 |
+| JavaScript | `iso10383-registry` | [`wrappers/javascript`](./wrappers/javascript) | Node 18 | `const { MICRegistry } = require("./wrappers/javascript")` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `iso10383-registry` | [`wrappers/rust`](./wrappers/rust) | edition 2021 | `use iso10383_registry::Registry;` | 27 |
 | Go | `github.com/slimissa/iso10383/wrappers/go` | [`wrappers/go`](./wrappers/go) | Go 1.21 | `import iso10383 "github.com/slimissa/iso10383/wrappers/go"` | 31 |
 
@@ -894,7 +900,7 @@ Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not fou
 
 ### The release gate, in order
 
-The 17 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it runs them. Each is a `gate` call: the script records its exit code and stops on a non-zero one.
+The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it runs them. Each is a `gate` call: the script records its exit code and stops on a non-zero one.
 
 | # | Check | Tool | What it catches |
 |--:|-------|------|-----------------|
@@ -911,10 +917,11 @@ The 17 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
 | 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
 | 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
-| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 140 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 143 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
 | 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
 | 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
 | 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
+| 18 | Release manifest | `gen_registry_release.py --check --version "$VERSION"` | A `registry_release.json` that is stale against the tree, invalid against its schema, or missing |
 
 ### The six layers of `validate.py`
 
@@ -931,7 +938,7 @@ The 17 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 
 | Check | Where | What it catches |
 |-------|-------|-----------------|
-| Raw-to-curated parse | `fetch_swift_mic.py` (the refresh) | Unknown type or status values, bad self-reference, malformed dates, missing columns, broken chains with `--strict` |
+| Raw-to-curated parse | `fetch_swift_mic.py` (the refresh) | Unknown type or status values, bad self-reference, malformed dates, missing or unexpected columns, broken chains with `--strict` |
 | Refresh diff | `refresh_diff.py` (the refresh) | NEW / EXPIRED / CHANGED / REMOVED counts between two registry files (CHANGED watches six fields); a REMOVED count above 0 exits 1 and opens the refresh PR as a draft |
 | Python wrapper suite | `pytest wrappers/python/tests -q`, in `check-wrappers` and inside gate 15 | The 31 Python wrapper tests |
 | SWIFT source health | `check-sources.yml`, weekly | SWIFT's file failing to download, or under 100,000 bytes (it opens an issue) |
@@ -944,20 +951,20 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 ### Release claims
 
-[`tools/release_claims.json`](./tools/release_claims.json) holds 201 machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`: 6 for 1.0.3, 5 for 1.0.4, 5 for 1.0.5, 6 for 1.1.0 and 179 under `doc-facts`. `check_release_claims.py <version>` verifies the `doc-facts` set plus that version's set (185 claims for 1.1.0) and exits non-zero on the first false one. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
+[`tools/release_claims.json`](./tools/release_claims.json) holds machine-checkable claims, each of the form `{file, contains}` or `{file, absent}`, in one list per released version plus a `doc-facts` list. `check_release_claims.py <version>` verifies the `doc-facts` set plus that version's set and exits non-zero on the first false one. The counts of each set are in `registry_release.json` (`counts.claims`), not in this prose. It runs in the `validate-json` CI job and in the release gate. The claims exist to stop classes of drift from coming back: a version string or count that disagrees with the tree, a tool name that no longer exists, mojibake, an unclosed code fence, a snapshot that disagrees with its meta, and the stale phrases a past audit removed (for example a wrong dialect label for the generic SQL file). Claims describe state, not intent ([`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) rule 6c).
 
 ### Tests
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 140 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 143 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
-| JavaScript | `(cd wrappers/javascript && node --test)` | 29 |
+| JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
-| **Total** | | **258** |
+| **Total** | | **261** |
 
-The Tests badge above reads 258, the sum of this table. The root suite is spread over sixteen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (17), `test_checks.py` (14), `test_export_sql.py` (12), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_check_registry_freshness.py` (6).
+The Tests badge above reads 261, the sum of this table. The root suite is spread over seventeen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (14), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_check_registry_freshness.py` (6).
 
 ---
 
@@ -1041,9 +1048,9 @@ The script conforms to [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md), t
 
 1. **Preconditions.** An orphan-variable check, `git fetch origin main`, branch is `main`, `HEAD` equals `origin/main`, clean working tree, tag `v<version>` free locally and on `origin`, a `## [<version>]` section in `CHANGELOG.md`, `gh` installed, and `VERSION` differs from the target. Any failure exits 1.
 2. **Version sites.** Writes `VERSION`, `iso10383.json` `meta.version`, the Python `pyproject.toml` and `__init__.py`, `package.json`, `Cargo.toml` and the README badge. The changelog heading is written by hand beforehand, and the Parquet footer follows from regeneration, which makes nine sites.
-3. **Regenerate** the exports and the bundles, in layer order.
+3. **Regenerate** the exports and the bundles, in layer order, then `registry_release.json`.
 4. **Version consistency** (`check_version_consistency.py`) after regeneration, so a site the bump missed fails here.
-5. **Gate.** Seventeen `gate` calls, in this order; each records its exit code in `GATE_LOG` and stops the release on a non-zero exit:
+5. **Gate.** Eighteen `gate` calls, in this order; each records its exit code in `GATE_LOG` and stops the release on a non-zero exit:
 
    1. `python3 tools/check_version_consistency.py`
    2. `python3 tools/validate.py`
@@ -1062,12 +1069,33 @@ The script conforms to [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md), t
    15. `bash tools/check_cross_language.sh --strict`
    16. `python3 tools/gen_iso3166_snapshot.py --check`
    17. `python3 tools/gen_exchange_calendar_snapshot.py --check`
+   18. `python3 tools/gen_registry_release.py --check --version "$VERSION"`
 
 6. **Commit and push** (`Release v<version>`), then **poll every workflow run for the release SHA** every 15 seconds for up to 600 seconds. It continues only when every run has completed with success; a failure or a timeout exits 1 before the tag exists.
 7. **Tag** only on green: the message is the `CHANGELOG.md` section (first line `Release v<version>`), checked for a header, a body and placeholders, then `git tag -a -F ... --cleanup=verbatim`. The recorded message is read back with `git for-each-ref` and compared with the file; on a mismatch the local tag is deleted and nothing is pushed. Then `git push origin "v<version>"`.
 8. **Verification document.** Writes `docs/v<version>-verification.md` with the commit SHA, the tag object SHA, and the exit code of every gate from `GATE_LOG`, so a gate added to the script cannot be missing from the document.
 
 Tags are immutable ([ADR 0005](./docs/decisions/0005-tag-discipline.md)). A verification document exists per release: [`v1.0.0`](./docs/v1.0.0-verification.md), [`v1.0.1`](./docs/v1.0.1-verification.md), [`v1.0.2`](./docs/v1.0.2-verification.md), [`v1.0.3`](./docs/v1.0.3-verification.md), [`v1.0.4`](./docs/v1.0.4-verification.md), [`v1.0.5`](./docs/v1.0.5-verification.md), [`v1.1.0`](./docs/v1.1.0-verification.md). The gate's `pyarrow` and toolchain requirements are the ones in [Flat exports](#comparison-semantics-and-the-build-pin).
+
+---
+
+### The release manifest
+
+[`registry_release.json`](./registry_release.json) is the release's self-description. [`tools/gen_registry_release.py`](./tools/gen_registry_release.py) generates it and [`registry_release.schema.json`](./registry_release.schema.json) is its contract. It lists every artifact a consumer might load, with size and SHA-256 (the registry, the schema, the nine flat exports and the four bundled copies), the source file the registry was derived from, the counts this README quotes, and the two vendored snapshots with their pinned versions and `review_by` dates. A project that pins registries by manifest (QLF is the first) reads this file; it does not parse this README.
+
+`commit` and `tag_object` are `null` in the committed file, by design: the file ships inside the release commit and cannot contain that commit's SHA, and the tag object does not exist yet. Both are recorded in `docs/v<version>-verification.md` and in the git tag. `distribution` is `source-only`: no wrapper is published.
+
+A consumer checking which tag a manifest describes, and that a file on disk is the file it lists:
+
+```bash
+python3 -c "import json; m=json.load(open('registry_release.json')); print(m['tag'], m['commit'])"
+# v<version> None   (the commit comes from: git rev-parse "<tag>^{commit}")
+
+python3 -c "import hashlib, json; m=json.load(open('registry_release.json')); f=next(x for x in m['files'] if x['path']=='iso10383.json'); print(hashlib.sha256(open('iso10383.json','rb').read()).hexdigest()==f['sha256'])"
+# True
+```
+
+`make registry-release` regenerates the file. `release.sh` regenerates it after the version bump and runs `gen_registry_release.py --check` as gate 18, so a release cannot ship a stale manifest. The number of tests the manifest reports is read from `tests/test_counts.json`; when that file is absent the field is `null`.
 
 ---
 
@@ -1106,15 +1134,18 @@ iso10383/
 ├── VERSION                              # Registry version, source of truth
 ├── iso10383.json                        # Layer 1: the registry (2,883 MICs)
 ├── schema.json                          # JSON Schema draft-07 contract, version 1.0.0
+├── registry_release.json                # Generated: this release's files, hashes, counts, vendored snapshots
+├── registry_release.schema.json         # JSON Schema draft-07 for registry_release.json
 ├── README.md                            # This file
 ├── CHANGELOG.md                         # Release history, [Unreleased] on top
+├── SECURITY.md                          # How to report a vulnerability; the two data-integrity mechanisms
 ├── CONTRIBUTING.md                      # The four rules, source discipline, change workflows
 ├── LICENSE                              # Apache 2.0
 ├── constraints.txt                      # Output-affecting pins (pyarrow==25.0.1)
 ├── requirements-dev.txt                 # jsonschema, pyarrow, pytest, pyyaml; applies constraints.txt
 ├── .gitattributes                       # LF endings for text exports; parquet is binary
 ├── .gitignore                           # raw/, caches, .venv, rust target and lockfile
-├── Makefile                             # package, build-wheel, test
+├── Makefile                             # package, build-wheel, test, registry-release
 │
 ├── iso10383.sql                         # Layer 2: generic dialect (ON CONFLICT DO NOTHING)
 ├── iso10383.postgresql.sql              # Layer 2: PostgreSQL 12+
@@ -1138,18 +1169,19 @@ iso10383/
 │   ├── export_csv.py                    # CSV/TSV generator, 4 files (--check)
 │   ├── export_parquet.py                # Parquet generator, byte-stable (--check)
 │   ├── sync_wrappers.py                 # Layer 3: bundled-copy sync (--check)
+│   ├── gen_registry_release.py          # registry_release.json generator (--check)
 │   ├── iso10383_cli.py                  # The command-line interface
 │   ├── gen_iso3166_snapshot.py          # Layer 4: ISO 3166 snapshot from its pinned tag (--check)
 │   ├── gen_exchange_calendar_snapshot.py  # Layer 4: Exchange Calendar snapshot from its pinned tag (--check)
-│   ├── iso3166_snapshot.json            # Layer 4: 252 alpha-2 codes, v1.6.9
+│   ├── iso3166_snapshot.json            # Layer 4: 252 alpha-2 codes
 │   ├── iso3166_snapshot.meta.json       # Vendoring metadata and review_by
-│   ├── exchange_calendar_snapshot.json  # Layer 4: 74 MICs, v2.15.4
+│   ├── exchange_calendar_snapshot.json  # Layer 4: 74 MICs
 │   ├── exchange_calendar_snapshot.meta.json  # Vendoring metadata and review_by
 │   ├── check_version_consistency.py     # The nine version sites, plus the schema badge
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
 │   ├── check_release_claims.py          # Verifies the claims manifest
-│   ├── release_claims.json              # 201 {file, contains|absent} claims
+│   ├── release_claims.json              # {file, contains|absent} claims, one list per release plus doc-facts
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
 │   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
 │   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
@@ -1176,6 +1208,7 @@ iso10383/
 │   ├── test_export_csv.py               # CSV/TSV exporter
 │   ├── test_export_parquet.py           # Parquet exporter
 │   ├── test_export_sql.py               # SQL exporter
+│   ├── test_fetch_swift_mic.py          # The fetcher rejects unexpected columns
 │   ├── test_fixture.py                  # The shared fixture itself
 │   ├── test_generators.py               # AST: no clock reads in the snapshot generators
 │   ├── test_iso10383_codes.py           # Known-code ground truth
@@ -1188,6 +1221,7 @@ iso10383/
 │       ├── bad_cycle.csv                # Parser input: cyclic parent chain
 │       ├── bad_missing_parent.csv       # Parser input: parent absent
 │       ├── valid_three_level.csv        # Parser input: a valid three-level chain
+│       ├── valid_seventeen_plus_one.csv # Parser input: the 17 columns plus one unexpected column (rejected)
 │       └── validator/
 │           ├── business_bad_self_ref.json        # Business layer failure
 │           ├── business_expired_no_date.json     # Business layer failure
@@ -1215,7 +1249,7 @@ iso10383/
 │   │   ├── src/index.js                 # MICRegistry
 │   │   ├── src/data/iso10383.json       # Layer 3 copy
 │   │   ├── test/fixture.js              # Fixture anchors
-│   │   └── test/registry.test.js        # 29 tests (node --test)
+│   │   └── test/registry.test.js        # 29 tests as node --test reports them (28 test() definitions plus the fixture-anchor module)
 │   ├── rust/
 │   │   ├── README.md                    # Rust API
 │   │   ├── Cargo.toml                   # Crate manifest (version site)
@@ -1411,8 +1445,8 @@ ISO 10383 is the leaf of the MIC join graph: other registries reference `mic`; t
 
 | Project | Edge | Proof |
 |---------|------|-------|
-| [Exchange Calendar](https://github.com/slimissa/exchange-calendar) | `exchanges/*.json` carries `mic` (or `code`); JOINS records 74 entries at v2.15.4 | `tools/exchange_calendar_snapshot.json` (74 MICs, v2.15.4) reproduced by `gen_exchange_calendar_snapshot.py --check`; `check_exchange_calendar_current.py --strict` compares it with the live sibling; `validate.py` fails if any of the 74 is missing here |
-| [ISO 3166](https://github.com/slimissa/iso3166) | Reverse edge: this registry's `country_code` joins ISO 3166's alpha-2 codes | `tools/iso3166_snapshot.json` (252 codes, v1.6.9), reproduced by `gen_iso3166_snapshot.py --check`; `validate.py` checks every `country_code` except `ZZ` against it |
+| [Exchange Calendar](https://github.com/slimissa/exchange-calendar) | `exchanges/*.json` carries `mic` (or `code`); JOINS records 74 entries | `tools/exchange_calendar_snapshot.json` (74 MICs) reproduced by `gen_exchange_calendar_snapshot.py --check`; `check_exchange_calendar_current.py --strict` compares it with the live sibling; `validate.py` fails if any of the 74 is missing here |
+| [ISO 3166](https://github.com/slimissa/iso3166) | Reverse edge: this registry's `country_code` joins ISO 3166's alpha-2 codes | `tools/iso3166_snapshot.json` (252 codes), reproduced by `gen_iso3166_snapshot.py --check`; `validate.py` checks every `country_code` except `ZZ` against it |
 | Asset Identifiers | `exchange` and `listings[].exchange` reference a MIC, "Either" granularity | Declared in that repository's `schema.json`, per `docs/JOINS.md`. JOINS records that the public repository holds only the schema and a fixture, so the edge is verified against a schema, not records. Not checkable from this tree. |
 | Corporate Actions | `exchange` per action | `docs/JOINS.md` marks it planned and records that none of its 240 actions carries an `exchange` field as of 2026-10-11. Not checkable from this tree. |
 | [Tempus](https://github.com/slimissa/Tempus) | Compile-time `@market_context` validation | None in this repository. Named as an intended consumer; it does not appear in `docs/JOINS.md`, and no artifact here depends on it. |

@@ -1048,6 +1048,18 @@
     {
       "file": "tools/exchange_calendar_snapshot.meta.json",
       "contains": "\"snapshot_sha256\""
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Total** |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Root (Python) |"
+    },
+    {
+      "file": "README.md",
+      "contains": "registry_release.json"
     }
   ],
   "1.1.2": [
