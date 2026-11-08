@@ -133,10 +133,10 @@
     {
       "file": "tools/exchange_calendar_snapshot.json",
       "name": "exchange-calendar",
-      "review_by": "2027-02-08",
-      "sha256": "9e6c7e037a2ba3d2838b76a4163104f85a89f08c1482ef3599529c384a541e00",
-      "source_version": "2.24.0",
-      "vendored_at": "2026-11-08"
+      "review_by": "2027-02-09",
+      "sha256": "78074b89bcfbc3ce08f426c6ce2567170ec8a52b760705caf46bea3a4bbcf04e",
+      "source_version": "2.26.0",
+      "vendored_at": "2026-11-09"
     },
     {
       "file": "tools/iso3166_snapshot.json",
