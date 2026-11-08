@@ -29,6 +29,8 @@ REPO = "https://github.com/slimissa/exchange-calendar.git"
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--strict", action="store_true")
+    p.add_argument("--fail-on-version-drift", action="store_true",
+                   help="Treat version drift as a failure (release gate only).")
     p.add_argument("--advisory", action="store_true",
                    help="Exit 0 when the sibling is unreachable, instead "
                         "of failing")
@@ -84,7 +86,10 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
     version_drift = live_version is not None and live_version != local_version
     if version_drift:
-        print(f"warning: version drift: snapshot source_version {local_version}, "
+        if version_drift and args.fail_on_version_drift:
+        print(f"FAIL: version drift: snapshot source_version {local_version}, upstream {live_version}", file=sys.stderr)
+        return 1
+    print(f"warning: version drift: snapshot source_version {local_version}, "
               f"upstream version {live_version}; does not fail.",
               file=sys.stderr)
 

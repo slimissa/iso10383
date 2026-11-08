@@ -1017,3 +1017,11 @@ Reviewed-by:
 - `slimissa/iso10383`
 
 The document is stable. Future changes require a new review cycle.
+
+## Version drift on push vs. on release
+
+A release gate requires version drift to be zero. A per-push CI does not:
+the pinned snapshot is what makes a build reproducible, and a version bump
+on a sibling does not mean the pin is wrong. `check_*_current.py
+--fail-on-version-drift` is the release-gate flag; `release.sh` passes it;
+`validate.yml` does not.

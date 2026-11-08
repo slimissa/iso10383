@@ -232,6 +232,7 @@ run python3 tools/export_csv.py
 run python3 tools/export_sql.py
 run python3 tools/export_parquet.py
 run python3 tools/sync_wrappers.py
+run python3 tools/gen_registry_release.py --version "$VERSION"
 
 # --- Gate -----------------------------------------------------------------
 
@@ -244,8 +245,8 @@ gate python3 tools/check_registry_freshness.py
 gate python3 tools/check_snapshot_freshness.py
 gate python3 tools/check_mojibake.py
 gate python3 tools/check_release_claims.py "$VERSION"
-gate python3 tools/check_iso3166_current.py --strict
-gate python3 tools/check_exchange_calendar_current.py --strict
+gate python3 tools/check_iso3166_current.py --strict --fail-on-version-drift
+gate python3 tools/check_exchange_calendar_current.py --strict --fail-on-version-drift
 gate python3 tools/iso10383_cli.py check
 gate python3 tools/export_csv.py --check
 gate python3 tools/export_sql.py --check
@@ -255,6 +256,7 @@ gate python3 -m pytest tests/ -q
 gate bash tools/check_cross_language.sh --strict
 gate python3 tools/gen_iso3166_snapshot.py --check
 gate python3 tools/gen_exchange_calendar_snapshot.py --check
+gate python3 tools/gen_registry_release.py --check --version "$VERSION"
 
 # --- Commit, push ---------------------------------------------------------
 
