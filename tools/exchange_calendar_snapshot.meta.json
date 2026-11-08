@@ -1,11 +1,13 @@
 {
   "$comment": "Vendoring metadata for exchange_calendar_snapshot.json. The snapshot stays byte-for-byte; this file records where it came from and when to review it. Read by tools/check_snapshot_freshness.py.",
   "source": "exchange-calendar",
-  "source_version": "2.15.4",
-  "vendored_at": "2026-10-10",
-  "vendored_from": "https://github.com/slimissa/exchange-calendar/blob/v2.15.4/calendar.json",
+  "source_version": "2.24.0",
+  "vendored_at": "2026-11-08",
+  "vendored_from": "https://github.com/slimissa/exchange-calendar/blob/v2.24.0/calendar.json",
   "meta": {
-    "review_by": "2027-01-10",
+    "review_by": "2027-02-08",
     "refresh_cadence": "monthly"
-  }
+  },
+  "upstream_sha256": "<UPSTREAM_EC_SHA>",
+  "snapshot_sha256": "<SNAPSHOT_EC_SHA>"
 }

@@ -1,11 +1,13 @@
 {
   "$comment": "Vendoring metadata for iso3166_snapshot.json. The snapshot stays byte-for-byte; this file records where it came from and when to review it. Read by tools/check_snapshot_freshness.py.",
   "source": "iso3166",
-  "source_version": "1.6.9",
-  "vendored_at": "2026-09-28",
-  "vendored_from": "https://github.com/slimissa/iso3166/blob/v1.6.9/iso3166.json",
+  "source_version": "1.12.5",
+  "vendored_at": "2026-11-08",
+  "vendored_from": "https://github.com/slimissa/iso3166/blob/v1.12.5/iso3166.json",
   "meta": {
-    "review_by": "2027-09-28",
+    "review_by": "2027-11-08",
     "refresh_cadence": "monthly"
-  }
+  },
+  "upstream_sha256": "<UPSTREAM_ISO3166_SHA>",
+  "snapshot_sha256": "a86cb869ffacda21864eac817264be6efb3c472e1c235fc993c3a62891ccf32d"
 }

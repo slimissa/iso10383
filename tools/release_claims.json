@@ -1032,6 +1032,22 @@
     {
       "file": "docs/decisions/v1.0.0-decisions.md",
       "contains": "Amendment (v1.1.2)"
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "contains": "\"upstream_sha256\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "contains": "\"snapshot_sha256\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "contains": "\"upstream_sha256\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "contains": "\"snapshot_sha256\""
     }
   ],
   "1.1.2": [
