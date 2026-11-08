@@ -351,10 +351,7 @@ wrappers/go/data/iso10383.json
 ### Why they exist
 
 Each wrapper package must be installable and usable without the
-repository. `pip install iso10383-registry`, `npm install
-iso10383-registry`, `cargo add iso10383-registry`, and `go get` all
-produce a working registry with no runtime file dependency. The
-snapshot ships inside the package.
+Each wrapper must be usable without the repository: install it from a clone (`pip install -e wrappers/python`, `require('./wrappers/javascript')`, a `path` dependency, a Go `replace` directive) and it works with no runtime file dependency. **Nothing is published to a package registry.** The snapshot ships inside the package.
 
 This is D15: wrappers bundle the registry.
 
