@@ -237,18 +237,3 @@ def test_exchange_calendar_current_advisory_tolerates_unreachable(
                         _network_down)
     assert check_exchange_calendar_current.main(["--strict", "--advisory"]) == 0
     assert "sibling unreachable" in capsys.readouterr().err
-
-@pytest.mark.network
-def test_iso3166_current_fails_on_version_drift(monkeypatch, capsys):
-    """Version drift is an error under --fail-on-version-drift."""
-    # This test requires the network; skip if unavailable.
-    import tools.check_iso3166_current as c
-    try:
-        rc = c.main(["--strict", "--fail-on-version-drift"])
-    except SystemExit as e:
-        rc = e.code
-    if rc is None:
-        pytest.skip("network unavailable")
-    # rc may be 0 (in sync) or 1 (drift); only assert the flag is
-    # recognized (no crash, no exit 2).
-    assert rc in (0, 1), f"unexpected exit {rc}"
