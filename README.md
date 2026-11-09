@@ -50,7 +50,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 |---|---|
 | **MICs** | 2,893: 1,599 operating, 1,294 segment |
 | **Status** | 2,304 `ACTIVE`, 9 `UPDATED`, 580 `EXPIRED`. Expired entries stay in the file, with their `expiration_date`. |
-| **Hierarchy** | Every segment's parent chain ends at an operating MIC. 1,281 segments sit directly under an operating MIC, 8 sit under another segment (three levels in all). 0 broken chains. |
+| **Hierarchy** | Every segment's parent chain ends at an operating MIC. 1,286 segments sit directly under an operating MIC, 8 sit under another segment (three levels in all). 0 broken chains. |
 | **Countries** | 149 distinct `country_code` values: 148 ISO 3166-1 alpha-2 codes plus `ZZ` (3 MICs: `BILT`, `XOFF`, `XXXX`) |
 | **Market categories** | 14 of the 16 ISO codes are in use (`ARMS` and `CTPS` are defined, unassigned) |
 | **Flat exports** | 9 derived files: SQL (4 dialects), CSV/TSV (4 variants), Parquet (1 file) |
@@ -73,7 +73,7 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | MICs | `python3 -c "import json; print(len(json.load(open('iso10383.json'))['mics']))"` | `2893` |
 | Operating / segment | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['mic_type'] for x in m).items()))"` | `[('OPERATING', 1599), ('SEGMENT', 1294)]` |
 | Active / updated / expired | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['status'] for x in m).items()))"` | `[('ACTIVE', 2304), ('EXPIRED', 580), ('UPDATED', 9)]` |
-| Segments under an operating MIC / under a segment | `python3 -c "import json; m={x['mic']:x for x in json.load(open('iso10383.json'))['mics']}; s=[x for x in m.values() if x['mic_type']=='SEGMENT']; print(sum(m[x['operating_mic']]['mic_type']=='OPERATING' for x in s), sum(m[x['operating_mic']]['mic_type']=='SEGMENT' for x in s))"` | `1281 8` |
+| Segments under an operating MIC / under a segment | `python3 -c "import json; m={x['mic']:x for x in json.load(open('iso10383.json'))['mics']}; s=[x for x in m.values() if x['mic_type']=='SEGMENT']; print(sum(m[x['operating_mic']]['mic_type']=='OPERATING' for x in s), sum(m[x['operating_mic']]['mic_type']=='SEGMENT' for x in s))"` | `1286 8` |
 | Broken chains | `python3 tools/validate.py \| tail -1` | `0 broken chains` |
 | Distinct country codes | `python3 -c "import json; print(len({x['country_code'] for x in json.load(open('iso10383.json'))['mics']}))"` | `149` |
 | Market categories in use | `python3 -c "import json; print(len({x['market_category'] for x in json.load(open('iso10383.json'))['mics']}))"` | `14` |
@@ -156,7 +156,7 @@ print(xnys.mic_type, xnys.country_code)      # OPERATING US
 
 print([s.mic for s in reg.segments("XJPX")][:3])   # ['XJAS', 'XOSE', 'XOSJ']
 print(reg.operating_mic("XTKS"))             # XJPX
-print(len(reg.expired(since="2024-01-01")))  # 82
+print(len(reg.expired(since="2024-01-01")))  # 96
 ```
 
 ### JavaScript (Node 18+)
@@ -370,7 +370,7 @@ A segment never self-references. Its `operating_mic` is its direct parent.
 }
 ```
 
-(Other keys omitted here for length; every entry carries all 17.) Every `EXPIRED` entry has an `expiration_date`, and no other entry has one: 566 and 566 in this snapshot.
+(Other keys omitted here for length; every entry carries all 17.) Every `EXPIRED` entry has an `expiration_date`, and a non-expired entry can carry one too: in this snapshot `GOTC` and `NDIG` are `ACTIVE` with `expiration_date` 2026-09-28, as published. 580 entries are `EXPIRED` and 582 have a date, so test `status`, not the presence of the date.
 
 ### Field reference
 
@@ -384,7 +384,7 @@ Seventeen fields per entry, every one present on every entry. The schema (`addit
 | `operating_mic` | string | 0 | Parent MIC. Self for operating MICs. |
 | `market_name` | string | 0 | Name as SWIFT publishes it |
 | `legal_entity_name` | string or null | 1,494 | Registered legal name of the operator |
-| `lei` | string or null | 629 | 20-character Legal Entity Identifier (all 2,254 present values are 20 characters) |
+| `lei` | string or null | 629 | 20-character Legal Entity Identifier (all 2,264 present values are 20 characters) |
 | `market_category` | string or null | 0 | One of the 16 ISO codes |
 | `acronym` | string or null | 1,867 | Short name |
 | `country_code` | string or null | 0 | ISO 3166-1 alpha-2, or `ZZ` |
@@ -393,7 +393,7 @@ Seventeen fields per entry, every one present on every entry. The schema (`addit
 | `creation_date` | date or null | 0 | ISO 8601 |
 | `last_update_date` | date or null | 0 | ISO 8601 |
 | `last_validation_date` | date or null | 1,896 | ISO 8601 |
-| `expiration_date` | date or null | 2,317 | ISO 8601; present exactly when `status` is `EXPIRED` |
+| `expiration_date` | date or null | 2,311 | ISO 8601; present on every `EXPIRED` entry, and on 2 others (`GOTC`, `NDIG`) |
 | `note` | string or null | 1,324 | Free text from the source |
 
 Why each nullable field is null, field by field, is in [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md). Ten fields are never null in this snapshot: the four non-nullable keys plus `market_name`, `country_code`, `creation_date`, `last_update_date`, `market_category` and `city`.
@@ -406,10 +406,10 @@ Why each nullable field is null, field by field, is in [`docs/ENRICHMENT.md`](./
 | Segment | 1,294 (973 active, 316 expired, 5 updated) |
 | Total | 2,893 |
 | Active / Updated / Expired | 2,304 / 9 / 580 |
-| Segments directly under an operating MIC | 1,281 |
+| Segments directly under an operating MIC | 1,286 |
 | Segments under another segment | 8 |
 | Broken parent chains | 0 |
-| Expired on or after 2024-01-01 | 82 |
+| Expired on or after 2024-01-01 | 96 |
 | Largest country counts | GB 603, US 504, DE 216, NL 123, FR 108, JP 89 |
 
 ### Enums
@@ -423,7 +423,7 @@ Three closed vocabularies. An unknown value raises in the parser and fails the s
 | Value | Meaning | Count |
 |-------|---------|------:|
 | `ACTIVE` | In force | 2,304 |
-| `UPDATED` | Changed since the last publication. Not a permanent state: it reverts to `ACTIVE` in a later snapshot. | 21 |
+| `UPDATED` | Changed since the last publication. Not a permanent state: it reverts to `ACTIVE` in a later snapshot. | 9 |
 | `EXPIRED` | No longer in force; `expiration_date` is set | 580 |
 
 **`market_category`**: sixteen codes from the ISO 10383 Release 2.0 factsheet. The 2026-11-09 snapshot uses 14.
@@ -470,7 +470,7 @@ Every entry has an `operating_mic`. An operating MIC points to itself. A segment
 |---------|------:|
 | Operating MICs | 1,599 |
 | Operating MICs that have at least one segment | 376 |
-| Segments directly under an operating MIC (one hop to the root) | 1,281 |
+| Segments directly under an operating MIC (one hop to the root) | 1,286 |
 | Segments under another segment (two hops to the root) | 8 |
 | Chains of three hops or more | 0 |
 | Broken chains (cycle, missing parent, deeper than 8 hops) | 0 |
@@ -587,7 +587,7 @@ Four files, one per audience. LF line endings everywhere, headers always present
 
 Consumer notes:
 
-- **Nulls are empty fields** (JSON `null` becomes `""`), so `expiration_date` is empty for 2,317 rows.
+- **Nulls are empty fields** (JSON `null` becomes `""`), so `expiration_date` is empty for 2,311 rows.
 - **Dates are plain `YYYY-MM-DD` text.** Ask pandas to parse them: `pd.read_csv("iso10383.csv", parse_dates=["creation_date", "expiration_date"])`.
 - **`mic` is text, not a number.** `3579` is a valid MIC. Spreadsheet applications treat an all-digit cell as a number, so keep the column as text when you re-save.
 
@@ -605,7 +605,7 @@ Typing, because Parquet has a type system:
 
 - `mic_type`, `status`, `country_code` and `market_category` are dictionary-encoded strings.
 - `creation_date`, `last_update_date`, `last_validation_date` and `expiration_date` are `date32`, not text. pandas returns them as `datetime.date` objects (dtype `object`) with `None` for null; pass `date_as_object=False` to `to_pandas()` for `datetime64`.
-- Null is a real null: `WHERE expiration_date IS NULL` returns the 2,317 non-expired rows.
+- Null is a real null: `WHERE expiration_date IS NULL` returns the 2,311 rows that have no date.
 
 **Footer metadata.** The footer carries `iso10383.version`, `iso10383.updated`, `iso10383.source_snapshot` and `iso10383.source_hash`, so a consumer who receives only the `.parquet` file can tell which registry version produced it. The footer's `iso10383.version` is one of the nine version sites.
 
@@ -1411,7 +1411,7 @@ It would be a second value to keep consistent with `operating_mic` when a parent
 The source file had no value, and the field stays null rather than carrying a guess ([`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) explains each nullable field). In JSON it is `null`, in CSV an empty field, in Parquet a null, in SQL `NULL`.
 
 **What does `UPDATED` mean, and should I treat it as active?**
-It means the entry changed since the last publication (21 entries in this snapshot). It is not expired. A consumer that wants "currently valid" should accept `ACTIVE` and `UPDATED` and exclude `EXPIRED`.
+It means the entry changed since the last publication (9 entries in this snapshot). It is not expired. A consumer that wants "currently valid" should accept `ACTIVE` and `UPDATED` and exclude `EXPIRED`.
 
 **Why does `validate.py` fail when Exchange Calendar references an unknown MIC?**
 Cross-registry checks have been blocking since v1.0.1, and the allowlist of tolerated gaps is empty. Fix the sibling or the registry; adding an allowlist entry needs an ADR amendment ([ADR 0007](./docs/decisions/0007-cross-registry-allowlist.md)). `--advisory` downgrades the failure to a warning.
