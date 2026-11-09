@@ -5,8 +5,8 @@
     "broken_chains": 0,
     "claims": {
       "doc_facts": 246,
-      "in_file": 277,
-      "verified": 254
+      "in_file": 275,
+      "verified": 252
     },
     "countries": 149,
     "expired": 566,
@@ -18,9 +18,9 @@
       "go": 31,
       "javascript": 29,
       "python": 31,
-      "root": 143,
+      "root": 147,
       "rust": 27,
-      "total": 261
+      "total": 265
     },
     "total": 2883,
     "updated": 21
