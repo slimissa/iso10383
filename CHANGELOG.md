@@ -64,6 +64,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.3] - 2026-11-09
+
 ### Fixed
 
 - `tools/iso3166_snapshot.meta.json`: `snapshot_sha256` held a value that
@@ -419,7 +423,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/slimissa/iso10383/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/slimissa/iso10383/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/slimissa/iso10383/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/slimissa/iso10383/compare/v1.0.5...v1.1.0
