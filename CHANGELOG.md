@@ -22,6 +22,7 @@ must match `VERSION`. CI enforces this with
 
 ### Corrected
 - README stated that `expiration_date` is present exactly when `status` is `EXPIRED`. Two `ACTIVE` entries (`GOTC`, `NDIG`) carry a date in this snapshot, kept as published. The README now says to test `status`.
+- README stated 376 operating MICs with at least one segment since the v1.1.1 rewrite. The registry gave 368 before this refresh and gives 369 now. The row is corrected.
 
 ## [1.1.3] - 2026-11-09
 

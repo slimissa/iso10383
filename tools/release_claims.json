@@ -1088,6 +1088,14 @@
     {
       "file": "CONTRIBUTING.md",
       "absent": "OK: 2883 MICs validated"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Operating MICs that have at least one segment | 369 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Operating MICs that have at least one segment | 376 |"
     }
   ],
   "1.1.2": [

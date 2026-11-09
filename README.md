@@ -469,7 +469,7 @@ Every entry has an `operating_mic`. An operating MIC points to itself. A segment
 | Measure | Value |
 |---------|------:|
 | Operating MICs | 1,599 |
-| Operating MICs that have at least one segment | 376 |
+| Operating MICs that have at least one segment | 369 |
 | Segments directly under an operating MIC (one hop to the root) | 1,286 |
 | Segments under another segment (two hops to the root) | 8 |
 | Chains of three hops or more | 0 |
