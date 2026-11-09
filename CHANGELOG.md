@@ -14,6 +14,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.4] - 2026-11-09
+
 ### Changed
 - Source refresh: SWIFT `ISO10383_MIC.csv` of 2026-11-09 (`sha256:1d7f8aadd0ff...`). 10 new MICs (5 operating, 5 segment), 0 removed. Status changes: ACTIVE to EXPIRED 14, ACTIVE to UPDATED 9, UPDATED to ACTIVE 21.
 - Counts: 2,893 MICs (1,599 operating, 1,294 segment), 2,304 active, 9 updated, 580 expired, 0 broken chains.
@@ -430,7 +434,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.4...HEAD
+[1.1.4]: https://github.com/slimissa/iso10383/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/slimissa/iso10383/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/slimissa/iso10383/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/slimissa/iso10383/compare/v1.1.0...v1.1.1
