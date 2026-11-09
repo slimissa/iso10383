@@ -86,8 +86,7 @@ Nothing yet.
 ### Fixed
 
 - The `v1.1.0` release notes claimed `descendants`, `root` and
-  `siblings` methods on the four wrappers. They were never
-  implemented; the wrapper surface is eleven query methods,
+  `siblings` methods on the four wrappers. They were never implemented; the wrapper surface is eleven query methods,
   unchanged.
 - `check_release_claims.py`'s docstring now matches the code: a
   claim about a missing file fails.
