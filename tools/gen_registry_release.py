@@ -187,12 +187,18 @@ def build(version: str, tag: str) -> dict:
     vendors = []
     for stem in SNAPSHOTS:
         sm = _json(f"{stem}.meta.json")
+        computed = hashlib.sha256(_read(ROOT / f"{stem}.json")).hexdigest()
+        declared = sm.get("snapshot_sha256")
+        if declared is not None and declared != computed:
+            raise SystemExit(
+                f"{stem}.meta.json: snapshot_sha256 {declared} != "
+                f"{computed} (actual hash of {stem}.json)")
         vendors.append({
             "name": sm["source"],
             "source_version": sm["source_version"],
             "vendored_at": sm["vendored_at"],
             "file": f"{stem}.json",
-            "sha256": hashlib.sha256(_read(ROOT / f"{stem}.json")).hexdigest(),
+            "sha256": computed,
             "review_by": sm["meta"]["review_by"],
         })
     vendors.sort(key=lambda v: v["name"])
