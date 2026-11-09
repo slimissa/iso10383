@@ -12,6 +12,39 @@ must match `VERSION`. CI enforces this with
 
 ---
 
+## [Unreleased]
+
+Nothing yet.
+
+## [1.1.3] - 2026-11-09
+
+### Fixed
+
+- `tools/iso3166_snapshot.meta.json`: `snapshot_sha256` held a value that
+  was not the SHA-256 of `tools/iso3166_snapshot.json`. It now matches
+  the file and the value in `registry_release.json`.
+
+### Added
+
+- Gate 18 (`gen_registry_release.py --check`) now also fails when a
+  snapshot `.meta.json` `snapshot_sha256` differs from the actual hash of
+  the snapshot file. The number of gates is unchanged.
+- Tests: `test_meta_snapshot_sha256_matches_the_file` (two cases) and a
+  `--fail-on-version-drift` test for each of the two `check_*_current.py`
+  tools.
+
+### Corrected
+
+- The v1.1.2 notes above named a flag, `--update-readme-counts`, that
+  never existed, and gave the test counts as 144 and 262. The counts at
+  v1.1.2 are 143 root and 261 in all. The tag v1.1.2 is not moved (ADR 0005).
+- The v1.1.2 release shipped a wrong ISO 3166 `snapshot_sha256` in its
+  `.meta.json` (see Fixed). `registry_release.json` carried the right hash.
+
+### Tests
+
+- The root suite grows from 143 to 147 tests: 265 across all five suites.
+
 ## [1.1.2] - 2026-11-08
 
 ### Added
@@ -61,39 +94,6 @@ must match `VERSION`. CI enforces this with
 - Three ADRs gained dated amendments: 0005 (Decision 4 and Scope),
   0010 (the `schedule:` sentence), 0011 (the `meta.updated`
   retraction).
-
-## [Unreleased]
-
-Nothing yet.
-
-## [1.1.3] - 2026-11-09
-
-### Fixed
-
-- `tools/iso3166_snapshot.meta.json`: `snapshot_sha256` held a value that
-  was not the SHA-256 of `tools/iso3166_snapshot.json`. It now matches
-  the file and the value in `registry_release.json`.
-
-### Added
-
-- Gate 18 (`gen_registry_release.py --check`) now also fails when a
-  snapshot `.meta.json` `snapshot_sha256` differs from the actual hash of
-  the snapshot file. The number of gates is unchanged.
-- Tests: `test_meta_snapshot_sha256_matches_the_file` (two cases) and a
-  `--fail-on-version-drift` test for each of the two `check_*_current.py`
-  tools.
-
-### Corrected
-
-- The v1.1.2 notes above named a flag, `--update-readme-counts`, that
-  never existed, and gave the test counts as 144 and 262. The counts at
-  v1.1.2 are 143 root and 261 in all. The tag v1.1.2 is not moved (ADR 0005).
-- The v1.1.2 release shipped a wrong ISO 3166 `snapshot_sha256` in its
-  `.meta.json` (see Fixed). `registry_release.json` carried the right hash.
-
-### Tests
-
-- The root suite grows from 143 to 147 tests: 265 across all five suites.
 
 ## [1.1.1] - 2026-11-06
  
