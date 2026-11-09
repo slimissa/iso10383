@@ -751,7 +751,7 @@ register.
 
 ## Known subtleties
 
-**CSV row count vs. JSON entry count.** Both equal 2,883 on the
+**CSV row count vs. JSON entry count.** Both equal 2,893 on the
 current snapshot. They will continue to match because the CSV
 exporter emits one row per JSON entry. If a future source file
 contains a duplicate `mic`, the fetcher raises before producing

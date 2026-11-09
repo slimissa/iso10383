@@ -1,6 +1,6 @@
 # ISO 10383 MIC Registry
 
-**A canonical, versioned, machine-readable registry of ISO 10383 Market Identifier Codes: 2,883 MICs (1,594 operating, 1,289 segment) with their parent chains, status, country, category and operator.**
+**A canonical, versioned, machine-readable registry of ISO 10383 Market Identifier Codes: 2,893 MICs (1,599 operating, 1,294 segment) with their parent chains, status, country, category and operator.**
 
 One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, four language wrappers, a command-line tool, two vendored cross-registry snapshots) is regenerated from it or checked against it, and re-verified on every push.
 
@@ -9,7 +9,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Schema](https://img.shields.io/badge/schema-1.0.0-green.svg)](./schema.json)
 [![Registry](https://img.shields.io/badge/registry-1.1.3-orange.svg)](./CHANGELOG.md)
-[![MICs](https://img.shields.io/badge/MICs-2883-blue.svg)](./iso10383.json)
+[![MICs](https://img.shields.io/badge/MICs-2893-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
 [![Tests](https://img.shields.io/badge/tests-265-success.svg)](./tests/)
 
@@ -48,8 +48,8 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 
 | | |
 |---|---|
-| **MICs** | 2,883: 1,594 operating, 1,289 segment |
-| **Status** | 2,296 `ACTIVE`, 21 `UPDATED`, 566 `EXPIRED`. Expired entries stay in the file, with their `expiration_date`. |
+| **MICs** | 2,893: 1,599 operating, 1,294 segment |
+| **Status** | 2,304 `ACTIVE`, 9 `UPDATED`, 580 `EXPIRED`. Expired entries stay in the file, with their `expiration_date`. |
 | **Hierarchy** | Every segment's parent chain ends at an operating MIC. 1,281 segments sit directly under an operating MIC, 8 sit under another segment (three levels in all). 0 broken chains. |
 | **Countries** | 149 distinct `country_code` values: 148 ISO 3166-1 alpha-2 codes plus `ZZ` (3 MICs: `BILT`, `XOFF`, `XXXX`) |
 | **Market categories** | 14 of the 16 ISO codes are in use (`ARMS` and `CTPS` are defined, unassigned) |
@@ -59,7 +59,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
 | **Tests** | 265: 147 root and 118 in the wrappers (31 + 29 + 27 + 31) |
 | **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
-| **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-09-23, `sha256:79de0f77...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
+| **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-11-09, `sha256:1d7f8aad...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
 | **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
 | **Security** | See [SECURITY.md](./SECURITY.md); integrity via `registry_release.json` |
 | **Dependencies and license** | The JSON needs none. Python, JavaScript and Go wrappers have none; the Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. Apache 2.0. |
@@ -70,9 +70,9 @@ Each command runs from a clone, prints one line, and is the source of the figure
 
 | Figure | Command | Prints |
 |--------|---------|--------|
-| MICs | `python3 -c "import json; print(len(json.load(open('iso10383.json'))['mics']))"` | `2883` |
-| Operating / segment | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['mic_type'] for x in m).items()))"` | `[('OPERATING', 1594), ('SEGMENT', 1289)]` |
-| Active / updated / expired | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['status'] for x in m).items()))"` | `[('ACTIVE', 2296), ('EXPIRED', 566), ('UPDATED', 21)]` |
+| MICs | `python3 -c "import json; print(len(json.load(open('iso10383.json'))['mics']))"` | `2893` |
+| Operating / segment | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['mic_type'] for x in m).items()))"` | `[('OPERATING', 1599), ('SEGMENT', 1294)]` |
+| Active / updated / expired | `python3 -c "import json,collections as c; m=json.load(open('iso10383.json'))['mics']; print(sorted(c.Counter(x['status'] for x in m).items()))"` | `[('ACTIVE', 2304), ('EXPIRED', 580), ('UPDATED', 9)]` |
 | Segments under an operating MIC / under a segment | `python3 -c "import json; m={x['mic']:x for x in json.load(open('iso10383.json'))['mics']}; s=[x for x in m.values() if x['mic_type']=='SEGMENT']; print(sum(m[x['operating_mic']]['mic_type']=='OPERATING' for x in s), sum(m[x['operating_mic']]['mic_type']=='SEGMENT' for x in s))"` | `1281 8` |
 | Broken chains | `python3 tools/validate.py \| tail -1` | `0 broken chains` |
 | Distinct country codes | `python3 -c "import json; print(len({x['country_code'] for x in json.load(open('iso10383.json'))['mics']}))"` | `149` |
@@ -100,7 +100,7 @@ Every trading system, quant library and fintech app maintains its own MIC list, 
 
 One versioned, schema-validated JSON file, guarded by CI, replaces the lists. The JSON is the contract; the SQL, CSV, Parquet, wrapper and CLI forms are ways to consume it without writing a parser. The registry deliberately stays narrow: it reproduces SWIFT's file and nothing else (see [Known limitations](#20-known-limitations)).
 
-Two other things are facts here and not metadata. **Time:** a venue that closed is still a row, with its `expiration_date` (566 of them, 82 on or after 2024-01-01), so a fact table from 2021 still joins. **Hierarchy:** the path from a segment to its operator is explicit in the data, not implied by a naming convention (see [The hierarchy layer](#7-the-hierarchy-layer)). **Currency is not here**: the registry does not store a trading currency, and says so under [Known limitations](#20-known-limitations).
+Two other things are facts here and not metadata. **Time:** a venue that closed is still a row, with its `expiration_date` (580 of them, 96 on or after 2024-01-01), so a fact table from 2021 still joins. **Hierarchy:** the path from a segment to its operator is explicit in the data, not implied by a naming convention (see [The hierarchy layer](#7-the-hierarchy-layer)). **Currency is not here**: the registry does not store a trading currency, and says so under [Known limitations](#20-known-limitations).
 
 ---
 
@@ -281,14 +281,14 @@ Only Layer 0 cannot be regenerated from this repository. **Back up `raw/`.** The
 {
   "meta": {
     "version": "<the contents of VERSION>",
-    "updated": "2026-09-23",
-    "source_snapshot": "2026-09-23",
+    "updated": "2026-11-09",
+    "source_snapshot": "2026-11-09",
     "source_url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv",
     "source_hash": "sha256:79de0f7704e260bd49b0d2439f3084891cabc93481da8bdbaa716e15a27211ed",
     "counts": {
-      "operating": 1594, "segment": 1289,
-      "active": 2296, "updated": 21, "expired": 566,
-      "total": 2883
+      "operating": 1599, "segment": 1294,
+      "active": 2304, "updated": 9, "expired": 580,
+      "total": 2893
     },
     "broken_chains": []
   },
@@ -402,10 +402,10 @@ Why each nullable field is null, field by field, is in [`docs/ENRICHMENT.md`](./
 
 | Group | Count |
 |-------|------:|
-| Operating | 1,594 (1,334 active, 256 expired, 4 updated) |
-| Segment | 1,289 (962 active, 310 expired, 17 updated) |
-| Total | 2,883 |
-| Active / Updated / Expired | 2,296 / 21 / 566 |
+| Operating | 1,599 (1,331 active, 264 expired, 4 updated) |
+| Segment | 1,294 (973 active, 316 expired, 5 updated) |
+| Total | 2,893 |
+| Active / Updated / Expired | 2,304 / 9 / 580 |
 | Segments directly under an operating MIC | 1,281 |
 | Segments under another segment | 8 |
 | Broken parent chains | 0 |
@@ -422,11 +422,11 @@ Three closed vocabularies. An unknown value raises in the parser and fails the s
 
 | Value | Meaning | Count |
 |-------|---------|------:|
-| `ACTIVE` | In force | 2,296 |
+| `ACTIVE` | In force | 2,304 |
 | `UPDATED` | Changed since the last publication. Not a permanent state: it reverts to `ACTIVE` in a later snapshot. | 21 |
-| `EXPIRED` | No longer in force; `expiration_date` is set | 566 |
+| `EXPIRED` | No longer in force; `expiration_date` is set | 580 |
 
-**`market_category`**: sixteen codes from the ISO 10383 Release 2.0 factsheet. The 2026-09-23 snapshot uses 14.
+**`market_category`**: sixteen codes from the ISO 10383 Release 2.0 factsheet. The 2026-11-09 snapshot uses 14.
 
 | Code | Meaning | Count |
 |------|---------|------:|
@@ -468,7 +468,7 @@ Every entry has an `operating_mic`. An operating MIC points to itself. A segment
 
 | Measure | Value |
 |---------|------:|
-| Operating MICs | 1,594 |
+| Operating MICs | 1,599 |
 | Operating MICs that have at least one segment | 376 |
 | Segments directly under an operating MIC (one hop to the root) | 1,281 |
 | Segments under another segment (two hops to the root) | 8 |
@@ -545,9 +545,9 @@ All nine flat exports are Layer 2. They are regenerated from `iso10383.json`, co
 
 | Artifact | Columns | Rows | Generator |
 |----------|--------:|-----:|-----------|
-| `iso10383.sql`, `.postgresql.sql`, `.mysql.sql`, `.sqlite.sql` | 11 (`mics`) | 2,883 | `tools/export_sql.py` |
-| `iso10383.csv`, `.excel.csv`, `.european.csv`, `.tsv` | 17 | 2,883 | `tools/export_csv.py` |
-| `iso10383.parquet` | 17 | 2,883 | `tools/export_parquet.py` |
+| `iso10383.sql`, `.postgresql.sql`, `.mysql.sql`, `.sqlite.sql` | 11 (`mics`) | 2,893 | `tools/export_sql.py` |
+| `iso10383.csv`, `.excel.csv`, `.european.csv`, `.tsv` | 17 | 2,893 | `tools/export_csv.py` |
+| `iso10383.parquet` | 17 | 2,893 | `tools/export_parquet.py` |
 
 The column sets are nested on purpose. The 11 SQL columns are the foreign-key-ready minimum (`mic`, `mic_type`, `status`, `operating_mic`, `market_name`, `country_code`, `market_category`, and the four dates). The 17 CSV and Parquet columns append `legal_entity_name`, `acronym`, `lei`, `city`, `website` and `note` for human analysis, in that order.
 
@@ -562,7 +562,7 @@ Four self-contained files, each in one transaction (`BEGIN;` ... `COMMIT;`) and 
 | [`iso10383.mysql.sql`](./iso10383.mysql.sql) | MySQL 8+ / MariaDB 10.4+ | `INSERT IGNORE`, one multi-row statement | none declared |
 | [`iso10383.sqlite.sql`](./iso10383.sqlite.sql) | SQLite 3.37+ | `INSERT OR IGNORE` | declared, deferrable; with `PRAGMA foreign_keys = ON` the file loads cleanly |
 
-Each file creates two tables, `market_categories` (16 rows) and `mics` (2,883 rows, `mic` primary key, `CHECK` constraints on `mic_type`, `status` and `market_category`), plus three indexes (`operating_mic`, `country_code`, `status`). `operating_mic` is `NOT NULL` in every dialect; operating MICs point to themselves. The PostgreSQL and SQLite files additionally declare the self-referencing foreign key, deferred so that a child row can load before its parent. The generic and MySQL files declare no foreign key.
+Each file creates two tables, `market_categories` (16 rows) and `mics` (2,893 rows, `mic` primary key, `CHECK` constraints on `mic_type`, `status` and `market_category`), plus three indexes (`operating_mic`, `country_code`, `status`). `operating_mic` is `NOT NULL` in every dialect; operating MICs point to themselves. The PostgreSQL and SQLite files additionally declare the self-referencing foreign key, deferred so that a child row can load before its parent. The generic and MySQL files declare no foreign key.
 
 ```sql
 -- Every venue under the Japan Exchange Group.
@@ -576,7 +576,7 @@ SELECT mic, market_name FROM mics WHERE country_code = 'DE' AND status = 'ACTIVE
 
 ### CSV and TSV
 
-Four files, one per audience. LF line endings everywhere, headers always present, 17 columns, 2,883 data rows (2,884 lines). There is no comment header: it would break `pandas.read_csv` and violate RFC 4180.
+Four files, one per audience. LF line endings everywhere, headers always present, 17 columns, 2,893 data rows (2,894 lines). There is no comment header: it would break `pandas.read_csv` and violate RFC 4180.
 
 | File | Audience | Quirk |
 |------|----------|-------|
@@ -594,12 +594,12 @@ Consumer notes:
 ```python
 import pandas as pd
 df = pd.read_csv("iso10383.csv")
-print(df.shape)   # (2883, 17)
+print(df.shape)   # (2893, 17)
 ```
 
 ### Parquet
 
-[`iso10383.parquet`](./iso10383.parquet): columnar, typed, snappy-compressed, one row group, 2,883 rows, readable by pandas, Polars, DuckDB, Spark and warehouse loaders. Columns follow `CSV_COLUMNS` (17).
+[`iso10383.parquet`](./iso10383.parquet): columnar, typed, snappy-compressed, one row group, 2,893 rows, readable by pandas, Polars, DuckDB, Spark and warehouse loaders. Columns follow `CSV_COLUMNS` (17).
 
 Typing, because Parquet has a type system:
 
@@ -617,7 +617,7 @@ print(t.schema.metadata[b"iso10383.version"])   # the contents of VERSION, as by
 
 ### Comparison semantics and the build pin
 
-`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2883 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. [`tests/test_pip_pins.py`](./tests/test_pip_pins.py) parses `validate.yml` and `refresh.yml` and fails, naming the file, job and line, if any `pip install` line that mentions `pyarrow` lacks `-c constraints.txt`; it runs in the root suite, which the release gate runs. It is a structural test because a substring claim cannot see a second, unpinned install line added next to a pinned one. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
+`export_csv.py --check` and `export_sql.py --check` compare bytes. `export_parquet.py --check` also compares **bytes** (`OK: iso10383.parquet in sync (2893 rows, bytes)`), because the Parquet writer sorts the footer dictionary before writing and two runs on the same `pyarrow` version produce identical files. Byte output depends on the `pyarrow` version, so [`constraints.txt`](./constraints.txt) pins `pyarrow==25.0.1`. [`requirements-dev.txt`](./requirements-dev.txt) applies it with `-c constraints.txt`, and every CI job that installs `pyarrow` (`validate-json`, `check-exports`, `check-cli` and `refresh.yml`) installs with `-c constraints.txt`. [`tests/test_pip_pins.py`](./tests/test_pip_pins.py) parses `validate.yml` and `refresh.yml` and fails, naming the file, job and line, if any `pip install` line that mentions `pyarrow` lacks `-c constraints.txt`; it runs in the root suite, which the release gate runs. It is a structural test because a substring claim cannot see a second, unpinned install line added next to a pinned one. [`docs/RELEASE_PATTERN.md`](./docs/RELEASE_PATTERN.md) § Version-pinned byte outputs states the rule.
 
 ---
 
@@ -804,7 +804,7 @@ The CLI is [`tools/iso10383_cli.py`](./tools/iso10383_cli.py), a repository arti
 | `validate MIC...` | Exit 0 if every MIC exists |
 | `search QUERY` | Substring on `market_name` and `acronym` |
 | `info` | Registry metadata (`meta` block and counts) |
-| `check` | Built-in smoke test: `OK: 2883 MICs, 1594 operating, 1289 segment, 0 broken chains` |
+| `check` | Built-in smoke test: `OK: 2893 MICs, 1599 operating, 1294 segment, 0 broken chains` |
 
 **Global option:** `--registry PATH` (or the environment variable `ISO10383_REGISTRY`; default `./iso10383.json`). **Per-command options:** `--color {never,auto,always}`, `--no-color`, `--quiet`.
 
@@ -896,7 +896,7 @@ python3 tools/validate.py --strict              # promote warnings to errors
 python3 tools/validate.py --advisory            # cross-registry gaps become warnings
 ```
 
-Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not found), 3 schema violation or malformed JSON. A clean run prints `OK: 2883 MICs validated`.
+Exit codes: 0 pass (warnings allowed), 1 data error, 2 usage error (file not found), 3 schema violation or malformed JSON. A clean run prints `OK: 2893 MICs validated`.
 
 ### The release gate, in order
 
@@ -1132,7 +1132,7 @@ The registry follows [Semantic Versioning](https://semver.org/): major for break
 ```text
 iso10383/
 ├── VERSION                              # Registry version, source of truth
-├── iso10383.json                        # Layer 1: the registry (2,883 MICs)
+├── iso10383.json                        # Layer 1: the registry (2,893 MICs)
 ├── schema.json                          # JSON Schema draft-07 contract, version 1.0.0
 ├── registry_release.json                # Generated: this release's files, hashes, counts, vendored snapshots
 ├── registry_release.schema.json         # JSON Schema draft-07 for registry_release.json
@@ -1383,7 +1383,7 @@ Stated plainly, because a canonical registry is a claim and a claim needs its ed
 - **One source.** Everything traces to SWIFT's published `ISO10383_MIC.csv`. A MIC that appears in a national exchange's own publications but not in that file is not here.
 - **Monthly lag.** SWIFT publishes on the second Monday of the month and the refresh runs on the 15th, so a venue that opens mid-month is absent until the next cycle. This is a property of the standard and of ADR 0011's batch shape, not a defect.
 - **A snapshot, not a history.** `UPDATED` is transient: it means "changed since the last publication" and reverts to `ACTIVE` later. No file records what changed in a MIC or when beyond the four date fields. Replaying an earlier state means checking out an earlier tag; Layer 0 keeps only the current raw file.
-- **No LEI, BIC or ISIN companion.** The `lei` field carries SWIFT's published LEI where there is one (2,254 of 2,883 entries; 629 are null). GLEIF's mapping was found to be a subset of that field and a companion file was declined ([ADR 0008](./docs/decisions/0008-mic-lei-companion-declined.md)). No MIC to BIC source file was found ([ADR 0009](./docs/decisions/0009-mic-bic-companion-declined.md)). MIC to ISIN is out of scope (D11).
+- **No LEI, BIC or ISIN companion.** The `lei` field carries SWIFT's published LEI where there is one (2,264 of 2,893 entries; 629 are null). GLEIF's mapping was found to be a subset of that field and a companion file was declined ([ADR 0008](./docs/decisions/0008-mic-lei-companion-declined.md)). No MIC to BIC source file was found ([ADR 0009](./docs/decisions/0009-mic-bic-companion-declined.md)). MIC to ISIN is out of scope (D11).
 - **No trading currency, operating hours or regulatory status.** Trading currency is not stored per MIC; the nearest derivation is `country_code` to ISO 4217, which cannot express a venue trading in a non-local currency. Operating hours belong to Exchange Calendar. Regulatory status is out of scope (D11).
 - **Sparse optional fields.** 1,867 entries have no `acronym`, 1,494 no `legal_entity_name`, 1,324 no `note`, 163 no `website` and 1,896 no `last_validation_date`. A null is the source's silence, never a guess; [`docs/ENRICHMENT.md`](./docs/ENRICHMENT.md) goes field by field.
 - **Three MICs have no fixed country.** `BILT`, `XOFF` and `XXXX` carry `ZZ`, ISO 10383's placeholder, which is not an ISO 3166 code; the validator skips it. `country_code` is never null.

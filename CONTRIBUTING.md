@@ -186,7 +186,7 @@ bash tools/check_cross_language.sh
 Expected on a clean checkout:
 
 ```
-OK: 2883 MICs validated            # python3 tools/validate.py
+OK: 2893 MICs validated            # python3 tools/validate.py
 147 passed                          # python3 -m pytest tests/ -q
 OK: 5 suite(s) passed, 0 skipped    # bash tools/check_cross_language.sh
 ```
