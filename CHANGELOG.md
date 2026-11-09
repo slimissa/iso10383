@@ -14,7 +14,14 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+- Source refresh: SWIFT `ISO10383_MIC.csv` of 2026-11-09 (`sha256:1d7f8aadd0ff...`). 10 new MICs (5 operating, 5 segment), 0 removed. Status changes: ACTIVE to EXPIRED 14, ACTIVE to UPDATED 9, UPDATED to ACTIVE 21.
+- Counts: 2,893 MICs (1,599 operating, 1,294 segment), 2,304 active, 9 updated, 580 expired, 0 broken chains.
+- Newly expired (14): operating `BRED`, `MAQE`, `NESI`, `RABL`, `RABO`, `RVSA`, `TPSO`, `VCMO`; segment `ILCM`, `IOFX`, `IOMM`, `MSCC`, `TSMM`, `TUOB`.
+- README, CONTRIBUTING and docs/LAYERS.md figures updated to these counts.
+
+### Corrected
+- README stated that `expiration_date` is present exactly when `status` is `EXPIRED`. Two `ACTIVE` entries (`GOTC`, `NDIG`) carry a date in this snapshot, kept as published. The README now says to test `status`.
 
 ## [1.1.3] - 2026-11-09
 
