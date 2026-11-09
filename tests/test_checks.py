@@ -237,3 +237,59 @@ def test_exchange_calendar_current_advisory_tolerates_unreachable(
                         _network_down)
     assert check_exchange_calendar_current.main(["--strict", "--advisory"]) == 0
     assert "sibling unreachable" in capsys.readouterr().err
+
+
+import pytest as _pytest
+
+
+@_pytest.mark.parametrize("stem", ["iso3166_snapshot", "exchange_calendar_snapshot"])
+def test_meta_snapshot_sha256_matches_the_file(stem):
+    import hashlib
+    import json
+    from pathlib import Path
+    tools = Path(__file__).resolve().parent.parent / "tools"
+    meta = json.loads((tools / f"{stem}.meta.json").read_text(encoding="utf-8"))
+    actual = hashlib.sha256((tools / f"{stem}.json").read_bytes()).hexdigest()
+    assert meta["snapshot_sha256"] == actual
+
+
+def test_exchange_calendar_fail_on_version_drift(monkeypatch, capsys):
+    import json
+    from pathlib import Path
+    mod = check_exchange_calendar_current
+    mics = json.loads(mod.SNAPSHOT.read_text(encoding="utf-8"))["mics"]
+
+    def fake_run(cmd, **kwargs):
+        td = Path(cmd[-1])
+        (td / "exchanges").mkdir(parents=True, exist_ok=True)
+        for m in mics:
+            (td / "exchanges" / f"{m}.json").write_text(
+                json.dumps({"mic": m}), encoding="utf-8")
+        (td / "calendar.json").write_text(
+            json.dumps({"meta": {"version": "99.0.0"}}), encoding="utf-8")
+
+    monkeypatch.setattr(mod.subprocess, "run", fake_run)
+    assert mod.main(["--strict", "--fail-on-version-drift"]) == 1
+    assert "FAIL: version drift" in capsys.readouterr().err
+    assert mod.main(["--strict"]) == 0
+
+
+def test_iso3166_fail_on_version_drift(monkeypatch, capsys):
+    import io
+    import json
+    mod = check_iso3166_current
+    codes = json.loads(mod.SNAPSHOT.read_text(encoding="utf-8"))["alpha_2_set"]
+    body = json.dumps({"countries": {"active": [{"alpha_2": c} for c in codes]},
+                       "meta": {"version": "99.0.0"}}).encode()
+
+    class R(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    monkeypatch.setattr(mod.urllib.request, "urlopen", lambda *a, **k: R(body))
+    assert mod.main(["--strict", "--fail-on-version-drift"]) == 1
+    assert "FAIL: version drift" in capsys.readouterr().err
+    assert mod.main(["--strict"]) == 0

@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-261"
+      "contains": "tests-265"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 143 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 147 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **261** |"
+      "contains": "| **Total** | | **265** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 261, the sum of this table"
+      "contains": "The Tests badge above reads 265, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "143 tests"
+      "contains": "147 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "261 across all five"
+      "contains": "265 across all five"
     },
     {
       "file": "README.md",
@@ -1086,14 +1086,6 @@
     {
       "file": "registry_release.json",
       "contains": "\"tag\": \"v1.1.2\""
-    },
-    {
-      "file": "tests/test_counts.json",
-      "contains": "\"root\": 143"
-    },
-    {
-      "file": "README.md",
-      "contains": "tests-261"
     }
   ]
 }
