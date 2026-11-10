@@ -14,6 +14,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.6] - 2026-11-10
+
 ### Corrected
 - README quoted the test counts of v1.1.4 in three places after v1.1.5 had raised them (`| **Tests** |` row, the `147 passed` example, and the sentence on the root test suite). They now match `tests/test_counts.json`. v1.1.5 shipped with those three lines stale: the figure test checked data figures only.
 
@@ -452,7 +456,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.6...HEAD
+[1.1.6]: https://github.com/slimissa/iso10383/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/slimissa/iso10383/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/slimissa/iso10383/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/slimissa/iso10383/compare/v1.1.2...v1.1.3
