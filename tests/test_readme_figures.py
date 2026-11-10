@@ -1,7 +1,11 @@
-"""RCP-21: every figure the README states about the data must match iso10383.json.
-One test, all mismatches reported at once, so a stale README is diagnosed in one run."""
+"""RCP-21: every figure the README states about the data or the test suite must match the repository.
+One test, all mismatches reported at once, so a stale README is diagnosed in one run.
+v1.1.6 adds: README test counts against tests/test_counts.json, and the declared root count against pytest's own collection."""
 import collections
 import json
+import re
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -33,7 +37,6 @@ def test_readme_figures_match_data():
     nodate = sum(1 for m in mics if not m.get("expiration_date"))
     problems = []
 
-    # meta.counts must agree with the entries
     want = {"total": total, "operating": op, "segment": sg, "active": act, "updated": upd, "expired": exp}
     for k, v in want.items():
         if meta["counts"].get(k) != v:
@@ -67,7 +70,28 @@ def test_readme_figures_match_data():
         f"({F(total)} MICs)",
         f"{F(total)} data rows ({F(total + 1)} lines)",
     ]
+
+    # Test counts: declared in tests/test_counts.json, quoted in the README
+    tc = json.loads((ROOT / "tests" / "test_counts.json").read_text(encoding="utf-8"))
+    wrappers = tc["python"] + tc["javascript"] + tc["rust"] + tc["go"]
+    root, tt = tc["root"], tc["root"] + wrappers
+    expected += [
+        f"| **Tests** | {tt}: {root} root and {wrappers} in the wrappers ({tc['python']} + {tc['javascript']} + {tc['rust']} + {tc['go']}) |",
+        f"`{root} passed`",
+        f"Any of the {root} root tests",
+        f"tests-{tt}",
+        f"| **Total** | | **{tt}** |",
+    ]
     for s in expected:
         if s not in readme:
             problems.append(f"README does not contain: {s!r}")
-    assert not problems, "README figures disagree with iso10383.json:\n  " + "\n  ".join(problems)
+
+    # The declared root count must equal what pytest collects
+    r = subprocess.run([sys.executable, "-m", "pytest", "tests", "--collect-only", "-q"],
+                       cwd=ROOT, capture_output=True, text=True)
+    m = re.search(r"(\d+) tests? collected", r.stdout)
+    if not m:
+        problems.append("could not read pytest's collected count: " + r.stdout[-200:].strip())
+    elif int(m.group(1)) != root:
+        problems.append(f"tests/test_counts.json says root={root}, pytest collects {m.group(1)}")
+    assert not problems, "figures disagree with the repository:\n  " + "\n  ".join(problems)
