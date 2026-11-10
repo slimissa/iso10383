@@ -14,7 +14,12 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Corrected
+- README quoted the test counts of v1.1.4 in three places after v1.1.5 had raised them (`| **Tests** |` row, the `147 passed` example, and the sentence on the root test suite). They now match `tests/test_counts.json`. v1.1.5 shipped with those three lines stale: the figure test checked data figures only.
+
+### Changed
+- `tests/test_readme_figures.py` also checks the README's test counts against `tests/test_counts.json`, and checks that the declared root count equals what pytest collects. No test was added, so the counts do not change.
+- No data change. `iso10383.json` is the v1.1.4 file.
 
 ## [1.1.5] - 2026-11-10
 

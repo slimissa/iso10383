@@ -1120,6 +1120,30 @@
     {
       "file": "README.md",
       "absent": "| **Total** | | **265** |"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **Tests** | 272: 154 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "contains": "`154 passed`"
+    },
+    {
+      "file": "README.md",
+      "contains": "Any of the 154 root tests"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 265: 147 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`147 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 147 root tests"
     }
   ],
   "1.1.2": [
@@ -1208,6 +1232,28 @@
     {
       "file": "registry_release.json",
       "contains": "\"tag\": \"v1.1.5\""
+    },
+    {
+      "file": "tools/gen_registry_release.py",
+      "contains": "snapshot_sha256"
+    }
+  ],
+  "1.1.6": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.1.6] - "
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "[1.1.6]: https://github.com/slimissa/iso10383/compare/v1.1.5...v1.1.6"
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"version\": \"1.1.6\""
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"tag\": \"v1.1.6\""
     },
     {
       "file": "tools/gen_registry_release.py",

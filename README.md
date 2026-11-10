@@ -57,7 +57,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
 | **Release gate** | 18 checks in [`scripts/release.sh`](./scripts/release.sh) |
 | **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
-| **Tests** | 265: 147 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Tests** | 272: 154 root and 118 in the wrappers (31 + 29 + 27 + 31) |
 | **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
 | **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-11-09, `sha256:1d7f8aad...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
 | **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
@@ -82,7 +82,7 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `17` |
 | Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | the value of `counts.claims.in_file` in `registry_release.json` |
 | Claims the current gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all N claim(s) verified`, where N is `counts.claims.verified` in `registry_release.json` |
-| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `147 passed` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `154 passed` |
 | Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on <VERSION>`, where `<VERSION>` is the contents of the `VERSION` file |
 | Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
 | CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
@@ -917,7 +917,7 @@ The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
 | 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
 | 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
-| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 147 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 154 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
 | 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
 | 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
 | 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
