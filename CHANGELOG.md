@@ -14,7 +14,16 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+- `tests/test_readme_figures.py` (RCP-21): the README figures about the data (counts, status split, hierarchy rows, LEI and date columns) must match `iso10383.json`, and `meta.counts` must match the entries. All mismatches are reported in one run.
+- `scripts/prepare_release.py` and `tests/test_prepare_release.py` (RCP-25): the CHANGELOG step of a release, with refusals for a misplaced `[Unreleased]`, empty content, placeholders and an existing version.
+
+### Changed
+- `refresh.yml` gains an advisory docs step. A refresh pull request becomes a draft with a stale-figures warning when the figure test fails. It does not run a manifest check, which is always stale until `release.sh` regenerates it. Its Validate step deselects the figure test, so the pull request still opens when the README is stale.
+- Tests: root 147 to 154, total 265 to 272. README, CONTRIBUTING, `tests/test_counts.json` and the claims are synced.
+
+### Not changed
+- No data change. `iso10383.json` is the v1.1.4 file.
 
 ## [1.1.4] - 2026-11-09
 

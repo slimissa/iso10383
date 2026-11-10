@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.4-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2893-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-265-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-272-success.svg)](./tests/)
 
 ---
 
@@ -957,14 +957,14 @@ Cross-registry validation has been blocking by default since v1.0.1 (D6, D17): a
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 147 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 154 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
-| **Total** | | **265** |
+| **Total** | | **272** |
 
-The Tests badge above reads 265, the sum of this table. The root suite is spread over seventeen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_check_registry_freshness.py` (6).
+The Tests badge above reads 272, the sum of this table. The root suite is spread over seventeen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_check_registry_freshness.py` (6).
 
 ---
 

@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-265"
+      "contains": "tests-272"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 147 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 154 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **265** |"
+      "contains": "| **Total** | | **272** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 265, the sum of this table"
+      "contains": "The Tests badge above reads 272, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "147 tests"
+      "contains": "154 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "265 across all five"
+      "contains": "272 across all five"
     },
     {
       "file": "README.md",
@@ -1096,6 +1096,30 @@
     {
       "file": "README.md",
       "absent": "| Operating MICs that have at least one segment | 376 |"
+    },
+    {
+      "file": "tests/test_readme_figures.py",
+      "contains": "def test_readme_figures_match_data"
+    },
+    {
+      "file": "scripts/prepare_release.py",
+      "contains": "def prepare("
+    },
+    {
+      "file": ".github/workflows/refresh.yml",
+      "contains": "Docs check (advisory)"
+    },
+    {
+      "file": ".github/workflows/refresh.yml",
+      "contains": "--deselect tests/test_readme_figures.py"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-265"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **265** |"
     }
   ],
   "1.1.2": [
@@ -1162,6 +1186,28 @@
     {
       "file": "registry_release.json",
       "contains": "\"tag\": \"v1.1.4\""
+    },
+    {
+      "file": "tools/gen_registry_release.py",
+      "contains": "snapshot_sha256"
+    }
+  ],
+  "1.1.5": [
+    {
+      "file": "CHANGELOG.md",
+      "contains": "## [1.1.5] - "
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "[1.1.5]: https://github.com/slimissa/iso10383/compare/v1.1.4...v1.1.5"
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"version\": \"1.1.5\""
+    },
+    {
+      "file": "registry_release.json",
+      "contains": "\"tag\": \"v1.1.5\""
     },
     {
       "file": "tools/gen_registry_release.py",
