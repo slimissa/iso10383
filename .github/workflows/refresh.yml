@@ -66,8 +66,20 @@ jobs:
         run: |
           python3 tools/validate.py
           python3 tools/check_version_consistency.py
-          python3 -m pytest tests/ -q
+          python3 -m pytest tests/ -q --deselect tests/test_readme_figures.py::test_readme_figures_match_data
 
+      - name: Docs check (advisory)
+        id: docs
+        run: |
+          # Advisory on purpose: a refresh always changes counts, so stale docs must not stop the PR from opening.
+          # They turn it into a draft with a warning. A manifest --check is NOT used here: it is always STALE until release.sh regenerates it.
+          set +e
+          python3 -m pytest tests/test_readme_figures.py -q > /tmp/figs.txt 2>&1
+          echo "figs=$?" >> "$GITHUB_OUTPUT"
+          python3 tools/check_release_claims.py "$(cat VERSION)" > /tmp/claims.txt 2>&1
+          echo "claims=$?" >> "$GITHUB_OUTPUT"
+          tail -25 /tmp/figs.txt; tail -8 /tmp/claims.txt
+          exit 0
       - name: Open pull request
         uses: peter-evans/create-pull-request@v6
         with:
@@ -78,11 +90,12 @@ jobs:
 
             ${{ steps.diff.outputs.code == '1' && '**REMOVED > 0. This draft requires human confirmation before merge.**' || 'No removals. Safe to review.' }}
             The removed MICs and the full diff are in the workflow log (step "Diff").
+            ${{ steps.docs.outputs.figs != '0' && '**README figures are stale (tests/test_readme_figures.py fails). Fix the docs before releasing.**' || 'README figures match the data.' }}
 
             **Before merging:**
             - Review the diff in the workflow log.
             - If `REMOVED > 0`, confirm the removal is intentional.
             - Add a `CHANGELOG.md` entry.
-          draft: ${{ steps.diff.outputs.code == '1' }}
+          draft: ${{ steps.diff.outputs.code == '1' || steps.docs.outputs.figs != '0' }}
           commit-message: "Refresh: ISO 10383 snapshot"
           delete-branch: true
