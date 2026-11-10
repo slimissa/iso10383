@@ -14,6 +14,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.5] - 2026-11-10
+
 ### Added
 - `tests/test_readme_figures.py` (RCP-21): the README figures about the data (counts, status split, hierarchy rows, LEI and date columns) must match `iso10383.json`, and `meta.counts` must match the entries. All mismatches are reported in one run.
 - `scripts/prepare_release.py` and `tests/test_prepare_release.py` (RCP-25): the CHANGELOG step of a release, with refusals for a misplaced `[Unreleased]`, empty content, placeholders and an existing version.
@@ -443,7 +447,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.4...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.5...HEAD
+[1.1.5]: https://github.com/slimissa/iso10383/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/slimissa/iso10383/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/slimissa/iso10383/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/slimissa/iso10383/compare/v1.1.1...v1.1.2
