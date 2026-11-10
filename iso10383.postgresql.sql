@@ -1,6 +1,6 @@
 -- ISO 10383 MIC registry export
 -- dialect: postgresql
--- version: 1.1.5
+-- version: 1.1.6
 -- updated: 2026-11-09
 -- source_snapshot: 2026-11-09
 -- source_hash: sha256:1d7f8aadd0ff8ca6ee94cbe67f1165845c67124731edddcc26b129f1da45eb0a
