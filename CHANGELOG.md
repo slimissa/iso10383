@@ -14,7 +14,20 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Corrected
+- README worked example (section 10) printed values from v1.1.0 (expired since 2024-01-01: 82 instead of 96; `df.shape` 2883; 2026 expirations 32 instead of 46), and the `examples/orders-5k` output was stale. Both now come from the v1.1.6 data.
+- README reproduce-every-number row for the release gates printed 17; the count is 18.
+- README null counts, category counts, country counts and the Exchange Calendar breakdown corrected, and the sentence "seventeen files in `tests/`" now states the real count. The manifest section no longer names a consumer.
+
+### Added
+- README: the two hashes in a snapshot's meta file and what the manifest does not prove; the refresh workflow as it behaves; `scripts/prepare_release.py`; the two-layer defence against README drift (claims pin text, the figure test pins figures to the data); five limitations, two FAQ entries and two deferred items.
+
+### Documented
+- README: an `EXPIRED` entry can carry an `expiration_date` after the snapshot date. In the 2026-11-09 data these are `BRED`, `MAQE`, `RVSA`, `TPSO`, `TUOB`, `VCMO` (dated 2026-11-23), kept as published.
+
+### Changed
+- `tools/release_claims.json`: doc-facts that pinned the corrected README sentences were updated (see the commit message for each).
+- No data change. `iso10383.json` is the v1.1.6 file.
 
 ## [1.1.6] - 2026-11-10
 
