@@ -371,7 +371,7 @@ A segment never self-references. Its `operating_mic` is its direct parent.
 }
 ```
 
-(Other keys omitted here for length; every entry carries all 17.) Every `EXPIRED` entry has an `expiration_date`, and a non-expired entry can carry one too: in this snapshot `GOTC` and `NDIG` are `ACTIVE` with `expiration_date` 2026-09-28, as published. 580 entries are `EXPIRED` and 582 have a date, so test `status`, not the presence of the date.
+(Other keys omitted here for length; every entry carries all 17.) Every `EXPIRED` entry has an `expiration_date`, and a non-expired entry can carry one too: in this snapshot `GOTC` and `NDIG` are `ACTIVE` with `expiration_date` 2026-09-28, as published. 580 entries are `EXPIRED` and 582 have a date, so test `status`, not the presence of the date. The date can also lie after the snapshot date: an `EXPIRED` entry may carry a scheduled expiry that has not happened yet. `status` describes the snapshot; for a point-in-time question, compare the date with the point in time.
 
 ### A three-level chain
 
