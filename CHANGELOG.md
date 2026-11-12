@@ -14,6 +14,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.7] - 2026-11-12
+
 ### Corrected
 - README worked example (section 10) printed values from v1.1.0 (expired since 2024-01-01: 82 instead of 96; `df.shape` 2883; 2026 expirations 32 instead of 46), and the `examples/orders-5k` output was stale. Both now come from the v1.1.6 data.
 - README reproduce-every-number row for the release gates printed 17; the count is 18.
@@ -469,7 +473,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.6...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.7...HEAD
+[1.1.7]: https://github.com/slimissa/iso10383/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/slimissa/iso10383/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/slimissa/iso10383/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/slimissa/iso10383/compare/v1.1.3...v1.1.4
