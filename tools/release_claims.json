@@ -1144,6 +1144,10 @@
     {
       "file": "README.md",
       "absent": "Any of the 147 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "git show v<source_version>:checksums.json | sha256sum"
     }
   ],
   "1.1.2": [

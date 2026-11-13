@@ -19,6 +19,7 @@ Nothing yet.
 ## [1.1.7] - 2026-11-12
 
 ### Corrected
+- `upstream_sha256` in `tools/exchange_calendar_snapshot.meta.json` did not reproduce from the tag it names (recorded `9b69a8989b216aed327adb702f641b52fd7be7777075344beaf16b8cdd5492a9`, introduced in v1.1.2). The old value is the digest of `calendar.json` at an untagged commit (d797fb6, 2026-11-08), not at the pinned tag. It is now the SHA-256 of the sibling's `checksums.json` at the pinned tag, which lists the digest of every `exchanges/*.json` file the generator reads. The ISO 3166 value was checked and reproduces.
 - README worked example (section 10) printed values from v1.1.0 (expired since 2024-01-01: 82 instead of 96; `df.shape` 2883; 2026 expirations 32 instead of 46), and the `examples/orders-5k` output was stale. Both now come from the v1.1.6 data.
 - README reproduce-every-number row for the release gates printed 17; the count is 18.
 - README null counts, category counts, country counts and the Exchange Calendar breakdown corrected, and the sentence "seventeen files in `tests/`" now states the real count. The manifest section no longer names a consumer.
@@ -30,6 +31,7 @@ Nothing yet.
 - README: an `EXPIRED` entry can carry an `expiration_date` after the snapshot date. In the 2026-11-09 data these are `BRED`, `MAQE`, `RVSA`, `TPSO`, `TUOB`, `VCMO` (dated 2026-11-23), kept as published.
 
 ### Changed
+- Exchange Calendar snapshot re-vendored from 2.26.0 to 2.27.0 (the live sibling had moved; the release gate refuses drift). MICs: 74 to 74.
 - `tools/release_claims.json`: doc-facts that pinned the corrected README sentences were updated (see the commit message for each).
 - No data change. `iso10383.json` is the v1.1.6 file.
 
