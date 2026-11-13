@@ -13,7 +13,7 @@
     "source_snapshot": "2026-11-09",
     "source_url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv",
     "updated": "2026-11-09",
-    "version": "1.1.6"
+    "version": "1.1.7"
   },
   "mics": [
     {

@@ -4,9 +4,9 @@
     "active": 2304,
     "broken_chains": 0,
     "claims": {
-      "doc_facts": 267,
-      "in_file": 316,
-      "verified": 272
+      "doc_facts": 268,
+      "in_file": 322,
+      "verified": 273
     },
     "countries": 149,
     "expired": 580,
@@ -31,7 +31,7 @@
       "bytes": 1718541,
       "layer": 1,
       "path": "iso10383.json",
-      "sha256": "d25d645241df4de21b36e450a1ce1aec8dd684301a6b0ff00e07164d8e9b12d5"
+      "sha256": "a194881eff1d7d0eeaccd0f002f68d326d7f1bd628be93aad64094656f5a9596"
     },
     {
       "bytes": 5930,
@@ -61,31 +61,31 @@
       "bytes": 376998,
       "layer": 2,
       "path": "iso10383.mysql.sql",
-      "sha256": "984ad751c26695d5f33d854794f7d0cb6b87855cac39490b9983a454b22b40eb"
+      "sha256": "d06f6c270560728ea0bc4b08d828b4048a41c9e846326cbf751c780f95567be2"
     },
     {
       "bytes": 203245,
       "layer": 2,
       "path": "iso10383.parquet",
-      "sha256": "1daeaf1ee1b69fd58563d7baa2dc23d83f2d88dde3f8a450e344d00a99249a67"
+      "sha256": "1fb3032c05c60723991533897ff4ff8937c3b1cd4d77723c4a9e75952daafe39"
     },
     {
       "bytes": 979766,
       "layer": 2,
       "path": "iso10383.postgresql.sql",
-      "sha256": "886f8bdb328dd0f22d5599ccebde0d511e9d0bd3795fd95e1a5934d4f100144a"
+      "sha256": "181523ed8873590be5ef8872b5ce21977e2efdae1e6361d19ec709e8f9d9d798"
     },
     {
       "bytes": 979652,
       "layer": 2,
       "path": "iso10383.sql",
-      "sha256": "0d94e7e09183c37b00674a58f7c0d8f207724936d2f292ea8ebd62ef5a72e915"
+      "sha256": "45342f37cf841fa55cec915ab0bb119a0c7aa3b7ecb8a519f85f08ec3a714a7c"
     },
     {
       "bytes": 924558,
       "layer": 2,
       "path": "iso10383.sqlite.sql",
-      "sha256": "e5ec35dbafa3688482a1db69a55d9f41407de20bec5d13809c3e34e166590a0c"
+      "sha256": "049f6308beeb9cab6fc9580ff0415919b790d2e55814bb5af3b15db6c87a6ac0"
     },
     {
       "bytes": 521414,
@@ -97,29 +97,29 @@
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/go/data/iso10383.json",
-      "sha256": "d25d645241df4de21b36e450a1ce1aec8dd684301a6b0ff00e07164d8e9b12d5"
+      "sha256": "a194881eff1d7d0eeaccd0f002f68d326d7f1bd628be93aad64094656f5a9596"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/javascript/src/data/iso10383.json",
-      "sha256": "d25d645241df4de21b36e450a1ce1aec8dd684301a6b0ff00e07164d8e9b12d5"
+      "sha256": "a194881eff1d7d0eeaccd0f002f68d326d7f1bd628be93aad64094656f5a9596"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/python/src/iso10383/data/iso10383.json",
-      "sha256": "d25d645241df4de21b36e450a1ce1aec8dd684301a6b0ff00e07164d8e9b12d5"
+      "sha256": "a194881eff1d7d0eeaccd0f002f68d326d7f1bd628be93aad64094656f5a9596"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/rust/data/iso10383.json",
-      "sha256": "d25d645241df4de21b36e450a1ce1aec8dd684301a6b0ff00e07164d8e9b12d5"
+      "sha256": "a194881eff1d7d0eeaccd0f002f68d326d7f1bd628be93aad64094656f5a9596"
     }
   ],
   "registry": "iso10383",
-  "released": "2026-11-10",
+  "released": "2026-11-12",
   "schema_version": "1.0.0",
   "source": {
     "name": "SWIFT ISO10383_MIC.csv",
@@ -127,16 +127,16 @@
     "snapshot": "2026-11-09",
     "url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv"
   },
-  "tag": "v1.1.6",
+  "tag": "v1.1.7",
   "tag_object": null,
   "vendors": [
     {
       "file": "tools/exchange_calendar_snapshot.json",
       "name": "exchange-calendar",
-      "review_by": "2027-02-09",
-      "sha256": "78074b89bcfbc3ce08f426c6ce2567170ec8a52b760705caf46bea3a4bbcf04e",
-      "source_version": "2.26.0",
-      "vendored_at": "2026-11-09"
+      "review_by": "2027-02-13",
+      "sha256": "088521dcf61e8024991213002c661cd76add7b7b47efefc56762656c5bae3364",
+      "source_version": "2.27.0",
+      "vendored_at": "2026-11-13"
     },
     {
       "file": "tools/iso3166_snapshot.json",
@@ -147,5 +147,5 @@
       "vendored_at": "2026-11-08"
     }
   ],
-  "version": "1.1.6"
+  "version": "1.1.7"
 }
