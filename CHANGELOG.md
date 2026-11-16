@@ -14,7 +14,12 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+- Source refresh: SWIFT `ISO10383_MIC.csv` of 2026-11-15 (`sha256:1d7f8aadd0ff...`). 0 new MICs (0 operating, 0 segment), 0 removed. Status changes: none.
+- Counts: 2,893 MICs (1,599 operating, 1,294 segment), 2,304 active, 9 updated, 580 expired, 0 broken chains.
+- Newly expired (0): operating none; segment none.
+- Non-expired entries that carry an `expiration_date`: `GOTC`, `NDIG`, kept as published.
+- README, CONTRIBUTING and the number-pinning claims updated to these figures.
 
 ## [1.1.7] - 2026-11-12
 
