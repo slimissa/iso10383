@@ -14,7 +14,14 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+- `tools/consumers.json` (qlf-sentinel client contract CC-5): the registries that vendor `iso10383.json`, in iso3166's format. One consumer, Exchange Calendar, which keeps `tools/iso10383_snapshot.json` and reads `mic` (its `tools/check_mic_codes.py`, cited in the file's `_comment`).
+- `tests/test_consumers_json.py` (4 tests): the key set, the `repo` pattern, `snapshot_path`, `fields_read` against the record fields of `schema.json`, unique names and repos, each field in that consumer's `docs/JOINS.md` row, and each repo linked in README section 22.
+- `tests/test_scripts.py` (2 tests): `release.sh` contains no `git add -A`, `git add .` or `git add --all`, prints `git diff --cached --stat`, and every path it stages exists and covers what the generators write.
+
+### Changed
+- `scripts/release.sh` stages the paths it writes by name (the version sites, the nine exports, the four bundled copies and `registry_release.json`) instead of `git add -A`, prints `git diff --cached --stat`, and exits 1 if anything is left unstaged or untracked. `--dry-run` prints the list instead.
+- Tests: root 154 to 160, total 272 to 278. README, CONTRIBUTING, `tests/test_counts.json` and the doc-facts claims are synced; `registry_release.json` (`counts.tests`, `counts.claims`) is regenerated at the next release.
 
 ## [1.1.8] - 2026-11-16
 
