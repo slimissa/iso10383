@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.8-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2893-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-272-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-276-success.svg)](./tests/)
 
 ---
 
@@ -57,7 +57,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
 | **Release gate** | 18 checks in [`scripts/release.sh`](./scripts/release.sh) |
 | **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
-| **Tests** | 272: 154 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Tests** | 276: 158 root and 118 in the wrappers (31 + 29 + 27 + 31) |
 | **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
 | **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-11-09, `sha256:1d7f8aad...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
 | **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
@@ -82,7 +82,7 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `18` |
 | Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | the value of `counts.claims.in_file` in `registry_release.json` |
 | Claims the current gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all N claim(s) verified`, where N is `counts.claims.verified` in `registry_release.json` |
-| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `154 passed` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `158 passed` |
 | Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on <VERSION>`, where `<VERSION>` is the contents of the `VERSION` file |
 | Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
 | CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
@@ -939,7 +939,7 @@ The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
 | 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
 | 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
-| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 154 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 158 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
 | 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
 | 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
 | 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
@@ -988,14 +988,14 @@ The release gate runs both (the claims as gate 6, the figure test inside gate 14
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 154 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 158 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
-| **Total** | | **272** |
+| **Total** | | **276** |
 
-The Tests badge above reads 272, the sum of this table. The root suite is spread over nineteen files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
+The Tests badge above reads 276, the sum of this table. The root suite is spread over twenty files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (3), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_consumers_json.py` (4), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
 
 ---
 
@@ -1217,6 +1217,7 @@ iso10383/
 │   ├── iso3166_snapshot.meta.json       # Vendoring metadata and review_by
 │   ├── exchange_calendar_snapshot.json  # Layer 4: 74 MICs
 │   ├── exchange_calendar_snapshot.meta.json  # Vendoring metadata and review_by
+│   ├── consumers.json                   # Registries that vendor iso10383.json, and the fields each reads (CC-5)
 │   ├── check_version_consistency.py     # The nine version sites, plus the schema badge
 │   ├── check_registry_freshness.py      # meta.source_snapshot within 60 days
 │   ├── check_snapshot_freshness.py      # Vendored snapshots within review_by
@@ -1247,6 +1248,7 @@ iso10383/
 │   ├── test_checks.py                   # The checking tools
 │   ├── test_check_release_claims.py     # The release-claims checker: exit codes, manifest keys
 │   ├── test_cli.py                      # CLI behaviour and exit codes
+│   ├── test_consumers_json.py           # tools/consumers.json against schema.json, docs/JOINS.md and README section 22
 │   ├── test_export_csv.py               # CSV/TSV exporter
 │   ├── test_export_parquet.py           # Parquet exporter
 │   ├── test_export_sql.py               # SQL exporter

@@ -1,0 +1,11 @@
+{
+  "_comment": "Registries that vendor iso10383.json, as read from their public repositories on 2026-11-23. fields_read comes from exchange-calendar tools/check_mic_codes.py at 1c5bc18: lines 137-143 extract mics[].mic from iso10383.json, lines 67-74 (build_mic_set) read the snapshot of those codes; meta.version is metadata and is not listed. Read by tests/test_consumers_json.py, which ties it to schema.json, docs/JOINS.md and README section 22. snapshot_path is where the consumer keeps its copy; its vendoring metadata is the same path with .json replaced by .meta.json.",
+  "consumers": [
+    {
+      "name": "Exchange Calendar",
+      "repo": "slimissa/exchange-calendar",
+      "snapshot_path": "tools/iso10383_snapshot.json",
+      "fields_read": ["mic"]
+    }
+  ]
+}

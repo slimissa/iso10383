@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-272"
+      "contains": "tests-276"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 154 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 158 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **272** |"
+      "contains": "| **Total** | | **276** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 272, the sum of this table"
+      "contains": "The Tests badge above reads 276, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "154 tests"
+      "contains": "158 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "272 across all five"
+      "contains": "276 across all five"
     },
     {
       "file": "README.md",
@@ -984,7 +984,7 @@
     },
     {
       "file": "README.md",
-      "contains": "nineteen files in `tests/`"
+      "contains": "twenty files in `tests/`"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 272: 154 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 276: 158 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`154 passed`"
+      "contains": "`158 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 154 root tests"
+      "contains": "Any of the 158 root tests"
     },
     {
       "file": "README.md",
@@ -1148,6 +1148,58 @@
     {
       "file": "README.md",
       "contains": "git show v<source_version>:checksums.json | sha256sum"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-272"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 154 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **272** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 272, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "154 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "272 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "nineteen files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 272: 154 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`154 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 154 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_consumers_json.py` (4)"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── test_consumers_json.py           # tools/consumers.json against schema.json, docs/JOINS.md and README section 22"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── consumers.json                   # Registries that vendor iso10383.json, and the fields each reads (CC-5)"
     }
   ],
   "1.1.2": [
