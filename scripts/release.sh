@@ -262,7 +262,57 @@ gate python3 tools/gen_registry_release.py --check --version "$VERSION"
 # --- Commit, push ---------------------------------------------------------
 
 step "Commit and push"
-run git add -A
+
+# Every path the steps above write, staged by name. The tree was clean
+# at the preconditions, so after staging nothing may be left unstaged
+# or untracked: a path written but not listed here is a bug in this
+# list, and a stray file stops the release instead of shipping in it.
+#   Version sites (check_version_consistency.py). CHANGELOG.md is
+#   written by hand beforehand; listed because it is a site. The
+#   Parquet footer is a site and an export.
+#   Exports: export_csv.py (4), export_sql.py (4), export_parquet.py (1).
+#   Bundles: sync_wrappers.py TARGETS (4).
+#   Manifest: gen_registry_release.py.
+RELEASE_PATHS=(
+    VERSION
+    CHANGELOG.md
+    iso10383.json
+    wrappers/python/pyproject.toml
+    wrappers/python/src/iso10383/__init__.py
+    wrappers/javascript/package.json
+    wrappers/rust/Cargo.toml
+    README.md
+    iso10383.csv
+    iso10383.excel.csv
+    iso10383.european.csv
+    iso10383.tsv
+    iso10383.sql
+    iso10383.postgresql.sql
+    iso10383.mysql.sql
+    iso10383.sqlite.sql
+    iso10383.parquet
+    wrappers/python/src/iso10383/data/iso10383.json
+    wrappers/javascript/src/data/iso10383.json
+    wrappers/rust/data/iso10383.json
+    wrappers/go/data/iso10383.json
+    registry_release.json
+)
+
+if [[ "$DRY_RUN" == "--dry-run" ]]; then
+    echo "[dry-run] would stage ${#RELEASE_PATHS[@]} paths:"
+    printf '[dry-run]   %s\n' "${RELEASE_PATHS[@]}"
+else
+    git add -- "${RELEASE_PATHS[@]}"
+    git diff --cached --stat
+    # Fully staged entries read "X  path" (worktree column blank).
+    # Anything else (unstaged change, untracked file) is left over.
+    LEFTOVER="$(git status --porcelain | grep -vE '^[MADRCT] ' || true)"
+    if [[ -n "$LEFTOVER" ]]; then
+        echo "FAIL: paths left unstaged or untracked after staging:" >&2
+        echo "$LEFTOVER" >&2
+        exit 1
+    fi
+fi
 run git commit -m "Release v$VERSION"
 run git push origin main
 

@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-276"
+      "contains": "tests-278"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 158 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 160 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **276** |"
+      "contains": "| **Total** | | **278** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 276, the sum of this table"
+      "contains": "The Tests badge above reads 278, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "158 tests"
+      "contains": "160 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "276 across all five"
+      "contains": "278 across all five"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 276: 158 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 278: 160 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`158 passed`"
+      "contains": "`160 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 158 root tests"
+      "contains": "Any of the 160 root tests"
     },
     {
       "file": "README.md",
@@ -1200,6 +1200,42 @@
     {
       "file": "README.md",
       "contains": "│   ├── consumers.json                   # Registries that vendor iso10383.json, and the fields each reads (CC-5)"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-276"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 158 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **276** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 276, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "158 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "276 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 276: 158 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`158 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 158 root tests"
     }
   ],
   "1.1.2": [
