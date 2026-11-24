@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-278"
+      "contains": "tests-298"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 160 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 180 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **278** |"
+      "contains": "| **Total** | | **298** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 278, the sum of this table"
+      "contains": "The Tests badge above reads 298, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "160 tests"
+      "contains": "180 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "278 across all five"
+      "contains": "298 across all five"
     },
     {
       "file": "README.md",
@@ -984,7 +984,7 @@
     },
     {
       "file": "README.md",
-      "contains": "twenty files in `tests/`"
+      "contains": "twenty-one files in `tests/`"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 278: 160 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 298: 180 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`160 passed`"
+      "contains": "`180 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 160 root tests"
+      "contains": "Any of the 180 root tests"
     },
     {
       "file": "README.md",
@@ -1236,6 +1236,66 @@
     {
       "file": "README.md",
       "absent": "Any of the 158 root tests"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-278"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 160 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **278** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 278, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "160 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "278 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "twenty files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 278: 160 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`160 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 160 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "`refresh_cadence` is `monthly`, `quarterly` or `yearly`, and `review_by` is `vendored_at` plus one cadence period"
+    },
+    {
+      "file": "README.md",
+      "contains": "Exchange Calendar is `quarterly`, ISO 3166 `yearly`"
+    },
+    {
+      "file": "README.md",
+      "absent": "(`monthly` for both)"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_snapshot_meta.py` (20)"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── test_snapshot_meta.py            # Vendoring meta files: CC-2 keys in meta, review_by cadence rule, top-level copies equal"
     }
   ],
   "1.1.2": [
@@ -1436,6 +1496,22 @@
     {
       "file": "CHANGELOG.md",
       "contains": "Exchange Calendar 2.27.0 to 2.34.0, ISO 3166 1.12.7 to 1.12.13. No change to the MIC or code sets"
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "contains": "\"refresh_cadence\": \"quarterly\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "contains": "\"refresh_cadence\": \"yearly\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "absent": "\"refresh_cadence\": \"monthly\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "absent": "\"refresh_cadence\": \"monthly\""
     }
   ]
 }

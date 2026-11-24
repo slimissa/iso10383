@@ -18,11 +18,14 @@ must match `VERSION`. CI enforces this with
 - `tools/consumers.json` (qlf-sentinel client contract CC-5): the registries that vendor `iso10383.json`, in iso3166's format. One consumer, Exchange Calendar, which keeps `tools/iso10383_snapshot.json` and reads `mic` (its `tools/check_mic_codes.py`, cited in the file's `_comment`).
 - `tests/test_consumers_json.py` (4 tests): the key set, the `repo` pattern, `snapshot_path`, `fields_read` against the record fields of `schema.json`, unique names and repos, each field in that consumer's `docs/JOINS.md` row, and each repo linked in README section 22.
 - `tests/test_scripts.py` (2 tests): `release.sh` contains no `git add -A`, `git add .` or `git add --all`, prints `git diff --cached --stat`, and every path it stages exists and covers what the generators write.
+- `tests/test_snapshot_meta.py` (20 tests): for every registry snapshot's `.meta.json`, the five qlf-sentinel CC-2 keys inside `meta` with their types, `refresh_cadence` in `monthly`/`quarterly`/`yearly`, `review_by` = `vendored_at` + 1 cadence period (month-end clamped), equal top-level and nested copies, and `meta.source_version` = the snapshot's `source_version`; one negative case per rule.
 
 ### Changed
 - `scripts/release.sh` stages the paths it writes by name (the version sites, the nine exports, the four bundled copies and `registry_release.json`) instead of `git add -A`, prints `git diff --cached --stat`, and exits 1 if anything is left unstaged or untracked. `--dry-run` prints the list instead.
 - Tests: root 154 to 160, total 272 to 278. README, CONTRIBUTING, `tests/test_counts.json` and the doc-facts claims are synced; `registry_release.json` (`counts.tests`, `counts.claims`) is regenerated at the next release.
 - Vendored snapshots re-vendored by their generators at the upstream tags: Exchange Calendar 2.27.0 to 2.34.0, ISO 3166 1.12.7 to 1.12.13. No change to the MIC or code sets (74 MICs, 252 codes). New `upstream_sha256`: `dae087fe56d4ebf409557b71249b7dc7a125dac3410767c81eba48990d803a65` (Exchange Calendar `checksums.json` at v2.34.0), `c4752297d0427e3e6ec929defd1cb717538ea4dc3c6721d6cce618cb8877a974` (ISO 3166 `iso3166.json` at v1.12.13). `vendored_at` 2026-11-23.
+- Vendoring meta files (qlf-sentinel client contract CC-2): `meta` now also holds `source`, `source_version` and `vendored_at`, equal to the top-level copies, which stay for `gen_registry_release.py` and `check_*_current.py`. `refresh_cadence` follows the windows both files have always used: Exchange Calendar `monthly` to `quarterly` (`review_by` 2027-02-23), ISO 3166 `monthly` to `yearly` (`review_by` 2027-11-23). Rule: `review_by` = `vendored_at` + 1 cadence period, recorded in each `$comment` and README section 9.
+- Tests: root 160 to 180, total 278 to 298 (counts, README, CONTRIBUTING and doc-facts claims synced).
 
 ## [1.1.8] - 2026-11-16
 
