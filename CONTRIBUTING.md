@@ -248,6 +248,7 @@ docs/
     0010-platform-charter.md  ADR: the platform charter.
     0011-reprocessing.md      ADR: reprocessing and the REMOVED > 0 guard.
     0012-agent-read-surface.md       ADR: the agent's read surface.
+    0013-sibling-drift-against-tags.md  ADR: sibling drift against release tags.
     v1.0.0-decisions.md       D1–D17, the locked decision register.
 
 iso10383.{sql,postgresql.sql,mysql.sql,sqlite.sql}    Layer 2 SQL
@@ -800,11 +801,11 @@ Describe corruption in prose. Do not embed it.
 ## What this document does not cover
 
 - **How the type system works.** See `docs/action_types.md`.
-- **Why each architectural decision was made.** See the twelve ADRs
+- **Why each architectural decision was made.** See the thirteen ADRs
   in `docs/decisions/` and the D-register in
   `docs/decisions/v1.0.0-decisions.md`.
-  **ADR section headers vary by ADR.** ADRs 0001–0009 open with
-  `## Context`; ADRs 0010–0012 open with `## Problem`. Every ADR
+  **ADR section headers vary by ADR.** ADRs 0001–0009 and 0013 open
+  with `## Context`; ADRs 0010–0012 open with `## Problem`. Every ADR
   except 0001 has a `## Decision` section or numbered `## Decision N`
   sections. Every ADR has `## Consequences`, `## Alternatives
   considered` and `## References`; `## Rationale`, `## Open questions`,

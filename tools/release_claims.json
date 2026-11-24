@@ -1556,6 +1556,54 @@
     {
       "file": "README.md",
       "contains": "`test_check_siblings_workflow.py` (6)"
+    },
+    {
+      "file": "docs/decisions/README.md",
+      "contains": "Thirteen ADRs, `0001` to `0013`, plus"
+    },
+    {
+      "file": "docs/decisions/README.md",
+      "absent": "Twelve ADRs, `0001` to `0012`"
+    },
+    {
+      "file": "docs/decisions/README.md",
+      "contains": "| 0013 | [What do the sibling drift checks compare against, and how is a sibling re-vendored?](./0013-sibling-drift-against-tags.md) | Accepted | none |"
+    },
+    {
+      "file": "README.md",
+      "contains": "# Index of the thirteen ADRs: question, status, amendments"
+    },
+    {
+      "file": "README.md",
+      "absent": "# Index of the twelve ADRs"
+    },
+    {
+      "file": "README.md",
+      "contains": "│       └── 0013-sibling-drift-against-tags.md  # Drift checks against the latest release tag; revendor.py; weekly check"
+    },
+    {
+      "file": "README.md",
+      "contains": "| [`docs/decisions/0013-sibling-drift-against-tags.md`](./docs/decisions/0013-sibling-drift-against-tags.md) |"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "    0013-sibling-drift-against-tags.md  ADR: sibling drift against release tags."
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "See the thirteen ADRs"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "See the twelve ADRs"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "ADRs 0001–0009 and 0013 open"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "ADRs 0001–0009 open with"
     }
   ],
   "1.1.2": [
@@ -1772,6 +1820,100 @@
     {
       "file": "tools/iso3166_snapshot.meta.json",
       "absent": "\"refresh_cadence\": \"monthly\""
+    }
+  ],
+  "1.1.10": [
+    {
+      "file": "docs/decisions/0013-sibling-drift-against-tags.md",
+      "contains": "# 0013 — Sibling drift checks against release tags"
+    },
+    {
+      "file": "docs/decisions/README.md",
+      "contains": "| 0013 |"
+    },
+    {
+      "file": ".github/workflows/check-siblings.yml",
+      "contains": "workflow_dispatch"
+    },
+    {
+      "file": ".github/workflows/check-siblings.yml",
+      "contains": "cron: \"30 6 * * 1\""
+    },
+    {
+      "file": ".github/workflows/check-siblings.yml",
+      "absent": "push:"
+    },
+    {
+      "file": ".github/workflows/check-siblings.yml",
+      "absent": "pull_request:"
+    },
+    {
+      "file": ".github/workflows/check-siblings.yml",
+      "contains": "title=\"Sibling drift: $SIBLING\""
+    },
+    {
+      "file": "tools/revendor.py",
+      "contains": "--check"
+    },
+    {
+      "file": "tools/revendor.py",
+      "contains": "import cadence"
+    },
+    {
+      "file": "tools/cadence.py",
+      "contains": "CADENCE_MONTHS = {\"monthly\": 1, \"quarterly\": 3, \"yearly\": 12}"
+    },
+    {
+      "file": "tests/test_snapshot_meta.py",
+      "contains": "from cadence import CADENCE_MONTHS, add_months"
+    },
+    {
+      "file": "Makefile",
+      "contains": "$(PYTHON) tools/revendor.py $(SIBLING) $(ARGS)"
+    },
+    {
+      "file": "tools/check_iso3166_current.py",
+      "contains": "upstream format changed at"
+    },
+    {
+      "file": "tools/check_exchange_calendar_current.py",
+      "contains": "upstream format changed at"
+    },
+    {
+      "file": "tools/check_iso3166_current.py",
+      "absent": "/main/"
+    },
+    {
+      "file": "tools/check_exchange_calendar_current.py",
+      "absent": "/main/"
+    },
+    {
+      "file": "tools/check_iso3166_current.py",
+      "contains": "sibling_tags.latest_semver_tag(REPO)"
+    },
+    {
+      "file": "tools/check_exchange_calendar_current.py",
+      "contains": "\"--branch\", tag"
+    },
+    {
+      "file": "tools/check_iso3166_current.py",
+      "contains": "warning: version drift: snapshot source_version"
+    },
+    {
+      "file": "tools/check_exchange_calendar_current.py",
+      "contains": "warning: version drift: snapshot source_version"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "gate python3 tools/check_iso3166_current.py --strict --fail-on-version-drift"
+    },
+    {
+      "file": "scripts/release.sh",
+      "contains": "gate python3 tools/check_exchange_calendar_current.py --strict --fail-on-version-drift"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "`tools/revendor.py`: re-vendors one or both sibling snapshots in one command"
     }
   ]
 }

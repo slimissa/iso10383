@@ -14,7 +14,17 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+- `tools/revendor.py`: re-vendors one or both sibling snapshots in one command (`{iso3166|exchange_calendar|all} [--to X.Y.Z | --latest] [--date YYYY-MM-DD] [--check]`). It sets `source_version`, runs the generator's own fetch at the tag, recomputes `upstream_sha256` (from the tag) and `snapshot_sha256`, and writes `vendored_at` (UTC), `vendored_from` and `meta.review_by` with `source`, `source_version` and `vendored_at` equal at the top level and in `meta`. `--check` writes nothing and exits 1 if anything would change. `make revendor SIBLING=all`. `tools/cadence.py` holds the `review_by` cadence rule, shared with `tests/test_snapshot_meta.py`.
+- `.github/workflows/check-siblings.yml`: every Monday at 06:30 UTC and on manual dispatch, runs both sibling drift checks with `--strict` and opens or comments on a `Sibling drift: <sibling>` issue when one fails. Scheduled only: `validate.yml` stays the one per-push workflow the release polls.
+- ADR 0013 (`docs/decisions/0013-sibling-drift-against-tags.md`): sibling drift against release tags, the re-vendor tool and the weekly check; version drift stays a release blocker (RELEASE_PATTERN, unchanged).
+- `tools/sibling_tags.py`: the latest strict-SemVer `vX.Y.Z` tag of a sibling, from `git ls-remote --tags`.
+- Tests: `tests/test_sibling_tags.py` (25), `tests/test_revendor.py` (15), `tests/test_check_siblings_workflow.py` (6). Root 180 to 226, total 298 to 344.
+
+### Changed
+- `tools/check_iso3166_current.py` and `tools/check_exchange_calendar_current.py` compare against the sibling's latest release tag, never `main`, and cross-check the tag against the file's `meta.version`. They print `upstream version: vX.Y.Z`. On 2026-11-24 Exchange Calendar's `main` reverted its v2.34.0 release commit while the tag stayed; against `main` the release-gate form failed, against the tag it passes.
+- A file at the tag that a check cannot read (missing file or key, empty set) fails with `upstream format changed at vX.Y.Z: ...`, never as stale, even with `--advisory`. This replaces the ISO 3166 check's "version not compared" note and the Exchange Calendar check's fallback to the sibling's `VERSION` file. Exit semantics are otherwise unchanged: content drift fails under `--strict`, version drift fails only with `--fail-on-version-drift`, an unreachable sibling fails unless `--advisory`.
+- README (cross-reference check, gates 7 and 8, CI section, workflow count), CONTRIBUTING (re-vendor workflow) and `docs/AUDIT.md` describe the tag-based checks.
 
 ## [1.1.9] - 2026-11-24
 

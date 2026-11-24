@@ -1,6 +1,6 @@
 # Architecture decision records
 
-Twelve ADRs, `0001` to `0012`, plus the register of locked decisions made
+Thirteen ADRs, `0001` to `0013`, plus the register of locked decisions made
 before v1.0.0. Start here to find which one answers a question.
 
 | ADR | Question it answers | Status | Amendments / Supersedes |
@@ -17,6 +17,7 @@ before v1.0.0. Start here to find which one answers a question.
 | 0010 | [What is the registry for, who consumes it, and what layers does it have?](./0010-platform-charter.md) | Accepted | Supersedes the undated draft `D18-platform-charter.md` (removed). Amendments: 2026-10-10; 2026-10-18 (two, on different claims) |
 | 0011 | [What does the refresh do step by step, and is reprocessing a capability?](./0011-reprocessing.md) | Accepted | Amendments: 2026-10-10; 2026-10-18 |
 | 0012 | [What may a future agent read, and what may it write?](./0012-agent-read-surface.md) | Accepted | none |
+| 0013 | [What do the sibling drift checks compare against, and how is a sibling re-vendored?](./0013-sibling-drift-against-tags.md) | Accepted | none |
 
 The Status column copies each ADR's own `**Status:**` header. No ADR is
 superseded by another. "Amendments" lists the dated `## Amendment`

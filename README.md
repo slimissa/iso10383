@@ -1349,7 +1349,7 @@ iso10383/
 │   ├── v1.1.5-verification.md          # Gate record for v1.1.5
 │   ├── v1.1.6-verification.md          # Gate record for v1.1.6
 │   └── decisions/
-│       ├── README.md                    # Index of the twelve ADRs: question, status, amendments
+│       ├── README.md                    # Index of the thirteen ADRs: question, status, amendments
 │       ├── v1.0.0-decisions.md          # D1 to D17, each with a status
 │       ├── 0001-source-format.md        # What SWIFT's file is
 │       ├── 0002-operating-segment-model.md  # One array, self-reference, multi-level
@@ -1362,7 +1362,8 @@ iso10383/
 │       ├── 0009-mic-bic-companion-declined.md  # Why there is no MIC to BIC file
 │       ├── 0010-platform-charter.md     # What the platform is, and its limits
 │       ├── 0011-reprocessing.md         # Monthly batch; no general reprocessing
-│       └── 0012-agent-read-surface.md   # What a future agent may read
+│       ├── 0012-agent-read-surface.md   # What a future agent may read
+│       └── 0013-sibling-drift-against-tags.md  # Drift checks against the latest release tag; revendor.py; weekly check
 │
 └── .github/
     └── workflows/
@@ -1406,6 +1407,7 @@ iso10383/
 | [`docs/decisions/0010-platform-charter.md`](./docs/decisions/0010-platform-charter.md) | What is the registry for, who consumes it, and what layers does it have? |
 | [`docs/decisions/0011-reprocessing.md`](./docs/decisions/0011-reprocessing.md) | What does the refresh do step by step, and is reprocessing a capability? |
 | [`docs/decisions/0012-agent-read-surface.md`](./docs/decisions/0012-agent-read-surface.md) | What may a future agent read, and what may it write? |
+| [`docs/decisions/0013-sibling-drift-against-tags.md`](./docs/decisions/0013-sibling-drift-against-tags.md) | What do the sibling drift checks compare against, and how is a sibling re-vendored? |
 | `docs/v<version>-verification.md` | What did the release gate print when this version shipped? |
 | [`examples/orders-5k/README.md`](./examples/orders-5k/README.md) | What does copying registry fields into a fact table cost, against a join on the MIC? |
 | [`CHANGELOG.md`](./CHANGELOG.md) | What changed in each release, and what is queued under `[Unreleased]`? |
