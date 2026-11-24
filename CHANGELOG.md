@@ -22,6 +22,7 @@ must match `VERSION`. CI enforces this with
 ### Changed
 - `scripts/release.sh` stages the paths it writes by name (the version sites, the nine exports, the four bundled copies and `registry_release.json`) instead of `git add -A`, prints `git diff --cached --stat`, and exits 1 if anything is left unstaged or untracked. `--dry-run` prints the list instead.
 - Tests: root 154 to 160, total 272 to 278. README, CONTRIBUTING, `tests/test_counts.json` and the doc-facts claims are synced; `registry_release.json` (`counts.tests`, `counts.claims`) is regenerated at the next release.
+- Vendored snapshots re-vendored by their generators at the upstream tags: Exchange Calendar 2.27.0 to 2.34.0, ISO 3166 1.12.7 to 1.12.13. No change to the MIC or code sets (74 MICs, 252 codes). New `upstream_sha256`: `dae087fe56d4ebf409557b71249b7dc7a125dac3410767c81eba48990d803a65` (Exchange Calendar `checksums.json` at v2.34.0), `c4752297d0427e3e6ec929defd1cb717538ea4dc3c6721d6cce618cb8877a974` (ISO 3166 `iso3166.json` at v1.12.13). `vendored_at` 2026-11-23.
 
 ## [1.1.8] - 2026-11-16
 

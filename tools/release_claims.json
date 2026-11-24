@@ -1416,6 +1416,26 @@
     {
       "file": "scripts/release.sh",
       "contains": "git add -- \"${RELEASE_PATHS[@]}\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.meta.json",
+      "contains": "\"source_version\": \"2.34.0\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.meta.json",
+      "contains": "\"source_version\": \"1.12.13\""
+    },
+    {
+      "file": "tools/exchange_calendar_snapshot.json",
+      "contains": "\"source_version\": \"2.34.0\""
+    },
+    {
+      "file": "tools/iso3166_snapshot.json",
+      "contains": "\"source_version\": \"1.12.13\""
+    },
+    {
+      "file": "CHANGELOG.md",
+      "contains": "Exchange Calendar 2.27.0 to 2.34.0, ISO 3166 1.12.7 to 1.12.13. No change to the MIC or code sets"
     }
   ]
 }
