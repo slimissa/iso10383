@@ -13,10 +13,18 @@
 #
 # `make registry-release` regenerates registry_release.json. Run it after
 # `make package` and after any change to a file the manifest lists.
+#
+# `make revendor SIBLING=all` re-vendors the sibling snapshots to their
+# latest release tags (tools/revendor.py; SIBLING is iso3166,
+# exchange_calendar or all). Extra flags go in ARGS, e.g. ARGS=--check or
+# SIBLING=iso3166 ARGS="--to 1.12.13". It needs the network, writes only
+# tools/*_snapshot.json and *.meta.json, and is not part of package or test.
 
 PYTHON ?= python3
+SIBLING ?= all
+ARGS ?=
 
-.PHONY: package build-wheel test registry-release
+.PHONY: package build-wheel test registry-release revendor
 
 package:
 	$(PYTHON) tools/export_csv.py
@@ -34,3 +42,6 @@ test:
 
 registry-release:
 	$(PYTHON) tools/gen_registry_release.py --version "$$(cat VERSION)"
+
+revendor:
+	$(PYTHON) tools/revendor.py $(SIBLING) $(ARGS)

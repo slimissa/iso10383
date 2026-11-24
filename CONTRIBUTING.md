@@ -22,6 +22,7 @@ rules and the source discipline if nothing else.
   - [Add an export format](#add-an-export-format)
   - [Add a wrapper method](#add-a-wrapper-method)
   - [Add a test](#add-a-test)
+  - [Re-vendor a sibling snapshot](#re-vendor-a-sibling-snapshot)
 - [The monthly refresh](#the-monthly-refresh)
 - [Cutting a release](#cutting-a-release)
 - [Commit conventions](#commit-conventions)
@@ -187,12 +188,12 @@ Expected on a clean checkout:
 
 ```
 OK: 2893 MICs validated            # python3 tools/validate.py
-205 passed                          # python3 -m pytest tests/ -q
+220 passed                          # python3 -m pytest tests/ -q
 OK: 5 suite(s) passed, 0 skipped    # bash tools/check_cross_language.sh
 ```
 
-The root suite is 205 tests; the wrapper suites are 31 (Python), 29
-(JavaScript), 27 (Rust) and 31 (Go), for 323 across all five. A clean
+The root suite is 220 tests; the wrapper suites are 31 (Python), 29
+(JavaScript), 27 (Rust) and 31 (Go), for 338 across all five. A clean
 `check_cross_language.sh` run reports `0 skipped`; a skipped suite means
 a toolchain (`node`, `cargo`, `go`) is missing.
 
@@ -452,6 +453,27 @@ Follow the fixture-anchor rule: no test hardcodes a MIC, a count,
 or a country code. Every expected value reads from
 `tests/cross_language_consistency.json` or from `iso10383.json`
 itself. If the fixture changes, the anchors change with it.
+
+### Re-vendor a sibling snapshot
+
+When a sibling releases (a release gate 7 or 8 failure on version
+drift is how it shows up at release time), re-vendor with one command:
+
+```bash
+python3 tools/revendor.py all --check   # report only: exit 1 if behind
+python3 tools/revendor.py all           # re-vendor both to their latest release tags
+python3 tools/revendor.py iso3166 --to 1.12.13 --date 2026-11-23   # one sibling, a given tag and date
+```
+
+It writes `tools/<sibling>_snapshot.json` and its `.meta.json` and
+nothing else: `source_version`, `upstream_sha256` (from the tag),
+`snapshot_sha256`, `vendored_from`, `vendored_at` and `meta.review_by`
+(the cadence rule in `tools/cadence.py`), with the top-level and `meta`
+copies equal. `vendored_at` is today in UTC unless `--date` is given.
+Then, by hand: a `CHANGELOG.md` `[Unreleased]` entry (versions from and
+to, set change, both `upstream_sha256`), the next version's claims in
+`tools/release_claims.json`, `python3 tools/validate.py` if a set
+changed, the root tests, and the release.
 
 ---
 

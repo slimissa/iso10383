@@ -6,26 +6,22 @@ review_by and refresh_cadence; review_by is vendored_at plus one cadence
 period; every key present both at the top level and in "meta" has the same
 value in both; and meta.source_version is the snapshot's own source_version.
 """
-import calendar
 import json
 import re
+import sys
 from datetime import date
 from pathlib import Path
 
 import pytest
 
 TOOLS = Path(__file__).resolve().parent.parent / "tools"
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+from cadence import CADENCE_MONTHS, add_months  # noqa: E402  (the rule lives once, in tools/cadence.py)
 REGISTRIES = ("iso4217", "iso3166", "iso10383", "exchange_calendar")
 PRESENT = [s for s in REGISTRIES if (TOOLS / f"{s}_snapshot.meta.json").is_file()]
-CADENCE_MONTHS = {"monthly": 1, "quarterly": 3, "yearly": 12}
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
-
-
-def add_months(d: date, n: int) -> date:
-    """d plus n calendar months, same day, clamped to the target month's last day."""
-    y, m = divmod(d.month - 1 + n, 12)
-    y, m = d.year + y, m + 1
-    return d.replace(year=y, month=m, day=min(d.day, calendar.monthrange(y, m)[1]))
 
 
 def _iso_date(v):

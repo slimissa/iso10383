@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-323"
+      "contains": "tests-338"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 205 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 220 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **323** |"
+      "contains": "| **Total** | | **338** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 323, the sum of this table"
+      "contains": "The Tests badge above reads 338, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "205 tests"
+      "contains": "220 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "323 across all five"
+      "contains": "338 across all five"
     },
     {
       "file": "README.md",
@@ -984,7 +984,7 @@
     },
     {
       "file": "README.md",
-      "contains": "twenty-two files in `tests/`"
+      "contains": "twenty-three files in `tests/`"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 323: 205 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 338: 220 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`205 passed`"
+      "contains": "`220 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 205 root tests"
+      "contains": "Any of the 220 root tests"
     },
     {
       "file": "README.md",
@@ -1388,6 +1388,82 @@
     {
       "file": "README.md",
       "contains": "`test_sibling_tags.py` (25)"
+    },
+    {
+      "file": "README.md",
+      "contains": "make revendor SIBLING=all  # re-vendor the sibling snapshots to their latest release tags"
+    },
+    {
+      "file": "README.md",
+      "contains": "**Re-vendoring** is one command: `python3 tools/revendor.py {iso3166|exchange_calendar|all} [--to X.Y.Z | --latest] [--date YYYY-MM-DD] [--check]`"
+    },
+    {
+      "file": "README.md",
+      "contains": "├── Makefile                             # package, build-wheel, test, registry-release, revendor"
+    },
+    {
+      "file": "README.md",
+      "absent": "├── Makefile                             # package, build-wheel, test, registry-release\n"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── revendor.py                      # Re-vendor a sibling snapshot in one command (--to | --latest, --check)"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── test_revendor.py                 # revendor.py offline: every field, --check writes nothing, cadence, make target"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "  - [Re-vendor a sibling snapshot](#re-vendor-a-sibling-snapshot)"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "### Re-vendor a sibling snapshot"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-323"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 205 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **323** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 323, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "205 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "323 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "twenty-two files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 323: 205 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`205 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 205 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_revendor.py` (15)"
     }
   ],
   "1.1.2": [
