@@ -4,9 +4,9 @@
     "active": 2304,
     "broken_chains": 0,
     "claims": {
-      "doc_facts": 268,
-      "in_file": 327,
-      "verified": 273
+      "doc_facts": 305,
+      "in_file": 378,
+      "verified": 319
     },
     "countries": 149,
     "expired": 580,
@@ -18,9 +18,9 @@
       "go": 31,
       "javascript": 29,
       "python": 31,
-      "root": 154,
+      "root": 180,
       "rust": 27,
-      "total": 272
+      "total": 298
     },
     "total": 2893,
     "updated": 9
@@ -31,7 +31,7 @@
       "bytes": 1718541,
       "layer": 1,
       "path": "iso10383.json",
-      "sha256": "2e773072c3b49fa7182bba09fa0c62a49f83ffc6ba13b59f0259ea15d75a3839"
+      "sha256": "9b531e7be7deaac31ead9bcc1425bf075d472cb1f02a23aa3172d0caf2771394"
     },
     {
       "bytes": 5930,
@@ -61,31 +61,31 @@
       "bytes": 376998,
       "layer": 2,
       "path": "iso10383.mysql.sql",
-      "sha256": "bb6fbba428e08e546c2a97c2df4a4a0e98ab605b4d53e63ed631c04e810af235"
+      "sha256": "85236e9c23ed6ffb37d3ed5629db22d46dbd5745d761023c870a11dc1d3cbd55"
     },
     {
       "bytes": 203245,
       "layer": 2,
       "path": "iso10383.parquet",
-      "sha256": "feaa224b7154c9df12cdd1abaabe80a801804f6d468cc0ef3143b79992d273c6"
+      "sha256": "4470f0dc6238e6da1a3bb46ec136753b619c5af0d368ac5d780f15918bedc52f"
     },
     {
       "bytes": 979766,
       "layer": 2,
       "path": "iso10383.postgresql.sql",
-      "sha256": "11b88499ab6a06a9da123d3218d94fc9657641852d66e14a6796307b03de802e"
+      "sha256": "6ebbf3914659a3ea3e36fbe1e457170bfcf3868914a7a0706d95417ee190d8b4"
     },
     {
       "bytes": 979652,
       "layer": 2,
       "path": "iso10383.sql",
-      "sha256": "09bdea0eea24e09a558ebd67c31e7895d09f4b15ee375eecc7c22d53d9e58507"
+      "sha256": "00bd8b7a8d2e586501c0f2af679e82734e2273ac196fcd940ab89273d59e6d6f"
     },
     {
       "bytes": 924558,
       "layer": 2,
       "path": "iso10383.sqlite.sql",
-      "sha256": "7b462bf5e4995d345755c1fb264bd8eb84acfb1be98ff855bc690accca31a1db"
+      "sha256": "4195e7941f3ae54b2704ab3bca78a457213eaf6349d1647fdd1c1768c96c7f73"
     },
     {
       "bytes": 521414,
@@ -97,29 +97,29 @@
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/go/data/iso10383.json",
-      "sha256": "2e773072c3b49fa7182bba09fa0c62a49f83ffc6ba13b59f0259ea15d75a3839"
+      "sha256": "9b531e7be7deaac31ead9bcc1425bf075d472cb1f02a23aa3172d0caf2771394"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/javascript/src/data/iso10383.json",
-      "sha256": "2e773072c3b49fa7182bba09fa0c62a49f83ffc6ba13b59f0259ea15d75a3839"
+      "sha256": "9b531e7be7deaac31ead9bcc1425bf075d472cb1f02a23aa3172d0caf2771394"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/python/src/iso10383/data/iso10383.json",
-      "sha256": "2e773072c3b49fa7182bba09fa0c62a49f83ffc6ba13b59f0259ea15d75a3839"
+      "sha256": "9b531e7be7deaac31ead9bcc1425bf075d472cb1f02a23aa3172d0caf2771394"
     },
     {
       "bytes": 1718541,
       "layer": 3,
       "path": "wrappers/rust/data/iso10383.json",
-      "sha256": "2e773072c3b49fa7182bba09fa0c62a49f83ffc6ba13b59f0259ea15d75a3839"
+      "sha256": "9b531e7be7deaac31ead9bcc1425bf075d472cb1f02a23aa3172d0caf2771394"
     }
   ],
   "registry": "iso10383",
-  "released": "2026-11-16",
+  "released": "2026-11-24",
   "schema_version": "1.0.0",
   "source": {
     "name": "SWIFT ISO10383_MIC.csv",
@@ -127,25 +127,25 @@
     "snapshot": "2026-11-15",
     "url": "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.csv"
   },
-  "tag": "v1.1.8",
+  "tag": "v1.1.9",
   "tag_object": null,
   "vendors": [
     {
       "file": "tools/exchange_calendar_snapshot.json",
       "name": "exchange-calendar",
-      "review_by": "2027-02-13",
-      "sha256": "088521dcf61e8024991213002c661cd76add7b7b47efefc56762656c5bae3364",
-      "source_version": "2.27.0",
-      "vendored_at": "2026-11-13"
+      "review_by": "2027-02-23",
+      "sha256": "2527f07fa3e190d0a8aa757332bf9e40017d6339d490c8e608c5a4850803544d",
+      "source_version": "2.34.0",
+      "vendored_at": "2026-11-23"
     },
     {
       "file": "tools/iso3166_snapshot.json",
       "name": "iso3166",
-      "review_by": "2027-11-16",
-      "sha256": "f2959ae8b2b4ab4a1ec7e56e06e1fea40e77006d2a2340184712c98a3e3f61e2",
-      "source_version": "1.12.7",
-      "vendored_at": "2026-11-16"
+      "review_by": "2027-11-23",
+      "sha256": "74f6a0d24962b564d79bb938131e110f052900a843e7bb5c9178f0159fe8ebf9",
+      "source_version": "1.12.13",
+      "vendored_at": "2026-11-23"
     }
   ],
-  "version": "1.1.8"
+  "version": "1.1.9"
 }
