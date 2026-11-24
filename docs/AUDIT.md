@@ -37,8 +37,8 @@ release adds a Layer-0-to-Layer-1 check, add the row.
 | `tools/check_snapshot_freshness.py` | Vendored `review_by` dates | `validate-json` | 4 |
 | `tools/check_release_claims.py` | Manifest claims | `validate-json` | 6 |
 | `tools/check_mojibake.py` | UTF-8 / Latin-1 corruption, fence parity | `check-mojibake` | 5 |
-| `tools/check_iso3166_current.py --strict` | Snapshot vs live sibling | `validate-json` | 7 |
-| `tools/check_exchange_calendar_current.py --strict` | Snapshot vs live sibling | `validate-json` | 8 |
+| `tools/check_iso3166_current.py --strict` | Snapshot vs the sibling's latest release tag | `validate-json` | 7 |
+| `tools/check_exchange_calendar_current.py --strict` | Snapshot vs the sibling's latest release tag | `validate-json` | 8 |
 | `tools/iso10383_cli.py check` | Registry invariants read through the CLI | `check-cli` | 9 |
 | `bash tools/check_cross_language.sh --strict` | Four wrapper suites agree | `check-cross-language` | 15 |
 | `tests/test_pip_pins.py` | Every pyarrow install line pinned | `validate-json` | 14 |

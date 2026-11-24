@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.9-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2893-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-298-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-323-success.svg)](./tests/)
 
 ---
 
@@ -57,7 +57,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
 | **Release gate** | 18 checks in [`scripts/release.sh`](./scripts/release.sh) |
 | **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
-| **Tests** | 298: 180 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Tests** | 323: 205 root and 118 in the wrappers (31 + 29 + 27 + 31) |
 | **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
 | **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-11-09, `sha256:1d7f8aad...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
 | **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
@@ -82,7 +82,7 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `18` |
 | Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | the value of `counts.claims.in_file` in `registry_release.json` |
 | Claims the current gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all N claim(s) verified`, where N is `counts.claims.verified` in `registry_release.json` |
-| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `180 passed` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `205 passed` |
 | Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on <VERSION>`, where `<VERSION>` is the contents of the `VERSION` file |
 | Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
 | CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
@@ -667,7 +667,7 @@ Each is produced by a generator that fetches the pinned tag named in its meta, n
 Two further mechanisms keep a snapshot honest, and they answer different questions:
 
 - **Scheduled re-verification**: `tools/check_snapshot_freshness.py` fails when `review_by` has passed, whether or not anything upstream changed.
-- **Cross-reference check**: `tools/check_iso3166_current.py` and `tools/check_exchange_calendar_current.py` compare the snapshot with the live sibling. A code or MIC set difference fails under `--strict`. A version-label drift prints `warning: version drift: ...` and does not change the exit code, except in the release gate, where `release.sh` passes `--fail-on-version-drift` (gates 7 and 8) and a drift fails. A sibling that cannot be reached exits 1 (nothing was compared) unless `--advisory` is passed, which exits 0 and still prints the note.
+- **Cross-reference check**: `tools/check_iso3166_current.py` and `tools/check_exchange_calendar_current.py` compare the snapshot with the sibling's latest release tag: the highest `vX.Y.Z` tag from `git ls-remote --tags`, never the sibling's `main` (`tools/sibling_tags.py`; ADR 0013). The tag is cross-checked against the file's `meta.version`, and a file the check cannot read (missing file or key, empty set) fails as `upstream format changed at vX.Y.Z`, never as stale. A code or MIC set difference fails under `--strict`. A version-label drift prints `warning: version drift: ...` and does not change the exit code, except in the release gate, where `release.sh` passes `--fail-on-version-drift` (gates 7 and 8) and a drift fails. A sibling that cannot be reached exits 1 (nothing was compared) unless `--advisory` is passed, which exits 0 and still prints the note.
 
 The Exchange Calendar snapshot's 74 MICs are, in this registry, 68 active operating MICs, 3 expired operating MICs (`XBSP`, `XJKT`, `XTAD`), 2 active segments and 1 updated segment (`XATH`); all 74 are present.
 
@@ -932,14 +932,14 @@ The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | 4 | Snapshot freshness | `check_snapshot_freshness.py` | A vendored snapshot past its `review_by` date; takes `--today YYYY-MM-DD` |
 | 5 | Mojibake | `check_mojibake.py` | Six byte patterns of UTF-8 / Latin-1 round-trip corruption (five literal signatures, one regex range), plus unclosed code fences; `--path` scans one file |
 | 6 | Release claims | `check_release_claims.py "$VERSION"` | A documentation or version claim that no longer matches the tree |
-| 7 | ISO 3166 drift | `check_iso3166_current.py --strict --fail-on-version-drift` | Snapshot code set differs from the live sibling; in the release gate a version-label drift fails too (elsewhere it only warns); an unreachable sibling fails unless `--advisory` |
-| 8 | Exchange Calendar drift | `check_exchange_calendar_current.py --strict --fail-on-version-drift` | Snapshot MIC set differs from the live sibling (same severity rules, including the unreachable case) |
+| 7 | ISO 3166 drift | `check_iso3166_current.py --strict --fail-on-version-drift` | Snapshot code set differs from the sibling's latest release tag; in the release gate a version-label drift fails too (elsewhere it only warns); an unreachable sibling fails unless `--advisory` |
+| 8 | Exchange Calendar drift | `check_exchange_calendar_current.py --strict --fail-on-version-drift` | Snapshot MIC set differs from the sibling's latest release tag (same severity rules, including the unreachable case) |
 | 9 | CLI smoke test | `iso10383_cli.py check` | Counts or chain integrity wrong when read through the CLI |
 | 10 | CSV/TSV export drift | `export_csv.py --check` | A derived file that is stale against `iso10383.json` |
 | 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
 | 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
 | 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
-| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 180 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 205 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
 | 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
 | 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
 | 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
@@ -988,14 +988,14 @@ The release gate runs both (the claims as gate 6, the figure test inside gate 14
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 180 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 205 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
-| **Total** | | **298** |
+| **Total** | | **323** |
 
-The Tests badge above reads 298, the sum of this table. The root suite is spread over twenty-one files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (5), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_consumers_json.py` (4), `test_snapshot_meta.py` (20), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
+The Tests badge above reads 323, the sum of this table. The root suite is spread over twenty-two files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (5), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_consumers_json.py` (4), `test_snapshot_meta.py` (20), `test_sibling_tags.py` (25), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
 
 ---
 
@@ -1224,8 +1224,9 @@ iso10383/
 │   ├── check_release_claims.py          # Verifies the claims manifest
 │   ├── release_claims.json              # {file, contains|absent} claims, one list per release plus doc-facts
 │   ├── check_mojibake.py                # Encoding corruption and unclosed fences
-│   ├── check_iso3166_current.py         # Snapshot vs live ISO 3166 (--strict)
-│   ├── check_exchange_calendar_current.py  # Snapshot vs live Exchange Calendar (--strict)
+│   ├── check_iso3166_current.py         # Snapshot vs ISO 3166 at its latest release tag (--strict)
+│   ├── check_exchange_calendar_current.py  # Snapshot vs Exchange Calendar at its latest release tag (--strict)
+│   ├── sibling_tags.py                  # Latest vX.Y.Z tag of a sibling (git ls-remote), shared by the drift checks
 │   └── check_cross_language.sh          # The four wrapper suites plus sync (--strict)
 │
 ├── scripts/
@@ -1261,6 +1262,7 @@ iso10383/
 │   ├── test_readme_figures.py           # Figures the README states against iso10383.json and test_counts.json
 │   ├── test_scripts.py                  # release.sh and verification-doc properties
 │   ├── test_self_reference.py           # Operating self-reference, chain termination
+│   ├── test_sibling_tags.py             # Drift checks read the latest release tag; tag parsing; format changes fail clearly
 │   ├── test_snapshot_meta.py            # Vendoring meta files: CC-2 keys in meta, review_by cadence rule, top-level copies equal
 │   ├── test_validate_schema.py          # Validator layers against bad fixtures
 │   ├── test_wrappers.py                 # Wrapper copies and shims

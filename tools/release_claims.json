@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-298"
+      "contains": "tests-323"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 180 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 205 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **298** |"
+      "contains": "| **Total** | | **323** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 298, the sum of this table"
+      "contains": "The Tests badge above reads 323, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "180 tests"
+      "contains": "205 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "298 across all five"
+      "contains": "323 across all five"
     },
     {
       "file": "README.md",
@@ -984,7 +984,7 @@
     },
     {
       "file": "README.md",
-      "contains": "twenty-one files in `tests/`"
+      "contains": "twenty-two files in `tests/`"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 298: 180 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 323: 205 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`180 passed`"
+      "contains": "`205 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 180 root tests"
+      "contains": "Any of the 205 root tests"
     },
     {
       "file": "README.md",
@@ -1296,6 +1296,98 @@
     {
       "file": "README.md",
       "contains": "│   ├── test_snapshot_meta.py            # Vendoring meta files: CC-2 keys in meta, review_by cadence rule, top-level copies equal"
+    },
+    {
+      "file": "README.md",
+      "contains": "compare the snapshot with the sibling's latest release tag: the highest `vX.Y.Z` tag from `git ls-remote --tags`, never the sibling's `main`"
+    },
+    {
+      "file": "README.md",
+      "absent": "compare the snapshot with the live sibling"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Snapshot code set differs from the sibling's latest release tag; in the release gate"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Snapshot code set differs from the live sibling;"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Snapshot MIC set differs from the sibling's latest release tag (same severity rules"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Snapshot MIC set differs from the live sibling"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── sibling_tags.py                  # Latest vX.Y.Z tag of a sibling (git ls-remote), shared by the drift checks"
+    },
+    {
+      "file": "README.md",
+      "absent": "# Snapshot vs live ISO 3166 (--strict)"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── test_sibling_tags.py             # Drift checks read the latest release tag; tag parsing; format changes fail clearly"
+    },
+    {
+      "file": "docs/AUDIT.md",
+      "contains": "| `tools/check_iso3166_current.py --strict` | Snapshot vs the sibling's latest release tag |"
+    },
+    {
+      "file": "docs/AUDIT.md",
+      "contains": "| `tools/check_exchange_calendar_current.py --strict` | Snapshot vs the sibling's latest release tag |"
+    },
+    {
+      "file": "docs/AUDIT.md",
+      "absent": "Snapshot vs live sibling"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-298"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 180 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **298** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 298, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "180 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "298 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "twenty-one files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 298: 180 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`180 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 180 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_sibling_tags.py` (25)"
     }
   ],
   "1.1.2": [

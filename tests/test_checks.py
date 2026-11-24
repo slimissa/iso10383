@@ -207,7 +207,14 @@ def _network_down(*args, **kwargs):
     raise OSError("network down")
 
 
+def _tag(version):
+    """Fake tag discovery: the sibling's latest release tag is v<version>."""
+    return lambda repo_url: f"v{version}"
+
+
 def test_iso3166_current_fails_when_sibling_unreachable(monkeypatch, capsys):
+    monkeypatch.setattr(check_iso3166_current.sibling_tags,
+                        "latest_semver_tag", _tag("1.12.13"))
     monkeypatch.setattr(check_iso3166_current.urllib.request, "urlopen",
                         _network_down)
     assert check_iso3166_current.main(["--strict"]) == 1
@@ -216,6 +223,8 @@ def test_iso3166_current_fails_when_sibling_unreachable(monkeypatch, capsys):
 
 
 def test_iso3166_current_advisory_tolerates_unreachable(monkeypatch, capsys):
+    monkeypatch.setattr(check_iso3166_current.sibling_tags,
+                        "latest_semver_tag", _tag("1.12.13"))
     monkeypatch.setattr(check_iso3166_current.urllib.request, "urlopen",
                         _network_down)
     assert check_iso3166_current.main(["--strict", "--advisory"]) == 0
@@ -268,6 +277,7 @@ def test_exchange_calendar_fail_on_version_drift(monkeypatch, capsys):
         (td / "calendar.json").write_text(
             json.dumps({"meta": {"version": "99.0.0"}}), encoding="utf-8")
 
+    monkeypatch.setattr(mod.sibling_tags, "latest_semver_tag", _tag("99.0.0"))
     monkeypatch.setattr(mod.subprocess, "run", fake_run)
     assert mod.main(["--strict", "--fail-on-version-drift"]) == 1
     assert "FAIL: version drift" in capsys.readouterr().err
@@ -289,6 +299,7 @@ def test_iso3166_fail_on_version_drift(monkeypatch, capsys):
         def __exit__(self, *a):
             return False
 
+    monkeypatch.setattr(mod.sibling_tags, "latest_semver_tag", _tag("99.0.0"))
     monkeypatch.setattr(mod.urllib.request, "urlopen", lambda *a, **k: R(body))
     assert mod.main(["--strict", "--fail-on-version-drift"]) == 1
     assert "FAIL: version drift" in capsys.readouterr().err
