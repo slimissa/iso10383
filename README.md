@@ -11,7 +11,7 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 [![Registry](https://img.shields.io/badge/registry-1.1.9-orange.svg)](./CHANGELOG.md)
 [![MICs](https://img.shields.io/badge/MICs-2893-blue.svg)](./iso10383.json)
 [![Wrappers](https://img.shields.io/badge/wrappers-4-purple.svg)](./wrappers/)
-[![Tests](https://img.shields.io/badge/tests-338-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/tests-344-success.svg)](./tests/)
 
 ---
 
@@ -57,10 +57,10 @@ One JSON file is the source of truth. Everything else (SQL, CSV, TSV, Parquet, f
 | **Wrappers** | 4: Python, JavaScript, Rust, Go, each bundling a byte-identical copy of the JSON and passing the same 22-case fixture |
 | **Release gate** | 18 checks in [`scripts/release.sh`](./scripts/release.sh) |
 | **Manifest claims** | One list per released version plus a `doc-facts` list in [`tools/release_claims.json`](./tools/release_claims.json); the counts are in `registry_release.json` (`counts.claims`) |
-| **Tests** | 338: 220 root and 118 in the wrappers (31 + 29 + 27 + 31) |
+| **Tests** | 344: 226 root and 118 in the wrappers (31 + 29 + 27 + 31) |
 | **Version** | One version number at nine sites (the `VERSION` file; the badge above shows it); the schema is 1.0.0 |
 | **Source** | SWIFT's published `ISO10383_MIC.csv`, snapshot 2026-11-09, `sha256:1d7f8aad...` recorded in `meta.source_hash`. The source of truth is [`iso10383.json`](./iso10383.json), validated against [`schema.json`](./schema.json). |
-| **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); three CI workflows; a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test` and `registry-release`; one example, [`examples/orders-5k`](./examples/orders-5k) |
+| **Around the data** | Five layers ([`docs/LAYERS.md`](./docs/LAYERS.md)); a CLI with nine subcommands; two vendored snapshots (ISO 3166 and Exchange Calendar, each pinned in its `.meta.json`); four CI workflows (one per push, three scheduled); a [`Makefile`](./Makefile) with `package`, `build-wheel`, `test`, `registry-release` and `revendor`; one example, [`examples/orders-5k`](./examples/orders-5k) |
 | **Security** | See [SECURITY.md](./SECURITY.md); integrity via `registry_release.json` |
 | **Dependencies and license** | The JSON needs none. Python, JavaScript and Go wrappers have none; the Rust wrapper depends on `serde` and `serde_json`. Build time: `jsonschema`, `pyarrow==25.0.1`, `pytest`, `pyyaml`. Apache 2.0. |
 
@@ -82,11 +82,11 @@ Each command runs from a clone, prints one line, and is the source of the figure
 | Release-gate checks | `grep -c '^gate ' scripts/release.sh` | `18` |
 | Manifest claims in the file | `python3 -c "import json; d=json.load(open('tools/release_claims.json')); print(sum(len(v) for v in d.values() if isinstance(v, list)))"` | the value of `counts.claims.in_file` in `registry_release.json` |
 | Claims the current gate verifies | `python3 tools/check_release_claims.py "$(cat VERSION)" \| tail -1` | `all N claim(s) verified`, where N is `counts.claims.verified` in `registry_release.json` |
-| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `220 passed` |
+| Root tests | `python3 -m pytest tests/ -q 2>&1 \| tail -1 \| cut -d' ' -f1-2` | `226 passed` |
 | Version, nine sites | `python3 tools/check_version_consistency.py \| tail -1` | `OK: all sites agree on <VERSION>`, where `<VERSION>` is the contents of the `VERSION` file |
 | Layers | `grep -c '^## Layer' docs/LAYERS.md` | `5` |
 | CLI subcommands | `grep -c 'add_parser(' tools/iso10383_cli.py` | `9` |
-| CI workflows | `ls .github/workflows \| wc -l` | `3` |
+| CI workflows | `ls .github/workflows \| wc -l` | `4` |
 
 The `0 broken chains` line that `validate.py` prints is a success message: the script reaches it only when no error was raised. The count itself is `meta.broken_chains` in `iso10383.json` and the output of `iso10383_cli.py check`.
 
@@ -942,7 +942,7 @@ The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | 11 | SQL export drift | `export_sql.py --check` | Same, for the four SQL files |
 | 12 | Parquet export drift | `export_parquet.py --check` | Same, compared byte for byte (hence the `pyarrow==25.0.1` pin) |
 | 13 | Wrapper sync | `sync_wrappers.py --check` | A bundled copy that differs from `iso10383.json`, or a missing one (`--allow-missing` tolerates a missing copy; a stale one still fails) |
-| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 220 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
+| 14 | Root test suite | `python3 -m pytest tests/ -q` | Any of the 226 root tests, including the AST test (`tests/test_generators.py`) that forbids clock reads, aliased or not, in the snapshot generators |
 | 15 | Cross-language | `check_cross_language.sh --strict` | A wrapper suite (Python, JavaScript, Rust or Go) that fails or cannot run; a skipped suite fails under `--strict` |
 | 16 | ISO 3166 snapshot reproduction | `gen_iso3166_snapshot.py --check` | A committed snapshot that differs byte for byte from the one its pinned upstream tag produces |
 | 17 | Exchange Calendar snapshot reproduction | `gen_exchange_calendar_snapshot.py --check` | Same, for the Exchange Calendar snapshot |
@@ -967,6 +967,7 @@ The 18 checks of [`scripts/release.sh`](./scripts/release.sh), in the order it r
 | Refresh diff | `refresh_diff.py` (the refresh) | NEW / EXPIRED / CHANGED / REMOVED counts between two registry files (CHANGED watches six fields); a REMOVED count above 0 exits 1 and opens the refresh PR as a draft |
 | Python wrapper suite | `pytest wrappers/python/tests -q`, in `check-wrappers` and inside gate 15 | The 31 Python wrapper tests |
 | SWIFT source health | `check-sources.yml`, weekly | SWIFT's file failing to download, or under 100,000 bytes (it opens an issue) |
+| Sibling drift | `check-siblings.yml`, weekly | A sibling's latest release tag adding or removing a code or MIC, changing its file format, or becoming unreachable (it opens a `Sibling drift: <sibling>` issue); a version-only lag only warns |
 
 There is no ISO 4217 check: ISO 10383 has no currency field and no ISO 4217 snapshot. The inactive tool that once stood in for one was removed in v1.0.5.
 
@@ -991,28 +992,29 @@ The release gate runs both (the claims as gate 6, the figure test inside gate 14
 
 | Suite | Command | Tests |
 |-------|---------|------:|
-| Root (Python) | `python3 -m pytest tests/ -q` | 220 |
+| Root (Python) | `python3 -m pytest tests/ -q` | 226 |
 | Python wrapper | `python3 -m pytest wrappers/python/tests -q` | 31 |
 | JavaScript | `(cd wrappers/javascript && node --test)` | 29 as `node --test` reports them (28 `test()` definitions plus the fixture-anchor module) |
 | Rust | `(cd wrappers/rust && cargo test --quiet)` | 27 |
 | Go | `(cd wrappers/go && go test ./... -count=1)` | 31 |
-| **Total** | | **338** |
+| **Total** | | **344** |
 
-The Tests badge above reads 338, the sum of this table. The root suite is spread over twenty-three files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (5), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_consumers_json.py` (4), `test_snapshot_meta.py` (20), `test_sibling_tags.py` (25), `test_revendor.py` (15), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
+The Tests badge above reads 344, the sum of this table. The root suite is spread over twenty-four files in `tests/`: `test_check_mojibake.py` (17), `test_cli.py` (18), `test_checks.py` (18), `test_export_sql.py` (12), `test_fetch_swift_mic.py` (2), `test_iso10383_codes.py` (11), `test_export_parquet.py` (9), `test_validate_schema.py` (10), `test_export_csv.py` (7), `test_wrappers.py` (7), `test_self_reference.py` (5), `test_fixture.py` (3), `test_scripts.py` (5), `test_pip_pins.py` (7), `test_generators.py` (6), `test_check_release_claims.py` (6), `test_prepare_release.py` (6), `test_readme_figures.py` (1), `test_consumers_json.py` (4), `test_snapshot_meta.py` (20), `test_sibling_tags.py` (25), `test_revendor.py` (15), `test_check_siblings_workflow.py` (6), `test_check_registry_freshness.py` (6). The declared counts live in `tests/test_counts.json`; `test_readme_figures.py` also checks the declared root count against what `pytest --collect-only` reports.
 
 ---
 
 ## 14. Continuous integration
 
-Three workflows in [`.github/workflows`](./.github/workflows):
+Four workflows in [`.github/workflows`](./.github/workflows), one per push and three scheduled:
 
 | Workflow | Runs on | Jobs | Protects against |
 |----------|---------|------|------------------|
 | **`validate.yml`** | push to `main`, pull requests to `main`, manual dispatch | seven, below | A stale derived file, a failing validator, a drifting wrapper, a snapshot that no longer reproduces, a corrupted text file |
 | **`refresh.yml`** | 00:00 UTC on the 15th of every month, manual dispatch | one: download, parse, diff, regenerate, validate, open a pull request | A registry that silently falls behind SWIFT |
 | **`check-sources.yml`** | 06:00 UTC every Monday, manual dispatch | one: fetch SWIFT's file; on failure open an issue | SWIFT's file moving, vanishing or shrinking between refreshes |
+| **`check-siblings.yml`** | 06:30 UTC every Monday, manual dispatch | one per sibling: `check_iso3166_current.py --strict` and `check_exchange_calendar_current.py --strict` against the sibling's latest release tag; on failure open or comment on a `Sibling drift: <sibling>` issue | A sibling that adds or removes a code or MIC, changes its file format or becomes unreachable, left unnoticed until the next push or release |
 
-`check-sources.yml` is not a per-push workflow: it does not run on push and is not part of the release poll. It fetches the file with `urllib.request.urlopen`; if the download fails or the response is under 100,000 bytes it opens a GitHub issue, or comments on the one already open.
+`check-sources.yml` and `check-siblings.yml` are not per-push workflows: they do not run on push or pull request and are not part of the release poll's per-push set (`validate.yml` is the only one; `tests/test_check_siblings_workflow.py` checks that). `check-siblings.yml` runs without `--fail-on-version-drift`, so a version-only sibling release warns there and fails only in the release gate (ADR 0013). `check-sources.yml` It fetches the file with `urllib.request.urlopen`; if the download fails or the response is under 100,000 bytes it opens a GitHub issue, or comments on the one already open.
 
 CI runs seven jobs on every push and pull request:
 
@@ -1253,6 +1255,7 @@ iso10383/
 │   ├── test_check_registry_freshness.py # check_registry_freshness.py --today, exit codes
 │   ├── test_checks.py                   # The checking tools
 │   ├── test_check_release_claims.py     # The release-claims checker: exit codes, manifest keys
+│   ├── test_check_siblings_workflow.py  # check-siblings.yml: scheduled only, permissions, both checks --strict; one per-push workflow
 │   ├── test_cli.py                      # CLI behaviour and exit codes
 │   ├── test_consumers_json.py           # tools/consumers.json against schema.json, docs/JOINS.md and README section 22
 │   ├── test_export_csv.py               # CSV/TSV exporter
@@ -1365,7 +1368,8 @@ iso10383/
     └── workflows/
         ├── validate.yml                 # Seven jobs on push and pull request
         ├── refresh.yml                  # Monthly refresh, opens a pull request
-        └── check-sources.yml            # Weekly: fetch SWIFT's file, open an issue on failure
+        ├── check-sources.yml            # Weekly: fetch SWIFT's file, open an issue on failure
+        └── check-siblings.yml           # Weekly: drift checks against the siblings' latest release tags, issue on failure
 ```
 
 ---

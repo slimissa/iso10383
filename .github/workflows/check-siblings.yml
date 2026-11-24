@@ -1,0 +1,71 @@
+name: check-siblings
+
+# Weekly drift check against the sibling registries' latest release tags
+# (docs/decisions/0013-sibling-drift-against-tags.md). It is not a
+# per-push workflow: it does not run on push or pull_request and is not
+# part of the release poll's per-push set. It runs both
+# check_*_current.py with --strict and without --fail-on-version-drift:
+# a code or MIC set difference, an unreachable sibling or an upstream
+# format change fails; a version-only lag only warns (the release gate is
+# where version drift fails). On failure it opens an issue per sibling,
+# "Sibling drift: <sibling>", or adds a comment to the one already open.
+# The checks use only the standard library and git, so nothing is
+# installed (constraints.txt pins output-affecting libraries only).
+
+on:
+  schedule:
+    - cron: "30 6 * * 1"    # 06:30 UTC every Monday, after check-sources
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-siblings:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sibling: [iso3166, exchange_calendar]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Drift check against the latest release tag
+        id: check
+        continue-on-error: true
+        env:
+          SIBLING: ${{ matrix.sibling }}
+        run: |
+          python3 "tools/check_${SIBLING}_current.py" --strict > "$RUNNER_TEMP/check.out" 2>&1 \
+            || { cat "$RUNNER_TEMP/check.out"; exit 1; }
+          cat "$RUNNER_TEMP/check.out"
+
+      - name: Open or comment on the drift issue
+        if: steps.check.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SIBLING: ${{ matrix.sibling }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Sibling drift: $SIBLING"
+          printf '%s\n\n' "The weekly check of tools/check_${SIBLING}_current.py --strict failed." > "$RUNNER_TEMP/body.md"
+          printf '%s\n\n' "Run: $RUN_URL" >> "$RUNNER_TEMP/body.md"
+          printf '%s\n' '```' >> "$RUNNER_TEMP/body.md"
+          cat "$RUNNER_TEMP/check.out" >> "$RUNNER_TEMP/body.md"
+          printf '%s\n\n' '```' >> "$RUNNER_TEMP/body.md"
+          printf '%s\n' "To re-vendor: python3 tools/revendor.py $SIBLING --check, then without --check (CONTRIBUTING.md, Re-vendor a sibling snapshot)." >> "$RUNNER_TEMP/body.md"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/body.md"
+          fi
+
+      - name: Fail the job when the check failed
+        if: steps.check.outcome == 'failure'
+        run: exit 1

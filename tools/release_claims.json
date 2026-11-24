@@ -926,27 +926,27 @@
     },
     {
       "file": "README.md",
-      "contains": "tests-338"
+      "contains": "tests-344"
     },
     {
       "file": "README.md",
-      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 220 |"
+      "contains": "| Root (Python) | `python3 -m pytest tests/ -q` | 226 |"
     },
     {
       "file": "README.md",
-      "contains": "| **Total** | | **338** |"
+      "contains": "| **Total** | | **344** |"
     },
     {
       "file": "README.md",
-      "contains": "The Tests badge above reads 338, the sum of this table"
+      "contains": "The Tests badge above reads 344, the sum of this table"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "220 tests"
+      "contains": "226 tests"
     },
     {
       "file": "CONTRIBUTING.md",
-      "contains": "338 across all five"
+      "contains": "344 across all five"
     },
     {
       "file": "README.md",
@@ -984,7 +984,7 @@
     },
     {
       "file": "README.md",
-      "contains": "twenty-three files in `tests/`"
+      "contains": "twenty-four files in `tests/`"
     },
     {
       "file": "README.md",
@@ -1123,15 +1123,15 @@
     },
     {
       "file": "README.md",
-      "contains": "| **Tests** | 338: 220 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+      "contains": "| **Tests** | 344: 226 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
     },
     {
       "file": "README.md",
-      "contains": "`220 passed`"
+      "contains": "`226 passed`"
     },
     {
       "file": "README.md",
-      "contains": "Any of the 220 root tests"
+      "contains": "Any of the 226 root tests"
     },
     {
       "file": "README.md",
@@ -1464,6 +1464,98 @@
     {
       "file": "README.md",
       "contains": "`test_revendor.py` (15)"
+    },
+    {
+      "file": "README.md",
+      "contains": "four CI workflows (one per push, three scheduled)"
+    },
+    {
+      "file": "README.md",
+      "absent": "three CI workflows"
+    },
+    {
+      "file": "README.md",
+      "contains": "| CI workflows | `ls .github/workflows \\| wc -l` | `4` |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| CI workflows | `ls .github/workflows \\| wc -l` | `3` |"
+    },
+    {
+      "file": "README.md",
+      "contains": "Four workflows in [`.github/workflows`](./.github/workflows), one per push and three scheduled:"
+    },
+    {
+      "file": "README.md",
+      "absent": "Three workflows in [`.github/workflows`]"
+    },
+    {
+      "file": "README.md",
+      "contains": "| **`check-siblings.yml`** | 06:30 UTC every Monday, manual dispatch |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`check-sources.yml` is not a per-push workflow"
+    },
+    {
+      "file": "README.md",
+      "contains": "│   ├── test_check_siblings_workflow.py  # check-siblings.yml: scheduled only, permissions, both checks --strict; one per-push workflow"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "contains": "weekly `check-siblings.yml` for a set change"
+    },
+    {
+      "file": "README.md",
+      "contains": "| Sibling drift | `check-siblings.yml`, weekly |"
+    },
+    {
+      "file": "README.md",
+      "contains": "        └── check-siblings.yml           # Weekly: drift checks against the siblings' latest release tags, issue on failure"
+    },
+    {
+      "file": "README.md",
+      "absent": "tests-338"
+    },
+    {
+      "file": "README.md",
+      "absent": "| Root (Python) | `python3 -m pytest tests/ -q` | 220 |"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Total** | | **338** |"
+    },
+    {
+      "file": "README.md",
+      "absent": "The Tests badge above reads 338, the sum of this table"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "220 tests"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "absent": "338 across all five"
+    },
+    {
+      "file": "README.md",
+      "absent": "twenty-three files in `tests/`"
+    },
+    {
+      "file": "README.md",
+      "absent": "| **Tests** | 338: 220 root and 118 in the wrappers (31 + 29 + 27 + 31) |"
+    },
+    {
+      "file": "README.md",
+      "absent": "`220 passed`"
+    },
+    {
+      "file": "README.md",
+      "absent": "Any of the 220 root tests"
+    },
+    {
+      "file": "README.md",
+      "contains": "`test_check_siblings_workflow.py` (6)"
     }
   ],
   "1.1.2": [

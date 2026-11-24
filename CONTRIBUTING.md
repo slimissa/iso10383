@@ -188,12 +188,12 @@ Expected on a clean checkout:
 
 ```
 OK: 2893 MICs validated            # python3 tools/validate.py
-220 passed                          # python3 -m pytest tests/ -q
+226 passed                          # python3 -m pytest tests/ -q
 OK: 5 suite(s) passed, 0 skipped    # bash tools/check_cross_language.sh
 ```
 
-The root suite is 220 tests; the wrapper suites are 31 (Python), 29
-(JavaScript), 27 (Rust) and 31 (Go), for 338 across all five. A clean
+The root suite is 226 tests; the wrapper suites are 31 (Python), 29
+(JavaScript), 27 (Rust) and 31 (Go), for 344 across all five. A clean
 `check_cross_language.sh` run reports `0 skipped`; a skipped suite means
 a toolchain (`node`, `cargo`, `go`) is missing.
 
@@ -456,8 +456,9 @@ itself. If the fixture changes, the anchors change with it.
 
 ### Re-vendor a sibling snapshot
 
-When a sibling releases (a release gate 7 or 8 failure on version
-drift is how it shows up at release time), re-vendor with one command:
+When a sibling releases (a `Sibling drift: <sibling>` issue from the
+weekly `check-siblings.yml` for a set change, or a release gate 7 or 8
+failure on version drift), re-vendor with one command:
 
 ```bash
 python3 tools/revendor.py all --check   # report only: exit 1 if behind
