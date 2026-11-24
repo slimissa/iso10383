@@ -14,6 +14,10 @@ must match `VERSION`. CI enforces this with
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.1.9] - 2026-11-24
+
 ### Added
 - `tools/consumers.json` (qlf-sentinel client contract CC-5): the registries that vendor `iso10383.json`, in iso3166's format. One consumer, Exchange Calendar, which keeps `tools/iso10383_snapshot.json` and reads `mic` (its `tools/check_mic_codes.py`, cited in the file's `_comment`).
 - `tests/test_consumers_json.py` (4 tests): the key set, the `repo` pattern, `snapshot_path`, `fields_read` against the record fields of `schema.json`, unique names and repos, each field in that consumer's `docs/JOINS.md` row, and each repo linked in README section 22.
@@ -495,7 +499,8 @@ must match `VERSION`. CI enforces this with
 - Wrapper packages for Python, JavaScript, Rust and Go, installed from
   the repository rather than from a package registry.
 
-[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.8...HEAD
+[Unreleased]: https://github.com/slimissa/iso10383/compare/v1.1.9...HEAD
+[1.1.9]: https://github.com/slimissa/iso10383/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/slimissa/iso10383/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/slimissa/iso10383/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/slimissa/iso10383/compare/v1.1.5...v1.1.6
